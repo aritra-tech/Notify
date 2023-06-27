@@ -68,4 +68,19 @@ dependencies {
 
     //Navigation
     implementation "androidx.navigation:navigation-compose:2.7.0-beta01"
+
+    //Room
+    implementation "androidx.room:room-runtime:2.5.2"
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    implementation "androidx.room:room-ktx:2.5.2"
+    implementation "androidx.compose.runtime:runtime-livedata:1.4.3"
+    annotationProcessor "androidx.room:room-compiler:2.5.2"
+    kapt "androidx.room:room-compiler:2.5.2"
+
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1"
+    implementation "androidx.core:core-ktx:1.10.1"
 }
