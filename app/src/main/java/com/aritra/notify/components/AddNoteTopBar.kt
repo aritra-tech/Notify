@@ -30,7 +30,7 @@ fun AddNoteTopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = { TODO() }) {
+            IconButton(onClick = { navigateBack() }) {
                 Icon(
                     painterResource(R.drawable.back),
                     contentDescription = "back"
