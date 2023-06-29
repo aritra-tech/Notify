@@ -27,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
@@ -84,6 +85,7 @@ fun HomeScreen(
                 )
             }
         },
+        containerColor = colorScheme.surface
     ) {
         Surface(
             color = colorResource(id = R.color.Background),
