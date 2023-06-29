@@ -32,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -90,7 +91,9 @@ fun HomeScreen(
             modifier = Modifier.padding(it)
         ) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(0.dp,20.dp,0.dp,0.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(0.dp, 20.dp, 0.dp, 0.dp)
             ) {
                 if (notesModel.isNotEmpty()) {
                     items(notesModel) { notesModel ->
@@ -168,7 +171,7 @@ fun NotesCard(
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
             .clickable { navigateToUpdateNoteScreen(noteModel.id) },
-        border = BorderStroke(1.dp, Color.Black)
+        border = BorderStroke(1.dp, Color.Black),
     ) {
         Column(
             modifier = Modifier
