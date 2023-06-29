@@ -18,7 +18,10 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),
     ) {
         composable(route = NotifyScreens.Home.name) {
             HomeScreen(
-
+                onFabClicked = { navController.navigate(NotifyScreens.AddNotes.name)},
+                navigateToUpdateNoteScreen = { noteId ->
+                    navController.navigate("${NotifyScreens.UpdateNotes.name}/$noteId")
+                }
             )
         }
         composable(NotifyScreens.AddNotes.name) {
