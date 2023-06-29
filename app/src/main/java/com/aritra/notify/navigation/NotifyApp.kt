@@ -25,7 +25,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),
             )
         }
         composable(NotifyScreens.AddNotes.name) {
-            AddNotesScreen()
+            AddNotesScreen(navigateBack = {navController.popBackStack()})
         }
         composable(NotifyScreens.Settings.name) {
             SettingsScreen()

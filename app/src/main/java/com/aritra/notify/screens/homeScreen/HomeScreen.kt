@@ -57,7 +57,6 @@ import com.aritra.notify.components.TopBar
 import com.aritra.notify.data.models.Note
 
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     onFabClicked: () -> Unit,
@@ -88,7 +87,6 @@ fun HomeScreen(
         containerColor = colorScheme.surface
     ) {
         Surface(
-            color = colorResource(id = R.color.Background),
             modifier = Modifier.padding(it)
         ) {
             LazyColumn(
@@ -179,8 +177,8 @@ fun NotesCard(
         ) {
             Text(
                 text = noteModel.title,
-                fontSize = 18.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_medium))
+                fontSize = 20.sp,
+                fontFamily = FontFamily(Font(R.font.poppins_semibold))
             )
             Text(
                 text = noteModel.note,
