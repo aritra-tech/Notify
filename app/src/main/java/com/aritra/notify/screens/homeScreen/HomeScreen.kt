@@ -27,10 +27,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,7 +58,6 @@ import com.aritra.notify.components.TopBar
 import com.aritra.notify.data.models.Note
 
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     onFabClicked: () -> Unit,
@@ -84,13 +85,15 @@ fun HomeScreen(
                 )
             }
         },
+        containerColor = colorScheme.surface
     ) {
         Surface(
-            color = colorResource(id = R.color.Background),
             modifier = Modifier.padding(it)
         ) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(0.dp,20.dp,0.dp,0.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(0.dp, 20.dp, 0.dp, 0.dp)
             ) {
                 if (notesModel.isNotEmpty()) {
                     items(notesModel) { notesModel ->
@@ -168,7 +171,7 @@ fun NotesCard(
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
             .clickable { navigateToUpdateNoteScreen(noteModel.id) },
-        border = BorderStroke(1.dp, Color.Black)
+        border = BorderStroke(1.dp, Color.Black),
     ) {
         Column(
             modifier = Modifier
@@ -177,8 +180,8 @@ fun NotesCard(
         ) {
             Text(
                 text = noteModel.title,
-                fontSize = 18.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_medium))
+                fontSize = 20.sp,
+                fontFamily = FontFamily(Font(R.font.poppins_semibold))
             )
             Text(
                 text = noteModel.note,
