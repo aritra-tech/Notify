@@ -20,14 +20,8 @@ fun TopBar() {
                 fontFamily = FontFamily(Font(R.font.poppins_medium))
             )
         },
-        actions = {
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(painterResource(
-                    id = R.drawable.bulb),
-                    contentDescription = "bulb"
-
-                )
-            }
-        }
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.onSecondary
+        )
     )
 }

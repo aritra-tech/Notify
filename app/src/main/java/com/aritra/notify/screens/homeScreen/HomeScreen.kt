@@ -17,10 +17,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DismissDirection.*
 import androidx.compose.material3.DismissValue.*
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -88,12 +90,13 @@ fun HomeScreen(
         containerColor = colorScheme.surface
     ) {
         Surface(
-            modifier = Modifier.padding(it)
+            modifier = Modifier.padding(it),
+            color = MaterialTheme.colorScheme.onSecondary
         ) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(0.dp, 20.dp, 0.dp, 0.dp)
+                    .padding(0.dp, 5.dp, 0.dp, 0.dp)
             ) {
                 if (notesModel.isNotEmpty()) {
                     items(notesModel) { notesModel ->
@@ -167,16 +170,20 @@ fun NotesCard(
 ) {
     Card(
         modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth()
+            .padding(12.dp)
+            .fillMaxSize()
             .clip(MaterialTheme.shapes.medium)
             .clickable { navigateToUpdateNoteScreen(noteModel.id) },
         border = BorderStroke(1.dp, Color.Black),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onSecondary
+        )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
+                .padding(12.dp)
         ) {
             Text(
                 text = noteModel.title,

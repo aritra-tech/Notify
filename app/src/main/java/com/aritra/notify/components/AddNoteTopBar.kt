@@ -4,7 +4,9 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -13,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.aritra.notify.R
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.screens.addNoteScreen.AddNoteViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,9 +26,12 @@ fun AddNoteTopBar(
     description: String
 ) {
     CenterAlignedTopAppBar(
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.onSecondary
+        ),
         title = {
             Text(
-                text = "Add notes",
+                text = "Add Notes",
                 fontFamily = FontFamily(Font(R.font.poppins_semibold))
             )
         },
@@ -39,7 +45,7 @@ fun AddNoteTopBar(
         },
         actions = {
 
-            IconButton(onClick = { navigateBack() }) {
+            IconButton(onClick = { TODO() }) {
                 Icon(
                     painterResource(R.drawable.share),
                     contentDescription = "share"
