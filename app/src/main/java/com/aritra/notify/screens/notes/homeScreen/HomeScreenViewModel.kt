@@ -1,4 +1,4 @@
-package com.aritra.notify.screens.homeScreen
+package com.aritra.notify.screens.notes.homeScreen
 
 import android.app.Application
 import androidx.compose.runtime.getValue

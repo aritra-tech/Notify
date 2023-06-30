@@ -1,4 +1,4 @@
-package com.aritra.notify.screens.addNoteScreen
+package com.aritra.notify.screens.notes.addNoteScreen
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
