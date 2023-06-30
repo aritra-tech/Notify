@@ -31,7 +31,7 @@ fun AddNoteTopBar(
         ),
         title = {
             Text(
-                text = "Add Notes",
+                text = "",
                 fontFamily = FontFamily(Font(R.font.poppins_semibold))
             )
         },
