@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 class NoteRepository(application: Application) {
 
-    private lateinit var noteDao: NoteDao
+    private var noteDao: NoteDao
 
     init {
         val database = NoteDatabase.getInstance(application)

@@ -58,11 +58,14 @@ fun AddNotesScreen(
                         placeholder = {
                             Text(
                                 "Title",
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.W700
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.W700,
+                                color = Color.Gray,
+                                fontFamily = FontFamily(Font(R.font.poppins_medium))
                             )
                         },
                         textStyle = TextStyle(
+                            fontSize = 20.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_medium)),
                         ),
                         maxLines = Int.MAX_VALUE,
@@ -79,11 +82,14 @@ fun AddNotesScreen(
                         placeholder = {
                             Text(
                                 "Notes",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.W500
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.W500,
+                                color = Color.Gray,
+                                fontFamily = FontFamily(Font(R.font.poppins_light))
                             )
                         },
                         textStyle = TextStyle(
+                            fontSize = 18.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_light)),
                         ),
                         colors = TextFieldDefaults.textFieldColors(containerColor = MaterialTheme.colorScheme.onSecondary)

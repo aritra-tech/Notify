@@ -11,20 +11,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import com.aritra.notify.R
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.screens.addNoteScreen.AddNoteViewModel
-
+import com.aritra.notify.screens.editNoteScreen.EditScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddNoteTopBar(
-    viewModel: AddNoteViewModel,
+fun EditNoteTopBar(
+    viewModel: EditScreenViewModel,
+    noteId: Int,
     navigateBack: () -> Unit,
     title: String,
     description: String
-) {
+){
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.onSecondary
@@ -51,16 +51,10 @@ fun AddNoteTopBar(
                     contentDescription = "share"
                 )
             }
-
             IconButton(onClick = {
-                if (title.isNotEmpty() || description.isNotEmpty()) {
-                    val noteDB = Note(id = 0, title = title, note = description)
-                    viewModel.insertNote(noteDB)
-                    navigateBack()
-                }
-                else {
-                    navigateBack()
-                }
+                val updateNote = Note(noteId,title,description)
+                viewModel.updateNotes(updateNote)
+                navigateBack()
             }) {
                 Icon(
                     painterResource(R.drawable.save),
