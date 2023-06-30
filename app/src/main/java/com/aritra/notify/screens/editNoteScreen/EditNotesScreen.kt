@@ -1,0 +1,96 @@
+package com.aritra.notify.screens.editNoteScreen
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aritra.notify.R
+import com.aritra.notify.components.EditNoteTopBar
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditNotesScreen(
+    noteId: Int,
+    navigateBack: () -> Unit
+) {
+    val editViewModel :EditScreenViewModel = viewModel()
+    val title = editViewModel.noteModel.title
+    val description = editViewModel.noteModel.note
+
+    LaunchedEffect(Unit) {
+        editViewModel.getNoteById(noteId)
+    }
+    Scaffold(
+        topBar = { EditNoteTopBar(editViewModel,noteId,navigateBack,title,description)}
+    ) {
+        Surface(
+            modifier = Modifier.padding(it)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    value = title,
+                    onValueChange = { title -> editViewModel.updateTitle(title) },
+                    placeholder = {
+                        Text(
+                            "Title",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.W700,
+                            color = Color.Gray,
+                            fontFamily = FontFamily(Font(R.font.poppins_medium))
+                        )
+                    },
+                    textStyle = TextStyle(
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                    ),
+                    maxLines = Int.MAX_VALUE,
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = MaterialTheme.colorScheme.onSecondary,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    )
+                )
+                TextField(
+                    modifier = Modifier.fillMaxSize(),
+                    value = description,
+                    onValueChange = { description -> editViewModel.updateDescription(description) },
+                    placeholder = {
+                        Text(
+                            "Notes",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.W500,
+                            color = Color.Gray,
+                            fontFamily = FontFamily(Font(R.font.poppins_light))
+                        )
+                    },
+                    textStyle = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_light)),
+                    ),
+                    colors = TextFieldDefaults.textFieldColors(containerColor = MaterialTheme.colorScheme.onSecondary)
+                )
+            }
+        }
+    }
+}
