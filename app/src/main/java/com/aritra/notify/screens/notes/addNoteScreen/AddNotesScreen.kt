@@ -1,6 +1,6 @@
 
 
-package com.aritra.notify.screens.addNoteScreen
+package com.aritra.notify.screens.notes.addNoteScreen
 
 
 import androidx.compose.foundation.layout.Column

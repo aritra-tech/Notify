@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.aritra.notify.screens.homeScreen
+package com.aritra.notify.screens.notes.homeScreen
 
 
 import android.annotation.SuppressLint
@@ -76,7 +76,7 @@ fun HomeScreen(
         topBar = { TopBar() },
         floatingActionButton = {
             FloatingActionButton(
-                modifier = Modifier.padding(0.dp,0.dp,20.dp,15.dp),
+                modifier = Modifier.padding(0.dp,0.dp,20.dp,5.dp),
                 onClick = { onFabClicked() },
                 containerColor = Color.Black
             ) {

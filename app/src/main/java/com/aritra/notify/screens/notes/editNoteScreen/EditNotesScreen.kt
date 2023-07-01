@@ -1,4 +1,4 @@
-package com.aritra.notify.screens.editNoteScreen
+package com.aritra.notify.screens.notes.editNoteScreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,7 +30,7 @@ fun EditNotesScreen(
     noteId: Int,
     navigateBack: () -> Unit
 ) {
-    val editViewModel :EditScreenViewModel = viewModel()
+    val editViewModel : EditScreenViewModel = viewModel()
     val title = editViewModel.noteModel.title
     val description = editViewModel.noteModel.note
 

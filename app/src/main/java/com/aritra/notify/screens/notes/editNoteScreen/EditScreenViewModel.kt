@@ -1,4 +1,4 @@
-package com.aritra.notify.screens.editNoteScreen
+package com.aritra.notify.screens.notes.editNoteScreen
 
 import android.app.Application
 import androidx.compose.runtime.getValue

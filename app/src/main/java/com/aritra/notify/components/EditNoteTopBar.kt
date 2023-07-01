@@ -13,8 +13,8 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import com.aritra.notify.R
 import com.aritra.notify.data.models.Note
-import com.aritra.notify.screens.addNoteScreen.AddNoteViewModel
-import com.aritra.notify.screens.editNoteScreen.EditScreenViewModel
+import com.aritra.notify.screens.notes.addNoteScreen.AddNoteViewModel
+import com.aritra.notify.screens.notes.editNoteScreen.EditScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
