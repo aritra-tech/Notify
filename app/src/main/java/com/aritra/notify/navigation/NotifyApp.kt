@@ -38,11 +38,11 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),
             route = NotifyScreens.Home.name,
             icon = Icons.Rounded.Home
         ),
-        BottomNavItem(
-            name = "To-do",
-            route = NotifyScreens.TodoHome.name,
-            icon = Icons.Rounded.List
-        ),
+//        BottomNavItem(
+//            name = "To-do",
+//            route = NotifyScreens.TodoHome.name,
+//            icon = Icons.Rounded.List
+//        ),
         BottomNavItem(
             name = "Settings",
             route = NotifyScreens.Settings.name,

@@ -34,7 +34,7 @@ fun AddNoteTopBar(
     viewModel: AddNoteViewModel,
     navigateBack: () -> Unit,
     title: String,
-    description: String
+    description: String,
 ) {
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -55,29 +55,28 @@ fun AddNoteTopBar(
             }
         },
         actions = {
-            IconButton(onClick = { TODO() }) {
-                Icon(
-                    painterResource(R.drawable.share),
-                    contentDescription = "share"
-                )
-            }
-
-            IconButton(onClick = {
-                if (title.isNotEmpty() || description.isNotEmpty()) {
-                    val noteDB = Note(id = 0, title = title, note = description)
-                    viewModel.insertNote(noteDB)
-                    navigateBack()
+            if (title.isNotEmpty()) {
+                IconButton(onClick = { TODO() }) {
+                    Icon(
+                        painterResource(R.drawable.share),
+                        contentDescription = "share"
+                    )
                 }
-                else {
-                    navigateBack()
-                }
-            }) {
-                Icon(
-                    painterResource(R.drawable.save),
-                    contentDescription = "save"
-                )
-            }
 
+                IconButton(onClick = {
+                    if (description.isNotEmpty()) {
+                        val noteDB = Note(id = 0, title = title, note = description)
+                        viewModel.insertNote(noteDB)
+                    }
+                    navigateBack()
+
+                }) {
+                    Icon(
+                        painterResource(R.drawable.save),
+                        contentDescription = "save"
+                    )
+                }
+            }
         }
     )
 }
