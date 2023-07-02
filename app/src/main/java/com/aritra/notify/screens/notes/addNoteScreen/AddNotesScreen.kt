@@ -46,6 +46,7 @@ fun AddNotesScreen(
     val viewModel: AddNoteViewModel = viewModel()
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+
     val focus = LocalFocusManager.current
     NotifyTheme(false) {
         Scaffold(
