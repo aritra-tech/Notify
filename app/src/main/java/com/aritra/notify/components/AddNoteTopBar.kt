@@ -55,7 +55,7 @@ fun AddNoteTopBar(
             }
         },
         actions = {
-            if (title.isNotEmpty()) {
+            if (title.isNotEmpty() && description.isNotEmpty()) {
                 IconButton(onClick = { TODO() }) {
                     Icon(
                         painterResource(R.drawable.share),
@@ -64,10 +64,8 @@ fun AddNoteTopBar(
                 }
 
                 IconButton(onClick = {
-                    if (description.isNotEmpty()) {
-                        val noteDB = Note(id = 0, title = title, note = description)
-                        viewModel.insertNote(noteDB)
-                    }
+                    val noteDB = Note(id = 0, title = title, note = description)
+                    viewModel.insertNote(noteDB)
                     navigateBack()
 
                 }) {
