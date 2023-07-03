@@ -1,5 +1,6 @@
 package com.aritra.notify.components
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -36,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
+import com.aritra.notify.data.db.NoteDatabase
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.screens.notes.addNoteScreen.AddNoteViewModel
 import eu.wewox.modalsheet.ExperimentalSheetApi
@@ -53,6 +56,8 @@ fun AddNoteTopBar(
     description: String,
 ) {
     var showSheet by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.onSecondary
@@ -92,10 +97,16 @@ fun AddNoteTopBar(
                             .padding(16.dp)
                     ) {
                         Spacer(modifier = Modifier.height(15.dp))
-                        Text(
+                        ShareOption(
                             text = "Share note as text",
-                            fontSize = 18.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                            onClick = {
+                                val sharingIntent = Intent(Intent.ACTION_SEND)
+                                sharingIntent.type = "text/plain"
+
+                                sharingIntent.putExtra(Intent.EXTRA_TEXT, "${"Title: $title"}\n${"Note: $description"}")
+                                context.startActivity(Intent.createChooser(sharingIntent, "Share via"))
+                                showSheet = false
+                            }
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
