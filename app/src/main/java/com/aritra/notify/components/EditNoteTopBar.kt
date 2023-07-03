@@ -1,6 +1,7 @@
 package com.aritra.notify.components
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -126,6 +127,7 @@ fun EditNoteTopBar(
                 val updateNote = Note(noteId,title,description)
                 viewModel.updateNotes(updateNote)
                 navigateBack()
+                Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
             }) {
                 Icon(
                     painterResource(R.drawable.save),

@@ -1,6 +1,7 @@
 package com.aritra.notify.components
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,6 +58,7 @@ fun AddNoteTopBar(
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
 
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -137,6 +139,7 @@ fun AddNoteTopBar(
                     val noteDB = Note(id = 0, title = title, note = description)
                     viewModel.insertNote(noteDB)
                     navigateBack()
+                    Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
 
                 }) {
                     Icon(
