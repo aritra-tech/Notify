@@ -136,7 +136,7 @@ fun AddNoteTopBar(
                 }
 
                 IconButton(onClick = {
-                    val noteDB = Note(id = 0, title = title, note = description)
+                    val noteDB = Note(id = 0, title = title,note = description)
                     viewModel.insertNote(noteDB)
                     navigateBack()
                     Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()

@@ -32,11 +32,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.AddNoteTopBar
 import com.aritra.notify.ui.theme.NotifyTheme
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,11 +50,16 @@ fun AddNotesScreen(
     val viewModel: AddNoteViewModel = viewModel()
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    val dateFormat = SimpleDateFormat("dd MMMM", Locale.getDefault())
+    val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+    timeFormat.isLenient = false
+    val currentDate = dateFormat.format(Calendar.getInstance().time)
+    val currentTime = timeFormat.format(Calendar.getInstance().time).uppercase(Locale.getDefault())
 
     val focus = LocalFocusManager.current
     NotifyTheme(false) {
         Scaffold(
-            topBar = { AddNoteTopBar(viewModel, navigateBack, title, description) },
+            topBar = { AddNoteTopBar(viewModel, navigateBack, title,description) },
         ) {
             Surface(
                 modifier = Modifier.padding(it)
@@ -90,6 +99,13 @@ fun AddNotesScreen(
                         keyboardActions = KeyboardActions(onNext = {
                             focus.moveFocus(FocusDirection.Down) }
                         ),
+                    )
+                    Text(
+                        modifier = Modifier.padding(bottom = 8.dp, start = 12.dp),
+                        text = "$currentDate, $currentTime",
+                        fontSize = 15.sp,
+                        color = Color.Gray,
+                        fontFamily = FontFamily(Font(R.font.poppins_light)),
                     )
                     TextField(
                         modifier = Modifier.fillMaxSize(),
