@@ -5,12 +5,15 @@ package com.aritra.notify.screens.notes.homeScreen
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -197,24 +201,32 @@ fun NotesCard(
 
 @Composable
 fun NoList() {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty_list))
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(30.dp, 150.dp, 0.dp, 0.dp)
+            .padding(30.dp, 200.dp, 0.dp, 0.dp)
     ) {
-        LottieAnimation(
-            composition = composition,
-            modifier = Modifier.size(300.dp),
-            isPlaying = true
+        Image(
+            painter = painterResource(id = R.drawable.no_list),
+            contentDescription = "empty",
+            modifier = Modifier.fillMaxWidth(),
+            alignment = Alignment.Center
         )
+        Spacer(modifier = Modifier.height(20.dp))
         Text(
-            text = "No notes here yet",
+            text = "No notes found",
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             fontFamily = FontFamily(Font(R.font.poppins_semibold)),
             fontSize = 20.sp
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = "When you add a notes. You will see your notes here",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            fontFamily = FontFamily(Font(R.font.poppins_light)),
+            fontSize = 18.sp
         )
     }
 }
