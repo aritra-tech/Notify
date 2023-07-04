@@ -1,5 +1,3 @@
-
-
 package com.aritra.notify.screens.notes.addNoteScreen
 
 
@@ -25,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -37,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.AddNoteTopBar
+import com.aritra.notify.components.TextDialog
 import com.aritra.notify.ui.theme.NotifyTheme
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -50,6 +50,7 @@ fun AddNotesScreen(
     val viewModel: AddNoteViewModel = viewModel()
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    val cancelDialogState = remember { mutableStateOf(false) }
     val dateFormat = SimpleDateFormat("dd MMMM", Locale.getDefault())
     val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
     timeFormat.isLenient = false
@@ -59,7 +60,15 @@ fun AddNotesScreen(
     val focus = LocalFocusManager.current
     NotifyTheme(false) {
         Scaffold(
-            topBar = { AddNoteTopBar(viewModel, navigateBack, title,description) },
+            topBar = {
+                AddNoteTopBar(
+                    viewModel,
+                    onBackPress = { cancelDialogState.value = true },
+                    onSave = { navigateBack() },
+                    title,
+                    description
+                )
+            },
         ) {
             Surface(
                 modifier = Modifier.padding(it)
@@ -74,7 +83,7 @@ fun AddNotesScreen(
                         onValueChange = { title = it },
                         placeholder = {
                             Text(
-                                "Title",
+                                stringResource(R.string.title),
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.W700,
                                 color = Color.Gray,
@@ -97,11 +106,12 @@ fun AddNotesScreen(
                             imeAction = ImeAction.Next
                         ),
                         keyboardActions = KeyboardActions(onNext = {
-                            focus.moveFocus(FocusDirection.Down) }
+                            focus.moveFocus(FocusDirection.Down)
+                        }
                         ),
                     )
                     Text(
-                        modifier = Modifier.padding(bottom = 8.dp, start = 12.dp),
+                        modifier = Modifier.padding(bottom = 8.dp, start = 13.dp),
                         text = "$currentDate, $currentTime",
                         fontSize = 15.sp,
                         color = Color.Gray,
@@ -113,7 +123,7 @@ fun AddNotesScreen(
                         onValueChange = { description = it },
                         placeholder = {
                             Text(
-                                "Notes",
+                                stringResource(R.string.notes),
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.W500,
                                 color = Color.Gray,
@@ -134,4 +144,14 @@ fun AddNotesScreen(
             }
         }
     }
+    TextDialog(
+        title = stringResource(R.string.are_you_sure),
+        description = stringResource(R.string.the_text_change_will_not_be_saved),
+        isOpened = cancelDialogState.value,
+        onDismissCallback = { cancelDialogState.value = false },
+        onConfirmCallback = {
+            navigateBack()
+            cancelDialogState.value = false
+        }
+    )
 }

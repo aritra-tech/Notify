@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -52,7 +53,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun AddNoteTopBar(
     viewModel: AddNoteViewModel,
-    navigateBack: () -> Unit,
+    onBackPress: () -> Unit,
+    onSave: () -> Unit,
     title: String,
     description: String,
 ) {
@@ -71,7 +73,7 @@ fun AddNoteTopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = { navigateBack() }) {
+            IconButton(onClick = { onBackPress() }) {
                 Icon(
                     painterResource(R.drawable.back),
                     contentDescription = "back"
@@ -100,7 +102,7 @@ fun AddNoteTopBar(
                     ) {
                         Spacer(modifier = Modifier.height(15.dp))
                         ShareOption(
-                            text = "Share note as text",
+                            text = stringResource(R.string.share_note_as_text),
                             onClick = {
                                 val sharingIntent = Intent(Intent.ACTION_SEND)
                                 sharingIntent.type = "text/plain"
@@ -112,7 +114,7 @@ fun AddNoteTopBar(
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "Share note as picture",
+                            text = stringResource(R.string.share_note_as_picture),
                             fontSize = 18.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_medium)),
                         )
@@ -126,7 +128,7 @@ fun AddNoteTopBar(
                             )
                         ) {
                             Text(
-                                text = "Cancel",
+                                text = stringResource(R.string.cancel),
                                 fontSize = 16.sp,
                                 textAlign = TextAlign.Center,
                                 fontFamily = FontFamily(Font(R.font.poppins_light))
@@ -138,7 +140,7 @@ fun AddNoteTopBar(
                 IconButton(onClick = {
                     val noteDB = Note(id = 0, title = title,note = description)
                     viewModel.insertNote(noteDB)
-                    navigateBack()
+                    onSave()
                     Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
 
                 }) {
