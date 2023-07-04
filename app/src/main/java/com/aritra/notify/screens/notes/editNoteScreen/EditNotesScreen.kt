@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -61,7 +62,7 @@ fun EditNotesScreen(
                     onValueChange = { title -> editViewModel.updateTitle(title) },
                     placeholder = {
                         Text(
-                            "Title",
+                            stringResource(R.string.title),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.W700,
                             color = Color.Gray,
@@ -93,7 +94,7 @@ fun EditNotesScreen(
                     onValueChange = { description -> editViewModel.updateDescription(description) },
                     placeholder = {
                         Text(
-                            "Notes",
+                            stringResource(R.string.notes),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.W500,
                             color = Color.Gray,

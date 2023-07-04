@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Notify</string>
+    <string name="are_you_sure_want_to_delete_these_items_it_cannot_be_recovered">Are you sure want to delete these items (it cannot be recovered)?</string>
+    <string name="warning">Warning</string>
+    <string name="confirm">Confirm</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="are_you_sure">Are you sure</string>
+    <string name="the_text_change_will_not_be_saved">The text change will not be saved</string>
+    <string name="notes">Notes</string>
+    <string name="title">Title</string>
+    <string name="share_note_as_text">Share note as text</string>
+    <string name="share_note_as_picture">Share note as picture</string>
+    <string name="cancel">Cancel</string>
 </resources>
