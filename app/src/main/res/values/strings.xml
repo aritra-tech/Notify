@@ -11,4 +11,5 @@
     <string name="share_note_as_text">Share note as text</string>
     <string name="share_note_as_picture">Share note as picture</string>
     <string name="cancel">Cancel</string>
+    <string name="search_your_notes">Search your notes</string>
 </resources>
