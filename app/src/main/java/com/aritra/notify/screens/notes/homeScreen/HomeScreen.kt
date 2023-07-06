@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Add
@@ -33,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
@@ -41,6 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -76,7 +79,7 @@ fun HomeScreen(
         topBar = { TopBar() },
         floatingActionButton = {
             FloatingActionButton(
-                modifier = Modifier.padding(0.dp,0.dp,20.dp,5.dp),
+                modifier = Modifier.padding(0.dp, 0.dp, 20.dp, 5.dp),
                 onClick = { onFabClicked() },
                 containerColor = Color.Black
             ) {
@@ -94,18 +97,43 @@ fun HomeScreen(
             color = MaterialTheme.colorScheme.onSecondary
         ) {
             var searchQuery by rememberSaveable { mutableStateOf("") }
-            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            var active by remember { mutableStateOf(false) }
+
+            Column(modifier = Modifier.fillMaxSize()) {
 
                 SearchBar(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(12.dp),
                     query = searchQuery,
                     onQueryChange = { searchQuery = it },
-                    onSearch = {},
-                    active = false,
-                    onActiveChange = {},
+                    onSearch = {
+                        active = false
+                        viewModel.searchNotesByTitle(searchQuery)
+                    },
+                    active = active,
+                    onActiveChange = { active = it },
+                    colors = SearchBarDefaults.colors(
+                        containerColor = colorScheme.background
+                    ),
                     placeholder = { Text(stringResource(R.string.search_your_notes)) },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) }
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    trailingIcon = {
+                        if (active || searchQuery.isNotEmpty()) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Close",
+                                modifier = Modifier.clickable {
+                                    if (searchQuery.isNotEmpty()) {
+                                        searchQuery = ""
+                                    } else {
+                                        active = false
+                                    }
+                                    viewModel.searchNotesByTitle(searchQuery)
+                                }
+                            )
+                        }
+                    }
                 ) {
                 }
                 LazyColumn(
@@ -199,6 +227,7 @@ fun NotesCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(12.dp)
         ) {
             Text(
                 text = noteModel.title,
