@@ -28,4 +28,12 @@ class HomeScreenViewModel(application: Application) : AndroidViewModel(applicati
             noteRepository.deleteNoteFromRoom(note)
         }
     }
+
+    fun searchNotesByTitle(searchQuery: String) {
+        viewModelScope.launch {
+            noteRepository.searchNotesByTitleFromRoom(searchQuery).collect { response ->
+                notesModel = response
+            }
+        }
+    }
 }

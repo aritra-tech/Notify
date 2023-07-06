@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -29,7 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
-import com.aritra.notify.components.EditNoteTopBar
+import com.aritra.notify.components.topbar.EditNoteTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +47,7 @@ fun EditNotesScreen(
         editViewModel.getNoteById(noteId)
     }
     Scaffold(
-        topBar = { EditNoteTopBar(editViewModel,noteId,navigateBack,title,description)}
+        topBar = { EditNoteTopBar(editViewModel,noteId,navigateBack,title,description) }
     ) {
         Surface(
             modifier = Modifier.padding(it)
@@ -61,7 +62,7 @@ fun EditNotesScreen(
                     onValueChange = { title -> editViewModel.updateTitle(title) },
                     placeholder = {
                         Text(
-                            "Title",
+                            stringResource(R.string.title),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.W700,
                             color = Color.Gray,
@@ -93,7 +94,7 @@ fun EditNotesScreen(
                     onValueChange = { description -> editViewModel.updateDescription(description) },
                     placeholder = {
                         Text(
-                            "Notes",
+                            stringResource(R.string.notes),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.W500,
                             color = Color.Gray,

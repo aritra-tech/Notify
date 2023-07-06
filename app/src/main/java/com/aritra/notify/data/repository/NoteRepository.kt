@@ -19,6 +19,9 @@ class NoteRepository(application: Application) {
 
     fun getNoteByIdFromRoom(noteId: Int): Flow<Note> = noteDao.getNoteById(noteId)
 
+    fun searchNotesByTitleFromRoom(searchQuery: String): Flow<List<Note>> =
+        noteDao.searchNotesByTitle(searchQuery)
+
     suspend fun insertNoteToRoom(note: Note) = noteDao.insertNote(note)
 
     suspend fun updateNoteInRoom(note: Note) = noteDao.updateNote(note)

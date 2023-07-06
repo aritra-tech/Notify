@@ -1,5 +1,7 @@
-package com.aritra.notify.components
+package com.aritra.notify.components.topbar
 
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -29,8 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
+import com.aritra.notify.components.ShareOption
 import com.aritra.notify.data.models.Note
-import com.aritra.notify.screens.notes.addNoteScreen.AddNoteViewModel
 import com.aritra.notify.screens.notes.editNoteScreen.EditScreenViewModel
 import eu.wewox.modalsheet.ExperimentalSheetApi
 import eu.wewox.modalsheet.ModalSheet
@@ -45,6 +48,8 @@ fun EditNoteTopBar(
     description: String
 ){
     var showSheet by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.onSecondary
@@ -83,10 +88,16 @@ fun EditNoteTopBar(
                         .padding(16.dp)
                 ) {
                     Spacer(modifier = Modifier.height(15.dp))
-                    Text(
+                    ShareOption(
                         text = "Share note as text",
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                        onClick = {
+                            val sharingIntent = Intent(Intent.ACTION_SEND)
+                            sharingIntent.type = "text/plain"
+
+                            sharingIntent.putExtra(Intent.EXTRA_TEXT, "${"Title: $title"}\n${"Note: $description"}")
+                            context.startActivity(Intent.createChooser(sharingIntent, "Share via"))
+                            showSheet = false
+                        }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
@@ -116,6 +127,7 @@ fun EditNoteTopBar(
                 val updateNote = Note(noteId,title,description)
                 viewModel.updateNotes(updateNote)
                 navigateBack()
+                Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
             }) {
                 Icon(
                     painterResource(R.drawable.save),

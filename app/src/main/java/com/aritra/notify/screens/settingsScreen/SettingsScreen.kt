@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.SettingsComponent
-import com.aritra.notify.components.SettingsTopAppBar
+import com.aritra.notify.components.topbar.SettingsTopAppBar
 import com.aritra.notify.utils.Const
 
 @Composable
