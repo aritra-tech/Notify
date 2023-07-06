@@ -1,4 +1,4 @@
-package com.aritra.notify.components
+package com.aritra.notify.components.dialog
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog

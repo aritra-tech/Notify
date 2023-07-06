@@ -1,26 +1,32 @@
-package com.aritra.notify.components
+@file:OptIn(ExperimentalMaterial3Api::class)
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+package com.aritra.notify.components.topbar
+
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import com.aritra.notify.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun SettingsTopAppBar() {
+fun TopBar() {
     TopAppBar(
         title = {
             Text(
-                text = "Settings",
+                text = "All Notes",
                 fontFamily = FontFamily(Font(R.font.poppins_medium))
             )
+        },
+        actions = {
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    painterResource(R.drawable.notification),
+                    contentDescription = "notification"
+                )
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.onSecondary

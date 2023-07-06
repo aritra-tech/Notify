@@ -30,7 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
-import com.aritra.notify.components.EditNoteTopBar
+import com.aritra.notify.components.topbar.EditNoteTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,7 +47,7 @@ fun EditNotesScreen(
         editViewModel.getNoteById(noteId)
     }
     Scaffold(
-        topBar = { EditNoteTopBar(editViewModel,noteId,navigateBack,title,description)}
+        topBar = { EditNoteTopBar(editViewModel,noteId,navigateBack,title,description) }
     ) {
         Surface(
             modifier = Modifier.padding(it)

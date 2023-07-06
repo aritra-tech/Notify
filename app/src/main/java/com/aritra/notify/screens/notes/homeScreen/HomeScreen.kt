@@ -59,7 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
-import com.aritra.notify.components.TopBar
+import com.aritra.notify.components.topbar.TopBar
 import com.aritra.notify.data.models.Note
 
 

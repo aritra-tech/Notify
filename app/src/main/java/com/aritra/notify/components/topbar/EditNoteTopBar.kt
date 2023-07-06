@@ -1,4 +1,4 @@
-package com.aritra.notify.components
+package com.aritra.notify.components.topbar
 
 import android.content.Intent
 import android.widget.Toast
@@ -32,8 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
+import com.aritra.notify.components.ShareOption
 import com.aritra.notify.data.models.Note
-import com.aritra.notify.screens.notes.addNoteScreen.AddNoteViewModel
 import com.aritra.notify.screens.notes.editNoteScreen.EditScreenViewModel
 import eu.wewox.modalsheet.ExperimentalSheetApi
 import eu.wewox.modalsheet.ModalSheet

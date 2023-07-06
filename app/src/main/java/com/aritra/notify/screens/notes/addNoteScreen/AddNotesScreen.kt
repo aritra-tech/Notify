@@ -35,8 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
-import com.aritra.notify.components.AddNoteTopBar
-import com.aritra.notify.components.TextDialog
+import com.aritra.notify.components.topbar.AddNoteTopBar
+import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.ui.theme.NotifyTheme
 import java.text.SimpleDateFormat
 import java.util.Calendar
