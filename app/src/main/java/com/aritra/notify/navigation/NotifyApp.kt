@@ -58,7 +58,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),
         bottomBar = {
             if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
                 NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.onBackground
+                    containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     bottomNavItem.forEach { item ->
                         NavigationBarItem(
@@ -70,16 +70,16 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),
                                     tint = if (backStackEntry.value?.destination?.route == item.route)
                                         MaterialTheme.colorScheme.onSurface
                                     else
-                                        MaterialTheme.colorScheme.onPrimary
+                                        MaterialTheme.colorScheme.secondary
                                 )
                             },
                             label = {
                                 Text(
                                     text = item.name,
                                     color = if (backStackEntry.value?.destination?.route == item.route)
-                                        MaterialTheme.colorScheme.inverseOnSurface
+                                        MaterialTheme.colorScheme.onSurface
                                     else
-                                        MaterialTheme.colorScheme.onPrimary,
+                                        MaterialTheme.colorScheme.secondary,
                                     fontWeight = if (backStackEntry.value?.destination?.route == item.route)
                                         FontWeight.Bold
                                     else
