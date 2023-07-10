@@ -74,7 +74,7 @@ fun SettingsScreen() {
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.onSecondary),
+                        .background(MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(5.dp)
                 ) {
                     Row(

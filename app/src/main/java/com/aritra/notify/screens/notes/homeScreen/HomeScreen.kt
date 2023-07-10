@@ -248,7 +248,7 @@ fun NoList() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(30.dp, 200.dp, 0.dp, 0.dp)
+            .padding(30.dp, 130.dp, 0.dp, 0.dp)
     ) {
         Image(
             painter = painterResource(id = R.drawable.no_list),
