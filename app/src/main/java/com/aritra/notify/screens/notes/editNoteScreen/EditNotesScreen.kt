@@ -41,13 +41,18 @@ fun EditNotesScreen(
     val editViewModel : EditScreenViewModel = viewModel()
     val title = editViewModel.noteModel.title
     val description = editViewModel.noteModel.note
+    val dateTime = editViewModel.noteModel.dateTime
     val focus = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
         editViewModel.getNoteById(noteId)
     }
     Scaffold(
-        topBar = { EditNoteTopBar(editViewModel,noteId,navigateBack,title,description) }
+        topBar = {
+            if (dateTime != null) {
+                EditNoteTopBar(editViewModel,noteId,navigateBack,title,description,dateTime)
+            }
+        }
     ) {
         Surface(
             modifier = Modifier.padding(it)

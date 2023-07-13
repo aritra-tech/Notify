@@ -50,6 +50,9 @@ fun AddNotesScreen(
     val viewModel: AddNoteViewModel = viewModel()
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    val dateTime by remember {
+        mutableStateOf(Calendar.getInstance().time)
+    }
     val cancelDialogState = remember { mutableStateOf(false) }
     val dateFormat = SimpleDateFormat("dd MMMM", Locale.getDefault())
     val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
@@ -66,7 +69,8 @@ fun AddNotesScreen(
                     onBackPress = { cancelDialogState.value = true },
                     onSave = { navigateBack() },
                     title,
-                    description
+                    description,
+                    dateTime,
                 )
             },
         ) {

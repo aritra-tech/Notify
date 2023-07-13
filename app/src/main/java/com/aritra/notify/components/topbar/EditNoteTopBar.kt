@@ -37,6 +37,7 @@ import com.aritra.notify.data.models.Note
 import com.aritra.notify.screens.notes.editNoteScreen.EditScreenViewModel
 import eu.wewox.modalsheet.ExperimentalSheetApi
 import eu.wewox.modalsheet.ModalSheet
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSheetApi::class)
 @Composable
@@ -45,7 +46,8 @@ fun EditNoteTopBar(
     noteId: Int,
     navigateBack: () -> Unit,
     title: String,
-    description: String
+    description: String,
+    dateTime: Date,
 ){
     var showSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -124,7 +126,7 @@ fun EditNoteTopBar(
                 }
             }
             IconButton(onClick = {
-                val updateNote = Note(noteId,title,description)
+                val updateNote = Note(noteId,title,description,dateTime)
                 viewModel.updateNotes(updateNote)
                 navigateBack()
                 Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
