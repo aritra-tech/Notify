@@ -8,8 +8,11 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +26,8 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DismissDirection.*
@@ -38,18 +43,21 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -215,6 +223,7 @@ fun NotesCard(
     noteModel: Note,
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit
 ) {
+
     Card(
         modifier = Modifier
             .padding(12.dp)
@@ -223,7 +232,7 @@ fun NotesCard(
         elevation = CardDefaults.cardElevation(3.dp),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onSecondary
+            containerColor = colorScheme.onSecondary
         )
     ) {
         Column(
@@ -233,16 +242,17 @@ fun NotesCard(
         ) {
             Text(
                 text = noteModel.title,
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 fontFamily = FontFamily(Font(R.font.poppins_semibold))
             )
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = noteModel.note,
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.poppins_light))
             )
             Spacer(modifier = Modifier.height(10.dp))
-            val formattedDateTime = SimpleDateFormat("dd MMMM", Locale.getDefault()).format(noteModel.dateTime)
+            val formattedDateTime = SimpleDateFormat("dd MMMM, hh:mm a", Locale.getDefault()).format(noteModel.dateTime)
             Text(
                 text = formattedDateTime,
                 fontSize = 14.sp,
