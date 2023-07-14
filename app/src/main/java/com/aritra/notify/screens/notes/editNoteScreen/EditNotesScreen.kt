@@ -27,10 +27,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.EditNoteTopBar
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,6 +95,12 @@ fun EditNotesScreen(
                     keyboardActions = KeyboardActions(onNext = {
                         focus.moveFocus(FocusDirection.Down) }
                     ),
+                )
+                Text(
+                    text = dateTime?.let {
+                        SimpleDateFormat("dd MMMM, hh:mm a", Locale.getDefault()).format(it)
+                    } ?: "",
+                    modifier = Modifier.padding(bottom = 8.dp, start = 13.dp),
                 )
                 TextField(
                     modifier = Modifier.fillMaxSize(),

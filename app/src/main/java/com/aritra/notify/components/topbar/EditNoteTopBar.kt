@@ -126,7 +126,8 @@ fun EditNoteTopBar(
                 }
             }
             IconButton(onClick = {
-                val updateNote = Note(noteId,title,description,dateTime)
+                val currentDateTime = Date()
+                val updateNote = Note(noteId,title,description,currentDateTime)
                 viewModel.updateNotes(updateNote)
                 navigateBack()
                 Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()

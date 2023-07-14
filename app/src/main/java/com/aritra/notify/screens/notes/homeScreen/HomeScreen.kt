@@ -61,6 +61,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.TopBar
 import com.aritra.notify.data.models.Note
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 @Composable
@@ -238,6 +240,14 @@ fun NotesCard(
                 text = noteModel.note,
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.poppins_light))
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            val formattedDateTime = SimpleDateFormat("dd MMMM", Locale.getDefault()).format(noteModel.dateTime)
+            Text(
+                text = formattedDateTime,
+                fontSize = 14.sp,
+                fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                color = Color.Gray
             )
         }
     }
