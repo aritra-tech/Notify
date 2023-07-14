@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.aritra.notify.data.dao.NoteDao
 import com.aritra.notify.data.models.Note
 
-@Database(entities = [Note::class], version = 1)
+@Database(entities = [Note::class], version = 2)
 abstract class NoteDatabase  : RoomDatabase() {
 
     abstract fun noteDao() : NoteDao
@@ -23,6 +23,7 @@ abstract class NoteDatabase  : RoomDatabase() {
                         NoteDatabase::class.java,
                         "Note_database"
                     )
+                        .fallbackToDestructiveMigration()
                         .allowMainThreadQueries()
                         .build()
                     INSTANCE = instance

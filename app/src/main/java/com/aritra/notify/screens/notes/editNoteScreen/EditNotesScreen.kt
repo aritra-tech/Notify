@@ -27,10 +27,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.EditNoteTopBar
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,13 +44,18 @@ fun EditNotesScreen(
     val editViewModel : EditScreenViewModel = viewModel()
     val title = editViewModel.noteModel.title
     val description = editViewModel.noteModel.note
+    val dateTime = editViewModel.noteModel.dateTime
     val focus = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
         editViewModel.getNoteById(noteId)
     }
     Scaffold(
-        topBar = { EditNoteTopBar(editViewModel,noteId,navigateBack,title,description) }
+        topBar = {
+            if (dateTime != null) {
+                EditNoteTopBar(editViewModel,noteId,navigateBack,title,description,dateTime)
+            }
+        }
     ) {
         Surface(
             modifier = Modifier.padding(it)
@@ -87,6 +95,12 @@ fun EditNotesScreen(
                     keyboardActions = KeyboardActions(onNext = {
                         focus.moveFocus(FocusDirection.Down) }
                     ),
+                )
+                Text(
+                    text = dateTime?.let {
+                        SimpleDateFormat("dd MMMM, hh:mm a", Locale.getDefault()).format(it)
+                    } ?: "",
+                    modifier = Modifier.padding(bottom = 8.dp, start = 13.dp),
                 )
                 TextField(
                     modifier = Modifier.fillMaxSize(),

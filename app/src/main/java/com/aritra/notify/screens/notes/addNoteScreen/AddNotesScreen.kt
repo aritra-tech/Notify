@@ -1,6 +1,7 @@
 package com.aritra.notify.screens.notes.addNoteScreen
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -50,6 +51,9 @@ fun AddNotesScreen(
     val viewModel: AddNoteViewModel = viewModel()
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    val dateTime by remember {
+        mutableStateOf(Calendar.getInstance().time)
+    }
     val cancelDialogState = remember { mutableStateOf(false) }
     val dateFormat = SimpleDateFormat("dd MMMM", Locale.getDefault())
     val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
@@ -66,7 +70,8 @@ fun AddNotesScreen(
                     onBackPress = { cancelDialogState.value = true },
                     onSave = { navigateBack() },
                     title,
-                    description
+                    description,
+                    dateTime,
                 )
             },
         ) {
@@ -114,7 +119,7 @@ fun AddNotesScreen(
                         modifier = Modifier.padding(bottom = 8.dp, start = 13.dp),
                         text = "$currentDate, $currentTime",
                         fontSize = 15.sp,
-                        color = Color.Gray,
+                        color = Color.LightGray,
                         fontFamily = FontFamily(Font(R.font.poppins_light)),
                     )
                     TextField(

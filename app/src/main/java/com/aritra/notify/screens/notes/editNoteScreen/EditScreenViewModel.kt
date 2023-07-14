@@ -10,11 +10,12 @@ import com.aritra.notify.data.models.Note
 import com.aritra.notify.data.repository.NoteRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class EditScreenViewModel(application: Application) : AndroidViewModel(application) {
 
     private val noteRepo = NoteRepository(application)
-    var noteModel by mutableStateOf(Note(0, "", ""))
+    var noteModel by mutableStateOf(Note(0, "", "",Date()))
 
     fun getNoteById(noteId: Int) = viewModelScope.launch(Dispatchers.IO) {
         noteRepo.getNoteByIdFromRoom(noteId).collect { response ->
@@ -32,5 +33,8 @@ class EditScreenViewModel(application: Application) : AndroidViewModel(applicati
 
     fun updateDescription(description: String) {
         noteModel = noteModel.copy(note = description)
+    }
+    fun updateDateTime(dateTime: Date) {
+        noteModel = noteModel.copy(dateTime = dateTime)
     }
 }

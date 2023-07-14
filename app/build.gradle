@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
     id 'kotlin-kapt'
 }
 
@@ -68,9 +69,6 @@ dependencies {
 
     //Navigation
     implementation "androidx.navigation:navigation-compose:2.7.0-beta01"
-
-    // Lottie
-    implementation "com.airbnb.android:lottie-compose:4.0.0"
 
     // UI update
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.27.0"

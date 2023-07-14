@@ -38,6 +38,7 @@ import com.aritra.notify.data.models.Note
 import com.aritra.notify.screens.notes.addNoteScreen.AddNoteViewModel
 import eu.wewox.modalsheet.ExperimentalSheetApi
 import eu.wewox.modalsheet.ModalSheet
+import java.util.Date
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSheetApi::class)
@@ -48,6 +49,7 @@ fun AddNoteTopBar(
     onSave: () -> Unit,
     title: String,
     description: String,
+    dateTime: Date,
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -129,7 +131,7 @@ fun AddNoteTopBar(
                 }
 
                 IconButton(onClick = {
-                    val noteDB = Note(id = 0, title = title,note = description)
+                    val noteDB = Note(id = 0, title = title,note = description, dateTime = dateTime)
                     viewModel.insertNote(noteDB)
                     onSave()
                     Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
