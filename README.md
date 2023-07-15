@@ -13,7 +13,7 @@ _Notify_ focuses on the following key things:
 - [x] Single Activity Design
 - [x] Offline Capability - Notes ✈️
 - [x] Clean and Simple Material UI 🎨
-- [ ] Dark mode 🌗
+- [X] Dark mode 🌗
 - [x] Jetpack Compose UI
 - [ ] Tests
 
