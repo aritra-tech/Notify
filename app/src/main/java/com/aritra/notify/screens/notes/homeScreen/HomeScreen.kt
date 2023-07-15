@@ -65,6 +65,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.TopBar
@@ -79,7 +80,7 @@ fun HomeScreen(
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit
 ) {
 
-    val viewModel: HomeScreenViewModel = viewModel()
+    val viewModel = hiltViewModel<HomeScreenViewModel>()
     val notesModel = viewModel.notesModel
     LaunchedEffect(Unit) {
         viewModel.getAllNotes()

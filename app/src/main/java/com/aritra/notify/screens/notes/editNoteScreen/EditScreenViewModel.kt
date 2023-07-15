@@ -8,23 +8,29 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.data.repository.NoteRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Date
+import javax.inject.Inject
 
-class EditScreenViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class EditScreenViewModel @Inject constructor(
+    application: Application,
+    private val editScreenRepository: NoteRepository
+) : AndroidViewModel(application) {
 
-    private val noteRepo = NoteRepository(application)
+
     var noteModel by mutableStateOf(Note(0, "", "",Date()))
 
     fun getNoteById(noteId: Int) = viewModelScope.launch(Dispatchers.IO) {
-        noteRepo.getNoteByIdFromRoom(noteId).collect { response ->
+        editScreenRepository.getNoteByIdFromRoom(noteId).collect { response ->
             noteModel = response
         }
     }
 
     fun updateNotes(noteModel: Note) = viewModelScope.launch(Dispatchers.IO) {
-        noteRepo.updateNoteInRoom(noteModel)
+        editScreenRepository.updateNoteInRoom(noteModel)
     }
 
     fun updateTitle(title: String) {

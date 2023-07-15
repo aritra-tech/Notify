@@ -5,13 +5,18 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.data.repository.NoteRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AddNoteViewModel(application: Application) : AndroidViewModel(application) {
-    private val noteRepository = NoteRepository(application)
+@HiltViewModel
+class AddNoteViewModel @Inject constructor(
+    application: Application,
+    private val addRepository: NoteRepository
+) : AndroidViewModel(application) {
 
     fun insertNote(note: Note) = viewModelScope.launch(Dispatchers.IO) {
-        noteRepository.insertNoteToRoom(note)
+        addRepository.insertNoteToRoom(note)
     }
 }

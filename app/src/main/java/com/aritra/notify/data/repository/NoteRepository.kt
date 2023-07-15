@@ -5,8 +5,9 @@ import com.aritra.notify.data.dao.NoteDao
 import com.aritra.notify.data.db.NoteDatabase
 import com.aritra.notify.data.models.Note
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class NoteRepository(application: Application) {
+class NoteRepository @Inject constructor(application: Application) {
 
     private var noteDao: NoteDao
 

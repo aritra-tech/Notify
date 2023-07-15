@@ -1,6 +1,8 @@
 package com.aritra.notify.di
 
+import android.app.Application
 import android.content.Context
+import com.aritra.notify.data.repository.NoteRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,4 +16,8 @@ class AppModule {
     @Provides
     fun provideDataStoreUtil(@ApplicationContext context: Context):DataStoreUtil = DataStoreUtil(context)
 
+    @Provides
+    fun provideRepository(application: Application): NoteRepository {
+        return NoteRepository(application)
+    }
 }

@@ -34,10 +34,12 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.AddNoteTopBar
 import com.aritra.notify.components.dialog.TextDialog
+import com.aritra.notify.screens.notes.homeScreen.HomeScreenViewModel
 import com.aritra.notify.ui.theme.NotifyTheme
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -48,7 +50,7 @@ import java.util.Locale
 fun AddNotesScreen(
     navigateBack: () -> Unit
 ) {
-    val viewModel: AddNoteViewModel = viewModel()
+    val addViewModel = hiltViewModel<AddNoteViewModel>()
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     val dateTime by remember {
@@ -66,7 +68,7 @@ fun AddNotesScreen(
         Scaffold(
             topBar = {
                 AddNoteTopBar(
-                    viewModel,
+                    addViewModel,
                     onBackPress = { cancelDialogState.value = true },
                     onSave = { navigateBack() },
                     title,

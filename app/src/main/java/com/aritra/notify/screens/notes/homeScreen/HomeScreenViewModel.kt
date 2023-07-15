@@ -8,16 +8,21 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.data.repository.NoteRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeScreenViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class HomeScreenViewModel @Inject constructor(
+    application: Application,
+    private val homeRepository: NoteRepository
+) : AndroidViewModel(application) {
 
-    private val noteRepository = NoteRepository(application)
     var notesModel by mutableStateOf(emptyList<Note>())
 
     fun getAllNotes() {
         viewModelScope.launch {
-            noteRepository.getAllNotesFromRoom().collect { response ->
+            homeRepository.getAllNotesFromRoom().collect { response ->
                 notesModel = response
             }
         }
@@ -25,13 +30,13 @@ class HomeScreenViewModel(application: Application) : AndroidViewModel(applicati
 
     fun deleteNote(note: Note) {
         viewModelScope.launch {
-            noteRepository.deleteNoteFromRoom(note)
+            homeRepository.deleteNoteFromRoom(note)
         }
     }
 
     fun searchNotesByTitle(searchQuery: String) {
         viewModelScope.launch {
-            noteRepository.searchNotesByTitleFromRoom(searchQuery).collect { response ->
+            homeRepository.searchNotesByTitleFromRoom(searchQuery).collect { response ->
                 notesModel = response
             }
         }

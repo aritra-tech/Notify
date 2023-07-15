@@ -29,9 +29,11 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.EditNoteTopBar
+import com.aritra.notify.screens.notes.homeScreen.HomeScreenViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -41,7 +43,7 @@ fun EditNotesScreen(
     noteId: Int,
     navigateBack: () -> Unit
 ) {
-    val editViewModel : EditScreenViewModel = viewModel()
+    val editViewModel = hiltViewModel<EditScreenViewModel>()
     val title = editViewModel.noteModel.title
     val description = editViewModel.noteModel.note
     val dateTime = editViewModel.noteModel.dateTime

@@ -12,14 +12,19 @@ import androidx.lifecycle.viewModelScope
 import com.aritra.notify.data.db.NoteDatabase
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.data.repository.NoteRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import javax.inject.Inject
 
-class SettingsViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class SettingsViewModel @Inject constructor(
+    application: Application,
+    private val settingsRepository: NoteRepository
+) : AndroidViewModel(application) {
 
-    private val noteRepository = NoteRepository(application)
     private val backupRepository = BackupRepository(
         provider = NoteDatabase.getInstance(application), // Pass the appropriate NoteDatabase instance
         context = application, // Pass the application context
@@ -56,7 +61,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     private fun observeNotes() {
         observeNoteJob?.cancel()
         observeNoteJob = viewModelScope.launch {
-            noteRepository.getAllNotesFromRoom().collect {note ->
+            settingsRepository.getAllNotesFromRoom().collect { note ->
                 notes = note
             }
         }

@@ -38,11 +38,12 @@ import com.aritra.notify.R
 import com.aritra.notify.components.CustomSwitch
 import com.aritra.notify.components.SettingsComponent
 import com.aritra.notify.components.topbar.SettingsTopAppBar
+import com.aritra.notify.screens.notes.homeScreen.HomeScreenViewModel
 import com.aritra.notify.utils.Const
 
 @Composable
 fun SettingsScreen() {
-    val settingsViewModel : SettingsViewModel = viewModel()
+    val settingsViewModel = hiltViewModel<SettingsViewModel>()
     val context = LocalContext.current
     var switchCheckedState by remember { mutableStateOf(false) }
     var isDialogShowingState by rememberSaveable { mutableStateOf(false) }
