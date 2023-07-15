@@ -91,31 +91,14 @@ fun NotifyTheme(
     }
 
     val view = LocalView.current
-    val systemUiController = rememberSystemUiController()
 
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-
-//            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+            window.statusBarColor =  colorScheme.background.toArgb()
         }
     }
 
-//    val view = LocalView.current
-//    val systemUiController = rememberSystemUiController()
-//
-//    if (!view.isInEditMode) {
-//        SideEffect {
-//            val window = (view.context as Activity).window
-//            window.statusBarColor = colorScheme.primary.toArgb()
-//            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-//            systemUiController.setStatusBarColor(
-//                color = Color.Transparent,
-//                darkIcons = false
-//            )
-//        }
-//    }
 
     MaterialTheme(
         colorScheme = colorScheme,
