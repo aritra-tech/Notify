@@ -14,6 +14,7 @@ _Notify_ focuses on the following key things:
 - [x] Offline Capability - Notes ✈️
 - [x] Clean and Simple Material UI 🎨
 - [X] Dark mode 🌗
+- [X] Back/Restore feature 👀
 - [x] Jetpack Compose UI
 - [ ] Tests
 
@@ -27,6 +28,9 @@ _Notify_ focuses on the following key things:
   - [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) - Stores UI-related data that isn't destroyed on UI changes.
   - [Room](https://developer.android.com/topic/libraries/architecture/room) - Room is an Android library which is an ORM that wraps Android's native SQLite database.
   - [StateFlow and SharedFlow](https://developer.android.com/kotlin/flow/stateflow-and-sharedflow#:~:text=StateFlow%20is%20a%20state%2Dholder,property%20of%20the%20MutableStateFlow%20class.) - StateFlow and SharedFlow are Flow APIs that enable flows to optimally emit state updates and emit values to multiple consumers.
+- [Dependency Injection](https://developer.android.com/training/dependency-injection) -
+    - [Hilt-Dagger](https://dagger.dev/hilt/) - A standard way to incorporate Dagger dependency injection into an Android application.
+    - [Hilt-ViewModel](https://developer.android.com/training/dependency-injection/hilt-jetpack) - DI for injecting ```ViewModel```. 
 - [Material Components for Android](https://github.com/material-components/material-components-android) - Modular and customizable Material Design UI components for Android.
 
 ## Architecture 👷‍♂️
