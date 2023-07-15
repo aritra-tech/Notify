@@ -4,6 +4,7 @@ package com.aritra.notify.components.topbar
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -20,6 +21,9 @@ fun TopBar() {
                 fontFamily = FontFamily(Font(R.font.poppins_medium))
             )
         },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = Color.Transparent,
+        )
 //        actions = {
 //            IconButton(onClick = { /*TODO*/ }) {
 //                Icon(
@@ -28,8 +32,5 @@ fun TopBar() {
 //                )
 //            }
 //        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.onSecondary
-        )
     )
 }
