@@ -103,8 +103,7 @@ fun HomeScreen(
         containerColor = colorScheme.surface
     ) {
         Surface(
-            modifier = Modifier.padding(it),
-            color = MaterialTheme.colorScheme.onSecondary
+            modifier = Modifier.padding(it)
         ) {
             var searchQuery by rememberSaveable { mutableStateOf("") }
             var active by remember { mutableStateOf(false) }

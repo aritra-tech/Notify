@@ -1,7 +1,6 @@
 package com.aritra.notify.screens.notes.addNoteScreen
 
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -62,7 +61,7 @@ fun AddNotesScreen(
     val currentTime = timeFormat.format(Calendar.getInstance().time).uppercase(Locale.getDefault())
 
     val focus = LocalFocusManager.current
-    NotifyTheme(false) {
+    NotifyTheme {
         Scaffold(
             topBar = {
                 AddNoteTopBar(

@@ -32,8 +32,10 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
+import com.aritra.notify.components.CustomSwitch
 import com.aritra.notify.components.SettingsComponent
 import com.aritra.notify.components.topbar.SettingsTopAppBar
 import com.aritra.notify.utils.Const
@@ -62,8 +64,7 @@ fun SettingsScreen() {
         topBar = { SettingsTopAppBar() }
     ) {
         Surface(
-            modifier = Modifier.padding(it),
-            color = MaterialTheme.colorScheme.onSecondary
+            modifier = Modifier.padding(it)
         ) {
             Column(
                 modifier = Modifier
@@ -79,7 +80,7 @@ fun SettingsScreen() {
                 ) {
                     Row(
                         modifier = Modifier
-                            .padding(12.dp)
+                            .padding(16.dp)
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -89,10 +90,7 @@ fun SettingsScreen() {
                             fontSize = 20.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_semibold))
                         )
-                        Switch(
-                            checked = switchCheckedState,
-                            onCheckedChange = { switchCheckedState = it }
-                        )
+                        CustomSwitch(themeViewModel = hiltViewModel())
                     }
                 }
                 SettingsComponent(
