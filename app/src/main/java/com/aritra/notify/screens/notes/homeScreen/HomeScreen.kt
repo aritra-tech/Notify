@@ -90,8 +90,7 @@ fun HomeScreen(
         floatingActionButton = {
             FloatingActionButton(
                 modifier = Modifier.padding(0.dp, 0.dp, 20.dp, 5.dp),
-                onClick = { onFabClicked() },
-                containerColor = Color.Black
+                onClick = { onFabClicked() }
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Add,

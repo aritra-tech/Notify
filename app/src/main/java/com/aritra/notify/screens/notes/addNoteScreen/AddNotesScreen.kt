@@ -1,6 +1,7 @@
 package com.aritra.notify.screens.notes.addNoteScreen
 
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -111,15 +112,25 @@ fun AddNotesScreen(
                         ),
                         keyboardActions = KeyboardActions(onNext = {
                             focus.moveFocus(FocusDirection.Down)
-                        }
-                        ),
+                        }),
                     )
-                    Text(
-                        modifier = Modifier.padding(bottom = 8.dp, start = 13.dp),
-                        text = "$currentDate, $currentTime",
-                        fontSize = 15.sp,
-                        color = Color.LightGray,
-                        fontFamily = FontFamily(Font(R.font.poppins_light)),
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = "$currentDate, $currentTime",
+                        onValueChange = {  },
+                        textStyle = TextStyle(
+                            fontSize = 15.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_light))
+                        ),
+                        readOnly = true,
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = MaterialTheme.colorScheme.onSecondary,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Text,
+                        ),
                     )
                     TextField(
                         modifier = Modifier.fillMaxSize(),
@@ -138,7 +149,11 @@ fun AddNotesScreen(
                             fontSize = 18.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_light)),
                         ),
-                        colors = TextFieldDefaults.textFieldColors(containerColor = MaterialTheme.colorScheme.onSecondary),
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = MaterialTheme.colorScheme.onSecondary,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
                         keyboardOptions = KeyboardOptions.Default.copy(
                             capitalization = KeyboardCapitalization.Sentences,
                             keyboardType = KeyboardType.Text,

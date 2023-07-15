@@ -96,11 +96,25 @@ fun EditNotesScreen(
                         focus.moveFocus(FocusDirection.Down) }
                     ),
                 )
-                Text(
-                    text = dateTime?.let {
+                TextField(
+                    value = dateTime?.let {
                         SimpleDateFormat("dd MMMM, hh:mm a", Locale.getDefault()).format(it)
                     } ?: "",
-                    modifier = Modifier.padding(bottom = 8.dp, start = 13.dp),
+                    onValueChange = {  },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true,
+                    textStyle = TextStyle(
+                        fontSize = 15.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_light))
+                    ),
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = MaterialTheme.colorScheme.onSecondary,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text,
+                    )
                 )
                 TextField(
                     modifier = Modifier.fillMaxSize(),
@@ -119,7 +133,11 @@ fun EditNotesScreen(
                         fontSize = 18.sp,
                         fontFamily = FontFamily(Font(R.font.poppins_light)),
                     ),
-                    colors = TextFieldDefaults.textFieldColors(containerColor = MaterialTheme.colorScheme.onSecondary),
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = MaterialTheme.colorScheme.onSecondary,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         capitalization = KeyboardCapitalization.Sentences,
                         keyboardType = KeyboardType.Text,
