@@ -219,7 +219,7 @@ fun NotesCard(
             .fillMaxHeight()
             .clickable { navigateToUpdateNoteScreen(noteModel.id) },
         elevation = CardDefaults.cardElevation(3.dp),
-        shape = RoundedCornerShape(5.dp),
+        shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = colorScheme.onSecondary
         )
@@ -227,7 +227,7 @@ fun NotesCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
+                .padding(12.dp)
         ) {
             Text(
                 text = noteModel.title,
