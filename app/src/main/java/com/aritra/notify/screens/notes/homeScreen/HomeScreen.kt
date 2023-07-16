@@ -3,6 +3,7 @@
 package com.aritra.notify.screens.notes.homeScreen
 
 
+import android.view.MotionEvent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -14,10 +15,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -58,6 +61,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -70,6 +74,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.TopBar
 import com.aritra.notify.data.models.Note
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import me.saket.swipe.SwipeAction
+import me.saket.swipe.SwipeableActionsBox
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -173,48 +182,73 @@ fun SwapDelete(
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit
 ) {
 
-    val dismissState = rememberDismissState(
-        confirmValueChange = {
-            if (it == DismissedToEnd)
-                viewModel.deleteNote(notesModel)
-            it != DismissedToEnd
-        }
+//    val dismissState = rememberDismissState(
+//        confirmValueChange = {
+//            if (it == DismissedToEnd)
+//                viewModel.deleteNote(notesModel)
+//            it != DismissedToEnd
+//        }
+//    )
+
+    val delete = SwipeAction(
+        onSwipe = {
+            viewModel.deleteNote(notesModel)
+        },
+        icon = {
+            Icon(
+                modifier = Modifier.padding(12.dp),
+                imageVector = Icons.Default.Delete,
+                contentDescription = null,
+                tint = Color.White
+            )
+        },
+        background = Color.Red,
     )
-    SwipeToDismiss(
-        directions = setOf(StartToEnd),
-        state = dismissState,
-        background = {
-            val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
-            val color by animateColorAsState(
-                when (dismissState.targetValue) {
-                    Default -> Color.LightGray
-                    DismissedToEnd -> Color.Red
-                    DismissedToStart -> return@SwipeToDismiss
-                }
-            )
-            val alignment = when (direction) {
-                StartToEnd -> Alignment.CenterStart
-                EndToStart -> return@SwipeToDismiss
-            }
-            val scale by animateFloatAsState(
-                if (dismissState.targetValue == Default) 0.75f else 1f
-            )
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(color)
-                    .padding(horizontal = 20.dp),
-                contentAlignment = alignment
-            ) {
-                Icon(
-                    Icons.Default.Delete,
-                    contentDescription = "delete",
-                    modifier = Modifier.scale(scale)
-                )
-            }
-        }, dismissContent = {
-            NotesCard(notesModel, navigateToUpdateNoteScreen)
-        })
+
+    SwipeableActionsBox(
+        modifier = Modifier.padding(10.dp),
+        swipeThreshold = 100.dp,
+        endActions = listOf(delete)
+    ) {
+        NotesCard(notesModel, navigateToUpdateNoteScreen)
+
+    }
+
+//    SwipeToDismiss(
+//        directions = setOf(StartToEnd),
+//        state = dismissState,
+//        background = {
+//            val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
+//            val color by animateColorAsState(
+//                when (dismissState.targetValue) {
+//                    Default -> Color.LightGray
+//                    DismissedToEnd -> Color.Red
+//                    DismissedToStart -> return@SwipeToDismiss
+//                }
+//            )
+//            val alignment = when (direction) {
+//                StartToEnd -> Alignment.CenterStart
+//                EndToStart -> return@SwipeToDismiss
+//            }
+//            val scale by animateFloatAsState(
+//                if (dismissState.targetValue == Default) 0.75f else 1f
+//            )
+//            Box(
+//                Modifier
+//                    .fillMaxSize()
+//                    .background(color)
+//                    .padding(horizontal = 20.dp),
+//                contentAlignment = alignment
+//            ) {
+//                Icon(
+//                    Icons.Default.Delete,
+//                    contentDescription = "delete",
+//                    modifier = Modifier.scale(scale)
+//                )
+//            }
+//        }, dismissContent = {
+//            NotesCard(notesModel, navigateToUpdateNoteScreen)
+//        })
 }
 
 @Composable
@@ -225,8 +259,8 @@ fun NotesCard(
 
     Card(
         modifier = Modifier
-            .padding(12.dp)
-            .fillMaxSize()
+            .padding(2.dp)
+            .fillMaxHeight()
             .clickable { navigateToUpdateNoteScreen(noteModel.id) },
         elevation = CardDefaults.cardElevation(3.dp),
         shape = RoundedCornerShape(8.dp),
@@ -237,21 +271,22 @@ fun NotesCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp)
+                .padding(10.dp)
         ) {
             Text(
                 text = noteModel.title,
                 fontSize = 22.sp,
                 fontFamily = FontFamily(Font(R.font.poppins_semibold))
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = noteModel.note,
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.poppins_light))
             )
             Spacer(modifier = Modifier.height(10.dp))
-            val formattedDateTime = SimpleDateFormat("dd MMMM, hh:mm a", Locale.getDefault()).format(noteModel.dateTime)
+            val formattedDateTime =
+                SimpleDateFormat("dd MMMM, hh:mm a", Locale.getDefault()).format(noteModel.dateTime)
             Text(
                 text = formattedDateTime,
                 fontSize = 14.sp,
