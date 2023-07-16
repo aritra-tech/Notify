@@ -182,14 +182,6 @@ fun SwapDelete(
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit
 ) {
 
-//    val dismissState = rememberDismissState(
-//        confirmValueChange = {
-//            if (it == DismissedToEnd)
-//                viewModel.deleteNote(notesModel)
-//            it != DismissedToEnd
-//        }
-//    )
-
     val delete = SwipeAction(
         onSwipe = {
             viewModel.deleteNote(notesModel)
@@ -213,42 +205,6 @@ fun SwapDelete(
         NotesCard(notesModel, navigateToUpdateNoteScreen)
 
     }
-
-//    SwipeToDismiss(
-//        directions = setOf(StartToEnd),
-//        state = dismissState,
-//        background = {
-//            val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
-//            val color by animateColorAsState(
-//                when (dismissState.targetValue) {
-//                    Default -> Color.LightGray
-//                    DismissedToEnd -> Color.Red
-//                    DismissedToStart -> return@SwipeToDismiss
-//                }
-//            )
-//            val alignment = when (direction) {
-//                StartToEnd -> Alignment.CenterStart
-//                EndToStart -> return@SwipeToDismiss
-//            }
-//            val scale by animateFloatAsState(
-//                if (dismissState.targetValue == Default) 0.75f else 1f
-//            )
-//            Box(
-//                Modifier
-//                    .fillMaxSize()
-//                    .background(color)
-//                    .padding(horizontal = 20.dp),
-//                contentAlignment = alignment
-//            ) {
-//                Icon(
-//                    Icons.Default.Delete,
-//                    contentDescription = "delete",
-//                    modifier = Modifier.scale(scale)
-//                )
-//            }
-//        }, dismissContent = {
-//            NotesCard(notesModel, navigateToUpdateNoteScreen)
-//        })
 }
 
 @Composable
@@ -263,7 +219,7 @@ fun NotesCard(
             .fillMaxHeight()
             .clickable { navigateToUpdateNoteScreen(noteModel.id) },
         elevation = CardDefaults.cardElevation(3.dp),
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(5.dp),
         colors = CardDefaults.cardColors(
             containerColor = colorScheme.onSecondary
         )
