@@ -72,6 +72,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
+import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.topbar.TopBar
 import com.aritra.notify.data.models.Note
 import kotlinx.coroutines.Job
@@ -182,9 +183,11 @@ fun SwapDelete(
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit
 ) {
 
+    val deleteDialogVisible = remember { mutableStateOf(false) }
+
     val delete = SwipeAction(
         onSwipe = {
-            viewModel.deleteNote(notesModel)
+            deleteDialogVisible.value = true
         },
         icon = {
             Icon(
@@ -204,6 +207,18 @@ fun SwapDelete(
     ) {
         NotesCard(notesModel, navigateToUpdateNoteScreen)
 
+    }
+    if (deleteDialogVisible.value) {
+        TextDialog(
+            title = stringResource(R.string.warning),
+            description = stringResource(R.string.are_you_sure_want_to_delete_these_items_it_cannot_be_recovered),
+            isOpened = deleteDialogVisible.value,
+            onDismissCallback = { deleteDialogVisible.value = false },
+            onConfirmCallback = {
+                viewModel.deleteNote(notesModel)
+                deleteDialogVisible.value = false
+            }
+        )
     }
 }
 
