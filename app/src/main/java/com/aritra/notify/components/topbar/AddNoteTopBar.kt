@@ -84,7 +84,6 @@ fun AddNoteTopBar(
                 ModalSheet(
                     visible = showSheet,
                     onVisibleChange = { showSheet = it},
-                    backgroundColor = MaterialTheme.colorScheme.surface,
                     shape = RoundedCornerShape(15.dp)
                 ) {
                     Column(
@@ -106,19 +105,16 @@ fun AddNoteTopBar(
                             }
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = stringResource(R.string.share_note_as_picture),
-                            fontSize = 18.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_medium)),
-                        )
+//                        Text(
+//                            text = stringResource(R.string.share_note_as_picture),
+//                            fontSize = 18.sp,
+//                            fontFamily = FontFamily(Font(R.font.poppins_medium)),
+//                        )
                         Spacer(modifier = Modifier.height(14.dp))
                         Button(onClick = { showSheet = false },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(10.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.outline
-                            )
                         ) {
                             Text(
                                 text = stringResource(R.string.cancel),
