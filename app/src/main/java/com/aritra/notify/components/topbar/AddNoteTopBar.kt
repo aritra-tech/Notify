@@ -104,12 +104,6 @@ fun AddNoteTopBar(
                                 showSheet = false
                             }
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
-//                        Text(
-//                            text = stringResource(R.string.share_note_as_picture),
-//                            fontSize = 18.sp,
-//                            fontFamily = FontFamily(Font(R.font.poppins_medium)),
-//                        )
                         Spacer(modifier = Modifier.height(14.dp))
                         Button(onClick = { showSheet = false },
                             modifier = Modifier

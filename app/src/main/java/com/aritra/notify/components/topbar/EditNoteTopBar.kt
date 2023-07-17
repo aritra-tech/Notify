@@ -47,6 +47,7 @@ fun EditNoteTopBar(
     navigateBack: () -> Unit,
     title: String,
     description: String,
+    dateTime: Date,
 ){
     var showSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
