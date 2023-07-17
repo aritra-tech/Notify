@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,12 +38,12 @@ import com.aritra.notify.screens.settingsScreen.ThemeViewModel
 
 @Composable
 fun CustomSwitch(
-    width: Dp = 50.dp,
+    width: Dp = 55.dp,
     height: Dp = 35.dp,
     checkedTrackColor: Color = Color(0xFF2c9fff).copy(alpha = 0.7f),
-    uncheckedTrackColor: Color = Color.Gray,
-    gapBetweenThumbAndTrackEdge: Dp = 4.dp,
-    borderWidth: Dp = 2.dp,
+    uncheckedTrackColor: Color = Color.LightGray,
+    gapBetweenThumbAndTrackEdge: Dp = 7.dp,
+    borderWidth: Dp = 1.5.dp,
     cornerSize: Int = 50,
     iconInnerPadding: Dp = 4.dp,
     thumbSize: Dp = 20.dp,
@@ -63,26 +64,7 @@ fun CustomSwitch(
         if (themeState.isDarkMode
         ) 1f else -1f
     )
-
-//    Box(
-//        modifier = Modifier
-//            .animateContentSize(
-//                animationSpec = spring(
-//                    dampingRatio = Spring.DampingRatioHighBouncy,
-//                    stiffness = Spring.StiffnessMediumLow
-//                )
-//            ), contentAlignment = Alignment.CenterEnd
-//    ) {
-//        Text(
-//            text = if (themeState.isDarkMode
-//            ) "ON" else "OFF",
-//            fontWeight = FontWeight.SemiBold,
-//
-//            modifier = Modifier,
-//
-//            )
-//    }
-// outer rectangle with border
+    // outer rectangle with border
     Box(
         modifier = Modifier
             .size(width = width, height = height)
