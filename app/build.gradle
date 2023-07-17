@@ -73,7 +73,7 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:2.7.0-beta01"
 
     // UI update
-    implementation "com.google.accompanist:accompanist-systemuicontroller:0.27.0"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.30.1"
 
     //Material 3
     implementation "androidx.compose.material3:material3:1.1.1"
