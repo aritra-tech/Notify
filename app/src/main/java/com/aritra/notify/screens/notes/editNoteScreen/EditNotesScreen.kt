@@ -15,6 +15,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
@@ -49,6 +52,9 @@ fun EditNotesScreen(
     val description = editViewModel.noteModel.note
     val dateTime = editViewModel.noteModel.dateTime
     val focus = LocalFocusManager.current
+    val characterCount = remember { mutableIntStateOf(title.length + description.length) }
+    val formattedDateTime = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
+    val formattedCharacterCount = "${characterCount.value} characters"
 
     LaunchedEffect(Unit) {
         editViewModel.getNoteById(noteId)
@@ -56,7 +62,7 @@ fun EditNotesScreen(
     Scaffold(
         topBar = {
             if (dateTime != null) {
-                EditNoteTopBar(editViewModel,noteId,navigateBack,title,description,dateTime)
+                EditNoteTopBar(editViewModel, noteId, navigateBack, title, description, dateTime)
             }
         }
     ) {
@@ -70,7 +76,10 @@ fun EditNotesScreen(
                     modifier = Modifier
                         .fillMaxWidth(),
                     value = title,
-                    onValueChange = { title -> editViewModel.updateTitle(title) },
+                    onValueChange = { newTitle ->
+                        editViewModel.updateTitle(newTitle)
+                        characterCount.value = newTitle.length + description.length
+                    },
                     placeholder = {
                         Text(
                             stringResource(R.string.title),
@@ -96,14 +105,13 @@ fun EditNotesScreen(
                         imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions(onNext = {
-                        focus.moveFocus(FocusDirection.Down) }
+                        focus.moveFocus(FocusDirection.Down)
+                    }
                     ),
                 )
                 TextField(
-                    value = dateTime?.let {
-                        SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(it)
-                    } ?: "",
-                    onValueChange = {  },
+                    value = "$formattedDateTime  |  $formattedCharacterCount",
+                    onValueChange = { },
                     modifier = Modifier.fillMaxWidth(),
                     readOnly = true,
                     textStyle = TextStyle(
@@ -122,7 +130,10 @@ fun EditNotesScreen(
                 TextField(
                     modifier = Modifier.fillMaxSize(),
                     value = description,
-                    onValueChange = { description -> editViewModel.updateDescription(description) },
+                    onValueChange = { newDescription ->
+                        editViewModel.updateDescription(newDescription)
+                        characterCount.value = title.length + newDescription.length
+                    },
                     placeholder = {
                         Text(
                             stringResource(R.string.notes),

@@ -107,11 +107,9 @@ fun HomeScreen(
                 Icon(
                     imageVector = Icons.Rounded.Add,
                     contentDescription = "Add FAB"
-//                    tint = Color.White,
                 )
             }
         },
-//        containerColor = colorScheme.surface
     ) {
         Surface(
             modifier = Modifier.padding(it)

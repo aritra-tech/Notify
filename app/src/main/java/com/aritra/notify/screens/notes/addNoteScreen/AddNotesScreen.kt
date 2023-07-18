@@ -17,6 +17,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,6 +42,7 @@ import com.aritra.notify.components.topbar.AddNoteTopBar
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.screens.notes.homeScreen.HomeScreenViewModel
 import com.aritra.notify.ui.theme.NotifyTheme
+import com.aritra.notify.utils.Const
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -56,9 +58,10 @@ fun AddNotesScreen(
     val dateTime by remember {
         mutableStateOf(Calendar.getInstance().time)
     }
+    var characterCount by remember { mutableIntStateOf(title.length + description.length) }
     val cancelDialogState = remember { mutableStateOf(false) }
-    val dateFormat = SimpleDateFormat("dd MMMM", Locale.getDefault())
-    val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+    val dateFormat = SimpleDateFormat(Const.DATE_FORMAT, Locale.getDefault())
+    val timeFormat = SimpleDateFormat(Const.TIME_FORMAT, Locale.getDefault())
     timeFormat.isLenient = false
     val currentDate = dateFormat.format(Calendar.getInstance().time)
     val currentTime = timeFormat.format(Calendar.getInstance().time).uppercase(Locale.getDefault())
@@ -87,7 +90,10 @@ fun AddNotesScreen(
                         modifier = Modifier
                             .fillMaxWidth(),
                         value = title,
-                        onValueChange = { title = it },
+                        onValueChange = {
+                            title = it
+                            characterCount = title.length + description.length
+                        },
                         placeholder = {
                             Text(
                                 stringResource(R.string.title),
@@ -118,8 +124,8 @@ fun AddNotesScreen(
                     )
                     TextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = "$currentDate, $currentTime",
-                        onValueChange = {  },
+                        value = "$currentDate, $currentTime   |  $characterCount characters",
+                        onValueChange = { },
                         textStyle = TextStyle(
                             fontSize = 15.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_light))
@@ -137,7 +143,10 @@ fun AddNotesScreen(
                     TextField(
                         modifier = Modifier.fillMaxSize(),
                         value = description,
-                        onValueChange = { description = it },
+                        onValueChange = {
+                            description = it
+                            characterCount = title.length + description.length
+                        },
                         placeholder = {
                             Text(
                                 stringResource(R.string.notes),
