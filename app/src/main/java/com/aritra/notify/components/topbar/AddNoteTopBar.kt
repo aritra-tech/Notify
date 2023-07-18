@@ -16,8 +16,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +55,10 @@ fun AddNoteTopBar(
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val skipPartiallyExpanded by remember { mutableStateOf(false) }
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = skipPartiallyExpanded
+    )
 
 
     CenterAlignedTopAppBar(
@@ -81,41 +87,42 @@ fun AddNoteTopBar(
                         contentDescription = "share"
                     )
                 }
-                ModalSheet(
-                    visible = showSheet,
-                    onVisibleChange = { showSheet = it},
-                    shape = RoundedCornerShape(15.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .navigationBarsPadding()
-                            .padding(16.dp)
+                if (showSheet){
+                    ModalBottomSheet(
+                        onDismissRequest = {showSheet = false},
+                        sheetState = bottomSheetState
                     ) {
-                        Spacer(modifier = Modifier.height(15.dp))
-                        ShareOption(
-                            text = stringResource(R.string.share_note_as_text),
-                            onClick = {
-                                val sharingIntent = Intent(Intent.ACTION_SEND)
-                                sharingIntent.type = "text/plain"
-
-                                sharingIntent.putExtra(Intent.EXTRA_TEXT, "${"Title: $title"}\n${"Note: $description"}")
-                                context.startActivity(Intent.createChooser(sharingIntent, "Share via"))
-                                showSheet = false
-                            }
-                        )
-                        Spacer(modifier = Modifier.height(14.dp))
-                        Button(onClick = { showSheet = false },
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(10.dp),
+                                .navigationBarsPadding()
+                                .padding(16.dp)
                         ) {
-                            Text(
-                                text = stringResource(R.string.cancel),
-                                fontSize = 16.sp,
-                                textAlign = TextAlign.Center,
-                                fontFamily = FontFamily(Font(R.font.poppins_light))
+                            Spacer(modifier = Modifier.height(15.dp))
+                            ShareOption(
+                                text = stringResource(R.string.share_note_as_text),
+                                onClick = {
+                                    val sharingIntent = Intent(Intent.ACTION_SEND)
+                                    sharingIntent.type = "text/plain"
+
+                                    sharingIntent.putExtra(Intent.EXTRA_TEXT, "${"Title: $title"}\n${"Note: $description"}")
+                                    context.startActivity(Intent.createChooser(sharingIntent, "Share via"))
+                                    showSheet = false
+                                }
                             )
+                            Spacer(modifier = Modifier.height(14.dp))
+                            Button(onClick = { showSheet = false },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.cancel),
+                                    fontSize = 16.sp,
+                                    textAlign = TextAlign.Center,
+                                    fontFamily = FontFamily(Font(R.font.poppins_medium))
+                                )
+                            }
                         }
                     }
                 }
