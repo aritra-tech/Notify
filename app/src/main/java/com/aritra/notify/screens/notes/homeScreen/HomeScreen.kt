@@ -106,12 +106,12 @@ fun HomeScreen(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Add,
-                    contentDescription = "Add FAB",
-                    tint = Color.White,
+                    contentDescription = "Add FAB"
+//                    tint = Color.White,
                 )
             }
         },
-        containerColor = colorScheme.surface
+//        containerColor = colorScheme.surface
     ) {
         Surface(
             modifier = Modifier.padding(it)
@@ -123,7 +123,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .align(Alignment.Start)
                         .fillMaxWidth()
-                        .padding(20.dp, 0.dp),
+                        .padding(10.dp),
                     query = searchQuery,
                     onQueryChange = {
                         searchQuery = it
@@ -226,9 +226,6 @@ fun NotesCard(
             .clickable { navigateToUpdateNoteScreen(noteModel.id) },
         elevation = CardDefaults.cardElevation(3.dp),
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = colorScheme.onSecondary
-        )
     ) {
         Column(
             modifier = Modifier

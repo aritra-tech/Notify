@@ -58,7 +58,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),
         bottomBar = {
             if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
                 NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.surface
+//                    containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     bottomNavItem.forEach { item ->
                         NavigationBarItem(
@@ -104,7 +104,6 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),
             startDestination = NotifyScreens.Home.name,
             modifier = Modifier
                 .padding(it)
-                .background(Color.White)
         ) {
             composable(route = NotifyScreens.Home.name) {
                 HomeScreen(
