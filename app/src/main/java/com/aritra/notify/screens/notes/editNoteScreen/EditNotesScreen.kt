@@ -34,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.EditNoteTopBar
 import com.aritra.notify.screens.notes.homeScreen.HomeScreenViewModel
+import com.aritra.notify.utils.Const
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -100,7 +101,7 @@ fun EditNotesScreen(
                 )
                 TextField(
                     value = dateTime?.let {
-                        SimpleDateFormat("dd MMMM, hh:mm a", Locale.getDefault()).format(it)
+                        SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(it)
                     } ?: "",
                     onValueChange = {  },
                     modifier = Modifier.fillMaxWidth(),

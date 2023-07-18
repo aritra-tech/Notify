@@ -51,6 +51,8 @@ import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -75,6 +77,7 @@ import com.aritra.notify.R
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.topbar.TopBar
 import com.aritra.notify.data.models.Note
+import com.aritra.notify.utils.Const
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -91,10 +94,8 @@ fun HomeScreen(
 ) {
 
     val viewModel = hiltViewModel<HomeScreenViewModel>()
-    val notesModel = viewModel.notesModel
-    LaunchedEffect(Unit) {
-        viewModel.getAllNotes()
-    }
+    val listOfAllNotes by viewModel.listOfNotes.observeAsState(listOf())
+    var searchQuery by rememberSaveable { mutableStateOf("") }
 
     Scaffold(
         topBar = { TopBar() },
@@ -115,41 +116,29 @@ fun HomeScreen(
         Surface(
             modifier = Modifier.padding(it)
         ) {
-            var searchQuery by rememberSaveable { mutableStateOf("") }
-            var active by remember { mutableStateOf(false) }
 
             Column(modifier = Modifier.fillMaxSize()) {
 
                 SearchBar(
                     modifier = Modifier
+                        .align(Alignment.Start)
                         .fillMaxWidth()
-                        .padding(12.dp),
+                        .padding(20.dp, 0.dp),
                     query = searchQuery,
-                    onQueryChange = { searchQuery = it },
-                    onSearch = {
-                        active = false
-                        viewModel.searchNotesByTitle(searchQuery)
+                    onQueryChange = {
+                        searchQuery = it
                     },
-                    active = active,
-                    onActiveChange = { active = it },
-                    colors = SearchBarDefaults.colors(
-                        containerColor = colorScheme.background
-                    ),
+                    onSearch = {},
+                    active = false,
+                    onActiveChange = {},
                     placeholder = { Text(stringResource(R.string.search_your_notes)) },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                     trailingIcon = {
-                        if (active || searchQuery.isNotEmpty()) {
+                        if (searchQuery.isNotEmpty()) {
                             Icon(
+                                modifier = Modifier.clickable { searchQuery = "" },
                                 imageVector = Icons.Default.Close,
-                                contentDescription = "Close",
-                                modifier = Modifier.clickable {
-                                    if (searchQuery.isNotEmpty()) {
-                                        searchQuery = ""
-                                    } else {
-                                        active = false
-                                    }
-                                    viewModel.searchNotesByTitle(searchQuery)
-                                }
+                                contentDescription = null
                             )
                         }
                     }
@@ -161,8 +150,10 @@ fun HomeScreen(
                         .padding(0.dp, 5.dp, 0.dp, 0.dp)
                 ) {
 
-                    if (notesModel.isNotEmpty()) {
-                        items(notesModel) { notesModel ->
+                    if (listOfAllNotes.isNotEmpty()) {
+                        items(listOfAllNotes.filter { note ->
+                            note.title.contains(searchQuery,true)
+                        }) { notesModel ->
                             SwapDelete(notesModel, viewModel, navigateToUpdateNoteScreen)
                         }
                     } else {
@@ -257,7 +248,7 @@ fun NotesCard(
             )
             Spacer(modifier = Modifier.height(10.dp))
             val formattedDateTime =
-                SimpleDateFormat("dd MMMM, hh:mm a", Locale.getDefault()).format(noteModel.dateTime)
+                SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(noteModel.dateTime)
             Text(
                 text = formattedDateTime,
                 fontSize = 14.sp,

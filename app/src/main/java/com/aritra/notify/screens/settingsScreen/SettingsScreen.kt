@@ -45,7 +45,6 @@ import com.aritra.notify.utils.Const
 fun SettingsScreen() {
     val settingsViewModel = hiltViewModel<SettingsViewModel>()
     val context = LocalContext.current
-    var switchCheckedState by remember { mutableStateOf(false) }
     var isDialogShowingState by rememberSaveable { mutableStateOf(false) }
 
     val exportLauncher = rememberLauncherForActivityResult(
