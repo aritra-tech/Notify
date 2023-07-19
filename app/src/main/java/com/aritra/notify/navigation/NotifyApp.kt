@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType.Companion.IntType
@@ -22,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.aritra.notify.R
 import com.aritra.notify.screens.notes.addNoteScreen.AddNotesScreen
 import com.aritra.notify.screens.notes.editNoteScreen.EditNotesScreen
 import com.aritra.notify.screens.notes.homeScreen.HomeScreen
@@ -35,17 +37,12 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),
         BottomNavItem(
             name = "Home",
             route = NotifyScreens.Home.name,
-            icon = Icons.Rounded.Home
+            Icon = R.drawable.home_outline
         ),
-//        BottomNavItem(
-//            name = "To-do",
-//            route = NotifyScreens.TodoHome.name,
-//            icon = Icons.Rounded.List
-//        ),
         BottomNavItem(
             name = "Settings",
             route = NotifyScreens.Settings.name,
-            icon = Icons.Rounded.Settings
+            Icon = R.drawable.settings_outline
         ),
     )
     val screensWithHiddenNavBar = listOf(
@@ -65,7 +62,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),
                             alwaysShowLabel = true,
                             icon = {
                                 Icon(
-                                    imageVector = item.icon,
+                                    painter = painterResource(id = item.Icon),
                                     contentDescription = item.name,
                                     tint = if (backStackEntry.value?.destination?.route == item.route)
                                         MaterialTheme.colorScheme.onSurface
