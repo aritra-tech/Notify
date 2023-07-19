@@ -1,7 +1,6 @@
 package com.aritra.notify.screens.notes.addNoteScreen
 
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,14 +32,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.AddNoteTopBar
 import com.aritra.notify.components.dialog.TextDialog
-import com.aritra.notify.screens.notes.homeScreen.HomeScreenViewModel
 import com.aritra.notify.ui.theme.NotifyTheme
 import com.aritra.notify.utils.Const
 import java.text.SimpleDateFormat
@@ -55,9 +51,7 @@ fun AddNotesScreen(
     val addViewModel = hiltViewModel<AddNoteViewModel>()
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    val dateTime by remember {
-        mutableStateOf(Calendar.getInstance().time)
-    }
+    val dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
     var characterCount by remember { mutableIntStateOf(title.length + description.length) }
     val cancelDialogState = remember { mutableStateOf(false) }
     val dateFormat = SimpleDateFormat(Const.DATE_FORMAT, Locale.getDefault())
@@ -65,8 +59,8 @@ fun AddNotesScreen(
     timeFormat.isLenient = false
     val currentDate = dateFormat.format(Calendar.getInstance().time)
     val currentTime = timeFormat.format(Calendar.getInstance().time).uppercase(Locale.getDefault())
-
     val focus = LocalFocusManager.current
+
     NotifyTheme {
         Scaffold(
             topBar = {

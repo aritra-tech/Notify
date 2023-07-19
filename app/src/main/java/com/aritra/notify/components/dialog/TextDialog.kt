@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
-import com.aritra.notify.utils.TestTags
+import com.aritra.notify.utils.Const
 
 @Composable
 fun TextDialog(
@@ -47,7 +47,7 @@ fun TextDialog(
                 TextButton(
                     onClick = { onConfirmCallback() },
                     shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.semantics { testTag = TestTags.CONFIRM_BUTTON }
+                    modifier = Modifier.semantics { testTag = Const.CONFIRM_BUTTON }
                 ) {
                     Text(
                         text = stringResource(R.string.confirm),
@@ -60,7 +60,7 @@ fun TextDialog(
                 TextButton(
                     onClick = { onDismissCallback() },
                     shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.semantics { testTag = TestTags.DISMISS_BUTTON }
+                    modifier = Modifier.semantics { testTag = Const.DISMISS_BUTTON }
                 ) {
                     Text(
                         text = stringResource(R.string.dismiss),

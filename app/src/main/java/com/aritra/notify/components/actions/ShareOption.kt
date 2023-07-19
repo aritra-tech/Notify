@@ -1,4 +1,4 @@
-package com.aritra.notify.components
+package com.aritra.notify.components.actions
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.Text

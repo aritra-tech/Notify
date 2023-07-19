@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,11 +33,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
-import com.aritra.notify.components.ShareOption
+import com.aritra.notify.components.actions.ShareOption
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.screens.notes.addNoteScreen.AddNoteViewModel
 import eu.wewox.modalsheet.ExperimentalSheetApi
-import eu.wewox.modalsheet.ModalSheet
 import java.util.Date
 
 
