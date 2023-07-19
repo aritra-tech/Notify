@@ -54,9 +54,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),
     Scaffold(
         bottomBar = {
             if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
-                NavigationBar(
-//                    containerColor = MaterialTheme.colorScheme.surface
-                ) {
+                NavigationBar() {
                     bottomNavItem.forEach { item ->
                         NavigationBarItem(
                             alwaysShowLabel = true,
