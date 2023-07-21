@@ -88,7 +88,7 @@ fun SettingsScreen() {
                             fontSize = 20.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_semibold))
                         )
-                        CustomSwitch(themeViewModel = hiltViewModel())
+                        CustomSwitch()
                     }
                 }
                 SettingsComponent(
