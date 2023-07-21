@@ -1,6 +1,7 @@
 package com.aritra.notify.navigation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType.Companion.IntType
 import androidx.navigation.compose.NavHost
@@ -36,12 +38,10 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),
 ){
     val bottomNavItem = listOf(
         BottomNavItem(
-            name = "Home",
             route = NotifyScreens.Home.name,
             Icon = R.drawable.home_outline
         ),
         BottomNavItem(
-            name = "Settings",
             route = NotifyScreens.Settings.name,
             Icon = R.drawable.settings_outline
         ),
@@ -55,31 +55,18 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),
     Scaffold(
         bottomBar = {
             if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
-                NavigationBar() {
+                NavigationBar(modifier = Modifier.height(60.dp)) {
                     bottomNavItem.forEach { item ->
                         NavigationBarItem(
                             alwaysShowLabel = true,
                             icon = {
                                 Icon(
                                     painter = painterResource(id = item.Icon),
-                                    contentDescription = item.name,
+                                    contentDescription = null,
                                     tint = if (backStackEntry.value?.destination?.route == item.route)
                                         MaterialTheme.colorScheme.onSurface
                                     else
                                         MaterialTheme.colorScheme.secondary
-                                )
-                            },
-                            label = {
-                                Text(
-                                    text = item.name,
-                                    color = if (backStackEntry.value?.destination?.route == item.route)
-                                        MaterialTheme.colorScheme.onSurface
-                                    else
-                                        MaterialTheme.colorScheme.secondary,
-                                    fontWeight = if (backStackEntry.value?.destination?.route == item.route)
-                                        FontWeight.Bold
-                                    else
-                                        FontWeight.Normal,
                                 )
                             },
                             selected = backStackEntry.value?.destination?.route == item.route,
