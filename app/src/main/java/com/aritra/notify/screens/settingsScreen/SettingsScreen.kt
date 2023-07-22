@@ -18,8 +18,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -28,13 +30,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
-import com.aritra.notify.components.customSwitch.CustomSwitch
 import com.aritra.notify.components.actions.SettingsComponent
 import com.aritra.notify.components.topbar.SettingsTopAppBar
 import com.aritra.notify.utils.Const
@@ -44,6 +47,8 @@ fun SettingsScreen() {
     val settingsViewModel = hiltViewModel<SettingsViewModel>()
     val context = LocalContext.current
     var isDialogShowingState by rememberSaveable { mutableStateOf(false) }
+    val themeViewModel: ThemeViewModel = hiltViewModel()
+    val themeState by themeViewModel.themeState.collectAsState()
 
     val exportLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("*/*"),
@@ -88,7 +93,11 @@ fun SettingsScreen() {
                             fontSize = 20.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_semibold))
                         )
-                        CustomSwitch()
+                        Switch(
+                            modifier = Modifier.semantics { contentDescription = "Theme Switch" },
+                            checked = themeState.isDarkMode,
+                            onCheckedChange = { themeViewModel.toggleTheme() }
+                        )
                     }
                 }
                 SettingsComponent(
