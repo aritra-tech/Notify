@@ -1,8 +1,6 @@
-package com.aritra.notify.screens.settingsScreen
+package com.aritra.notify.ui.screens.settingsScreen
 
 import android.app.Application
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.aritra.notify.data.db.NoteDatabase
 import com.aritra.notify.data.models.Note
+import com.aritra.notify.data.repository.BackupRepository
 import com.aritra.notify.data.repository.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +33,7 @@ class SettingsViewModel @Inject constructor(
     )
     var notes by mutableStateOf(emptyList<Note>())
 
-    private var observeNoteJob : Job? = null
+    private var observeNoteJob: Job? = null
 
     init {
         observe()
@@ -47,7 +46,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun onImport(uri: Uri){
+    fun onImport(uri: Uri) {
         viewModelScope.launch {
             backupRepository.import(uri)
             observe()
@@ -66,5 +65,4 @@ class SettingsViewModel @Inject constructor(
             }
         }
     }
-
 }

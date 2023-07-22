@@ -1,4 +1,4 @@
-package com.aritra.notify
+package com.aritra.notify.ui.screens
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

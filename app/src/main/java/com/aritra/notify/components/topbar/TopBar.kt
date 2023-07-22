@@ -24,13 +24,5 @@ fun TopBar() {
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = Color.Transparent,
         )
-//        actions = {
-//            IconButton(onClick = { /*TODO*/ }) {
-//                Icon(
-//                    painterResource(R.drawable.notification),
-//                    contentDescription = "notification"
-//                )
-//            }
-//        },
     )
 }

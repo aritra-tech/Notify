@@ -1,4 +1,4 @@
-package com.aritra.notify.screens.settingsScreen
+package com.aritra.notify.ui.theme
 
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel

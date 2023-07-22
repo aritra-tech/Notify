@@ -1,4 +1,4 @@
-package com.aritra.notify.screens.notes.editNoteScreen
+package com.aritra.notify.ui.screens.notes.editNoteScreen
 
 import android.app.Application
 import androidx.compose.runtime.getValue
@@ -21,7 +21,7 @@ class EditScreenViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
 
-    var noteModel by mutableStateOf(Note(0, "", "",Date()))
+    var noteModel by mutableStateOf(Note(0, "", "", Date()))
 
     fun getNoteById(noteId: Int) = viewModelScope.launch(Dispatchers.IO) {
         editScreenRepository.getNoteByIdFromRoom(noteId).collect { response ->
@@ -39,8 +39,5 @@ class EditScreenViewModel @Inject constructor(
 
     fun updateDescription(description: String) {
         noteModel = noteModel.copy(note = description)
-    }
-    fun updateDateTime(dateTime: Date) {
-        noteModel = noteModel.copy(dateTime = dateTime)
     }
 }

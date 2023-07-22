@@ -8,9 +8,9 @@ import com.aritra.notify.data.dao.NoteDao
 import com.aritra.notify.data.models.Note
 
 @Database(entities = [Note::class], version = 2)
-abstract class NoteDatabase  : RoomDatabase() {
+abstract class NoteDatabase : RoomDatabase() {
 
-    abstract fun noteDao() : NoteDao
+    abstract fun noteDao(): NoteDao
 
     companion object {
         private var INSTANCE: NoteDatabase? = null
