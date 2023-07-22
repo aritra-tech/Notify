@@ -15,6 +15,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
@@ -34,6 +37,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.EditNoteTopBar
 import com.aritra.notify.screens.notes.homeScreen.HomeScreenViewModel
+import com.aritra.notify.utils.Const
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -48,6 +52,9 @@ fun EditNotesScreen(
     val description = editViewModel.noteModel.note
     val dateTime = editViewModel.noteModel.dateTime
     val focus = LocalFocusManager.current
+    val characterCount = remember { mutableIntStateOf(title.length + description.length) }
+    val formattedDateTime = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
+    val formattedCharacterCount = "${characterCount.value} characters"
 
     LaunchedEffect(Unit) {
         editViewModel.getNoteById(noteId)
@@ -55,7 +62,7 @@ fun EditNotesScreen(
     Scaffold(
         topBar = {
             if (dateTime != null) {
-                EditNoteTopBar(editViewModel,noteId,navigateBack,title,description,dateTime)
+                EditNoteTopBar(editViewModel, noteId, navigateBack, title, description, dateTime)
             }
         }
     ) {
@@ -69,7 +76,10 @@ fun EditNotesScreen(
                     modifier = Modifier
                         .fillMaxWidth(),
                     value = title,
-                    onValueChange = { title -> editViewModel.updateTitle(title) },
+                    onValueChange = { newTitle ->
+                        editViewModel.updateTitle(newTitle)
+                        characterCount.value = newTitle.length + description.length
+                    },
                     placeholder = {
                         Text(
                             stringResource(R.string.title),
@@ -84,10 +94,12 @@ fun EditNotesScreen(
                         fontFamily = FontFamily(Font(R.font.poppins_medium)),
                     ),
                     maxLines = Int.MAX_VALUE,
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = MaterialTheme.colorScheme.onSecondary,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        disabledContainerColor = MaterialTheme.colorScheme.onSecondary,
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
+                        unfocusedIndicatorColor = Color.Transparent,
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         capitalization = KeyboardCapitalization.Sentences,
@@ -95,24 +107,25 @@ fun EditNotesScreen(
                         imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions(onNext = {
-                        focus.moveFocus(FocusDirection.Down) }
+                        focus.moveFocus(FocusDirection.Down)
+                    }
                     ),
                 )
                 TextField(
-                    value = dateTime?.let {
-                        SimpleDateFormat("dd MMMM, hh:mm a", Locale.getDefault()).format(it)
-                    } ?: "",
-                    onValueChange = {  },
+                    value = "$formattedDateTime  |  $formattedCharacterCount",
+                    onValueChange = { },
                     modifier = Modifier.fillMaxWidth(),
                     readOnly = true,
                     textStyle = TextStyle(
                         fontSize = 15.sp,
                         fontFamily = FontFamily(Font(R.font.poppins_light))
                     ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = MaterialTheme.colorScheme.onSecondary,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        disabledContainerColor = MaterialTheme.colorScheme.onSecondary,
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
+                        unfocusedIndicatorColor = Color.Transparent,
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
@@ -121,7 +134,10 @@ fun EditNotesScreen(
                 TextField(
                     modifier = Modifier.fillMaxSize(),
                     value = description,
-                    onValueChange = { description -> editViewModel.updateDescription(description) },
+                    onValueChange = { newDescription ->
+                        editViewModel.updateDescription(newDescription)
+                        characterCount.value = title.length + newDescription.length
+                    },
                     placeholder = {
                         Text(
                             stringResource(R.string.notes),
@@ -135,10 +151,12 @@ fun EditNotesScreen(
                         fontSize = 18.sp,
                         fontFamily = FontFamily(Font(R.font.poppins_light)),
                     ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = MaterialTheme.colorScheme.onSecondary,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        disabledContainerColor = MaterialTheme.colorScheme.onSecondary,
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
+                        unfocusedIndicatorColor = Color.Transparent,
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         capitalization = KeyboardCapitalization.Sentences,

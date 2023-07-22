@@ -1,5 +1,7 @@
 package com.aritra.notify.screens.settingsScreen
 
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -19,34 +21,34 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.R
-import com.aritra.notify.components.CustomSwitch
-import com.aritra.notify.components.SettingsComponent
+import com.aritra.notify.components.actions.SettingsComponent
 import com.aritra.notify.components.topbar.SettingsTopAppBar
-import com.aritra.notify.screens.notes.homeScreen.HomeScreenViewModel
 import com.aritra.notify.utils.Const
 
 @Composable
 fun SettingsScreen() {
     val settingsViewModel = hiltViewModel<SettingsViewModel>()
     val context = LocalContext.current
-    var switchCheckedState by remember { mutableStateOf(false) }
     var isDialogShowingState by rememberSaveable { mutableStateOf(false) }
+    val themeViewModel: ThemeViewModel = hiltViewModel()
+    val themeState by themeViewModel.themeState.collectAsState()
 
     val exportLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("*/*"),
@@ -91,7 +93,11 @@ fun SettingsScreen() {
                             fontSize = 20.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_semibold))
                         )
-                        CustomSwitch(themeViewModel = hiltViewModel())
+                        Switch(
+                            modifier = Modifier.semantics { contentDescription = "Theme Switch" },
+                            checked = themeState.isDarkMode,
+                            onCheckedChange = { themeViewModel.toggleTheme() }
+                        )
                     }
                 }
                 SettingsComponent(
@@ -107,7 +113,8 @@ fun SettingsScreen() {
                     settingText = "Notify is completely open source. \n Have a feedback visit Github!",
                     painterResourceID = R.drawable.code
                 ) {
-                    settingsViewModel.openNotify(context)
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/aritra-tech/Notify"))
+                    context.startActivity(intent)
                 }
             }
         }

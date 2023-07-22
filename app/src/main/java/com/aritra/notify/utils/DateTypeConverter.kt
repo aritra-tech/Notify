@@ -8,7 +8,7 @@ import java.util.Locale
 class DateTypeConverter {
 
     companion object {
-        private val displayDateFormat = SimpleDateFormat("dd MMMM, hh:mm a", Locale.getDefault())
+        private val displayDateFormat = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault())
 
         @TypeConverter
         @JvmStatic

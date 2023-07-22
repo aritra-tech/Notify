@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.data.repository.NoteRepository
@@ -18,15 +19,7 @@ class HomeScreenViewModel @Inject constructor(
     private val homeRepository: NoteRepository
 ) : AndroidViewModel(application) {
 
-    var notesModel by mutableStateOf(emptyList<Note>())
-
-    fun getAllNotes() {
-        viewModelScope.launch {
-            homeRepository.getAllNotesFromRoom().collect { response ->
-                notesModel = response
-            }
-        }
-    }
+    var listOfNotes = homeRepository.getAllNotesFromRoom().asLiveData()
 
     fun deleteNote(note: Note) {
         viewModelScope.launch {
@@ -34,11 +27,4 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    fun searchNotesByTitle(searchQuery: String) {
-        viewModelScope.launch {
-            homeRepository.searchNotesByTitleFromRoom(searchQuery).collect { response ->
-                notesModel = response
-            }
-        }
-    }
 }

@@ -1,20 +1,17 @@
 package com.aritra.notify.navigation
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType.Companion.IntType
 import androidx.navigation.compose.NavHost
@@ -22,30 +19,30 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.aritra.notify.R
 import com.aritra.notify.screens.notes.addNoteScreen.AddNotesScreen
 import com.aritra.notify.screens.notes.editNoteScreen.EditNotesScreen
 import com.aritra.notify.screens.notes.homeScreen.HomeScreen
 import com.aritra.notify.screens.settingsScreen.SettingsScreen
 import com.aritra.notify.screens.todo.todoHomeScreen.TodoHomeScreen
+import kotlinx.coroutines.delay
 
 @Composable
-fun NotifyApp(navController: NavHostController = rememberNavController(),
-){
+fun NotifyApp(navController: NavHostController = rememberNavController(),onLoaded: () -> Unit){
+
+    LaunchedEffect(key1 = Unit){
+        delay(2000)
+        onLoaded()
+    }
+
     val bottomNavItem = listOf(
         BottomNavItem(
-            name = "Home",
             route = NotifyScreens.Home.name,
-            icon = Icons.Rounded.Home
+            Icon = R.drawable.home_outline
         ),
-//        BottomNavItem(
-//            name = "To-do",
-//            route = NotifyScreens.TodoHome.name,
-//            icon = Icons.Rounded.List
-//        ),
         BottomNavItem(
-            name = "Settings",
             route = NotifyScreens.Settings.name,
-            icon = Icons.Rounded.Settings
+            Icon = R.drawable.settings_outline
         ),
     )
     val screensWithHiddenNavBar = listOf(
@@ -57,33 +54,18 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),
     Scaffold(
         bottomBar = {
             if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
-                NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ) {
+                NavigationBar(modifier = Modifier.height(60.dp)) {
                     bottomNavItem.forEach { item ->
                         NavigationBarItem(
                             alwaysShowLabel = true,
                             icon = {
                                 Icon(
-                                    imageVector = item.icon,
-                                    contentDescription = item.name,
+                                    painter = painterResource(id = item.Icon),
+                                    contentDescription = null,
                                     tint = if (backStackEntry.value?.destination?.route == item.route)
                                         MaterialTheme.colorScheme.onSurface
                                     else
                                         MaterialTheme.colorScheme.secondary
-                                )
-                            },
-                            label = {
-                                Text(
-                                    text = item.name,
-                                    color = if (backStackEntry.value?.destination?.route == item.route)
-                                        MaterialTheme.colorScheme.onSurface
-                                    else
-                                        MaterialTheme.colorScheme.secondary,
-                                    fontWeight = if (backStackEntry.value?.destination?.route == item.route)
-                                        FontWeight.Bold
-                                    else
-                                        FontWeight.Normal,
                                 )
                             },
                             selected = backStackEntry.value?.destination?.route == item.route,
@@ -104,7 +86,6 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),
             startDestination = NotifyScreens.Home.name,
             modifier = Modifier
                 .padding(it)
-                .background(Color.White)
         ) {
             composable(route = NotifyScreens.Home.name) {
                 HomeScreen(

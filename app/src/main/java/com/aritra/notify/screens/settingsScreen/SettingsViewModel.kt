@@ -67,8 +67,4 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun openNotify(context: Context){
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/aritra-tech/Notify"))
-        context.startActivity(intent)
-    }
 }
