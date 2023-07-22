@@ -20,17 +20,17 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aritra.notify.R
-import com.aritra.notify.screens.notes.addNoteScreen.AddNotesScreen
-import com.aritra.notify.screens.notes.editNoteScreen.EditNotesScreen
-import com.aritra.notify.screens.notes.homeScreen.HomeScreen
-import com.aritra.notify.screens.settingsScreen.SettingsScreen
-import com.aritra.notify.screens.todo.todoHomeScreen.TodoHomeScreen
+import com.aritra.notify.ui.screens.notes.addNoteScreen.AddNotesScreen
+import com.aritra.notify.ui.screens.notes.editNoteScreen.EditNotesScreen
+import com.aritra.notify.ui.screens.notes.homeScreen.HomeScreen
+import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
+import com.aritra.notify.ui.screens.todo.todoHomeScreen.TodoHomeScreen
 import kotlinx.coroutines.delay
 
 @Composable
-fun NotifyApp(navController: NavHostController = rememberNavController(),onLoaded: () -> Unit){
+fun NotifyApp(navController: NavHostController = rememberNavController(), onLoaded: () -> Unit) {
 
-    LaunchedEffect(key1 = Unit){
+    LaunchedEffect(key1 = Unit) {
         delay(2000)
         onLoaded()
     }
@@ -89,32 +89,31 @@ fun NotifyApp(navController: NavHostController = rememberNavController(),onLoade
         ) {
             composable(route = NotifyScreens.Home.name) {
                 HomeScreen(
-                    onFabClicked = { navController.navigate(NotifyScreens.AddNotes.name)},
+                    onFabClicked = { navController.navigate(NotifyScreens.AddNotes.name) },
                     navigateToUpdateNoteScreen = { noteId ->
                         navController.navigate("${NotifyScreens.UpdateNotes.name}/$noteId")
                     }
                 )
             }
-            composable(route = "${NotifyScreens.UpdateNotes.name}/{noteId}",
-                arguments = listOf(navArgument("noteId") { type = IntType})
+            composable(
+                route = "${NotifyScreens.UpdateNotes.name}/{noteId}",
+                arguments = listOf(navArgument("noteId") { type = IntType })
             ) { backStack ->
                 val noteId = backStack.arguments?.getInt("noteId") ?: 0
                 EditNotesScreen(
                     noteId = noteId,
-                    navigateBack = {navController.popBackStack()}
+                    navigateBack = { navController.popBackStack() }
                 )
             }
             composable(NotifyScreens.TodoHome.name) {
                 TodoHomeScreen()
             }
             composable(NotifyScreens.AddNotes.name) {
-                AddNotesScreen(navigateBack = {navController.popBackStack()})
+                AddNotesScreen(navigateBack = { navController.popBackStack() })
             }
             composable(NotifyScreens.Settings.name) {
                 SettingsScreen()
             }
         }
     }
-
-
 }

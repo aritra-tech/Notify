@@ -12,4 +12,18 @@
     <string name="share_note_as_picture">Share note as picture</string>
     <string name="cancel">Cancel</string>
     <string name="search_your_notes">Search your notes</string>
+    <string name="icon">icon</string>
+    <string name="back">back</string>
+    <string name="share">share</string>
+    <string name="save">save</string>
+    <string name="compose">Compose</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="export_import">Export/Import</string>
+    <string name="export_or_import_your_notes_to_a_file">Export or Import your notes to a file.</string>
+    <string name="visit_github">Visit Github</string>
+    <string name="notify_is_completely_open_source_have_a_feedback_visit_github">Notify is completely open source. \n Have a feedback visit Github!</string>
+    <string name="export_and_import"><![CDATA[Export & Import]]></string>
+    <string name="export_or_import_of_your_notes_internally_on_your_phone">Export or Import of your notes internally on your phone.</string>
+    <string name="export">Export</string>
+    <string name="Import">Import</string>
 </resources>

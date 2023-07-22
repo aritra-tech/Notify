@@ -1,4 +1,4 @@
-package com.aritra.notify.screens.notes.addNoteScreen
+package com.aritra.notify.ui.screens.notes.addNoteScreen
 
 
 import androidx.compose.foundation.layout.Column
@@ -91,8 +91,8 @@ fun AddNotesScreen(
                         modifier = Modifier
                             .fillMaxWidth(),
                         value = title,
-                        onValueChange = {
-                            title = it
+                        onValueChange = { newTitle ->
+                            title = newTitle
                             characterCount = title.length + description.length
                         },
                         placeholder = {
@@ -148,8 +148,8 @@ fun AddNotesScreen(
                     TextField(
                         modifier = Modifier.fillMaxSize(),
                         value = description,
-                        onValueChange = {
-                            description = it
+                        onValueChange = { newDescription ->
+                            description = newDescription
                             characterCount = title.length + description.length
                         },
                         placeholder = {

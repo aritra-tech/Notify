@@ -35,11 +35,10 @@ import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.ShareOption
 import com.aritra.notify.data.models.Note
-import com.aritra.notify.screens.notes.editNoteScreen.EditScreenViewModel
-import eu.wewox.modalsheet.ExperimentalSheetApi
+import com.aritra.notify.ui.screens.notes.editNoteScreen.EditScreenViewModel
 import java.util.Date
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSheetApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditNoteTopBar(
     viewModel: EditScreenViewModel,
@@ -48,7 +47,7 @@ fun EditNoteTopBar(
     title: String,
     description: String,
     dateTime: Date,
-){
+) {
     var showSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val skipPartiallyExpanded by remember { mutableStateOf(false) }
@@ -70,7 +69,7 @@ fun EditNoteTopBar(
             IconButton(onClick = { navigateBack() }) {
                 Icon(
                     painterResource(R.drawable.back),
-                    contentDescription = "back"
+                    contentDescription = stringResource(R.string.back)
                 )
             }
         },
@@ -78,12 +77,12 @@ fun EditNoteTopBar(
             IconButton(onClick = { showSheet = true }) {
                 Icon(
                     painterResource(R.drawable.share),
-                    contentDescription = "share"
+                    contentDescription = stringResource(R.string.share)
                 )
             }
-            if (showSheet){
+            if (showSheet) {
                 ModalBottomSheet(
-                    onDismissRequest = {showSheet = false},
+                    onDismissRequest = { showSheet = false },
                     sheetState = bottomSheetState
                 ) {
                     Column(
@@ -99,13 +98,22 @@ fun EditNoteTopBar(
                                 val sharingIntent = Intent(Intent.ACTION_SEND)
                                 sharingIntent.type = "text/plain"
 
-                                sharingIntent.putExtra(Intent.EXTRA_TEXT, "${"Title: $title"}\n${"Note: $description"}")
-                                context.startActivity(Intent.createChooser(sharingIntent, "Share via"))
+                                sharingIntent.putExtra(
+                                    Intent.EXTRA_TEXT,
+                                    "${"Title: $title"}\n${"Note: $description"}"
+                                )
+                                context.startActivity(
+                                    Intent.createChooser(
+                                        sharingIntent,
+                                        "Share via"
+                                    )
+                                )
                                 showSheet = false
                             }
                         )
                         Spacer(modifier = Modifier.height(14.dp))
-                        Button(onClick = { showSheet = false },
+                        Button(
+                            onClick = { showSheet = false },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(10.dp),
@@ -122,14 +130,14 @@ fun EditNoteTopBar(
             }
             IconButton(onClick = {
                 val currentDateTime = Date()
-                val updateNote = Note(noteId,title,description,currentDateTime)
+                val updateNote = Note(noteId, title, description, currentDateTime)
                 viewModel.updateNotes(updateNote)
                 navigateBack()
                 Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
             }) {
                 Icon(
                     painterResource(R.drawable.save),
-                    contentDescription = "save"
+                    contentDescription = stringResource(R.string.save)
                 )
             }
 

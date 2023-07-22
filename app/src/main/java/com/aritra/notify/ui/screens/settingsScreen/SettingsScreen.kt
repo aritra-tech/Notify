@@ -1,4 +1,4 @@
-package com.aritra.notify.screens.settingsScreen
+package com.aritra.notify.ui.screens.settingsScreen
 
 import android.content.Intent
 import android.net.Uri
@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.Font
@@ -40,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.SettingsComponent
 import com.aritra.notify.components.topbar.SettingsTopAppBar
+import com.aritra.notify.ui.theme.ThemeViewModel
 import com.aritra.notify.utils.Const
 
 @Composable
@@ -53,13 +55,13 @@ fun SettingsScreen() {
     val exportLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("*/*"),
         onResult = { uri ->
-            if (uri != null) settingsViewModel.onExport(uri)
+            uri?.let { settingsViewModel.onExport(uri) }
         }
     )
     val importLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri ->
-            if (uri != null) settingsViewModel.onImport(uri)
+            uri?.let { settingsViewModel.onImport(uri) }
         }
     )
 
@@ -89,7 +91,7 @@ fun SettingsScreen() {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Dark Mode",
+                            text = stringResource(R.string.dark_mode),
                             fontSize = 20.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_semibold))
                         )
@@ -101,41 +103,44 @@ fun SettingsScreen() {
                     }
                 }
                 SettingsComponent(
-                    settingHeaderText = "Export/Import",
-                    settingText = "Export or Import your notes to a file.",
+                    settingHeaderText = stringResource(R.string.export_import),
+                    settingText = stringResource(R.string.export_or_import_your_notes_to_a_file),
                     painterResourceID = R.drawable.history
                 ) {
                     // Dialog will open up
                     isDialogShowingState = true
                 }
                 SettingsComponent(
-                    settingHeaderText = "Visit Github",
-                    settingText = "Notify is completely open source. \n Have a feedback visit Github!",
+                    settingHeaderText = stringResource(R.string.visit_github),
+                    settingText = stringResource(R.string.notify_is_completely_open_source_have_a_feedback_visit_github),
                     painterResourceID = R.drawable.code
                 ) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/aritra-tech/Notify"))
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/aritra-tech/Notify")
+                    )
                     context.startActivity(intent)
                 }
             }
         }
     }
-    if(isDialogShowingState){
+    if (isDialogShowingState) {
         AlertDialog(
             onDismissRequest = {
                 isDialogShowingState = false
             },
             title = {
-                Text("Export & Import")
+                Text(stringResource(R.string.export_and_import))
             },
             text = {
-                Text("Export or Import of your notes internally on your phone.")
+                Text(stringResource(R.string.export_or_import_of_your_notes_internally_on_your_phone))
             },
             confirmButton = {
                 OutlinedButton(onClick = {
                     exportLauncher.launch(Const.DATABASE_FILE_NAME)
                     isDialogShowingState = false
                 }) {
-                    Text(text = "Export")
+                    Text(text = stringResource(R.string.export))
                 }
             },
             dismissButton = {
@@ -143,7 +148,7 @@ fun SettingsScreen() {
                     importLauncher.launch(arrayOf("*/*"))
                     isDialogShowingState = false
                 }) {
-                    Text(text = "Import")
+                    Text(text = stringResource(R.string.Import))
                 }
             }
         )

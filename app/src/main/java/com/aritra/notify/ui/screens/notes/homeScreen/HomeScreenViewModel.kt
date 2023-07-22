@@ -1,9 +1,6 @@
-package com.aritra.notify.screens.notes.homeScreen
+package com.aritra.notify.ui.screens.notes.homeScreen
 
 import android.app.Application
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
