@@ -1,23 +1,16 @@
 package com.aritra.notify.navigation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType.Companion.IntType
@@ -32,10 +25,16 @@ import com.aritra.notify.screens.notes.editNoteScreen.EditNotesScreen
 import com.aritra.notify.screens.notes.homeScreen.HomeScreen
 import com.aritra.notify.screens.settingsScreen.SettingsScreen
 import com.aritra.notify.screens.todo.todoHomeScreen.TodoHomeScreen
+import kotlinx.coroutines.delay
 
 @Composable
-fun NotifyApp(navController: NavHostController = rememberNavController(),
-){
+fun NotifyApp(navController: NavHostController = rememberNavController(),onLoaded: () -> Unit){
+
+    LaunchedEffect(key1 = Unit){
+        delay(2000)
+        onLoaded()
+    }
+
     val bottomNavItem = listOf(
         BottomNavItem(
             route = NotifyScreens.Home.name,
