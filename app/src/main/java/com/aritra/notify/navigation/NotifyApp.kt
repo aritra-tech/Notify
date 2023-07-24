@@ -24,7 +24,6 @@ import com.aritra.notify.ui.screens.notes.addNoteScreen.AddNotesScreen
 import com.aritra.notify.ui.screens.notes.editNoteScreen.EditNotesScreen
 import com.aritra.notify.ui.screens.notes.homeScreen.HomeScreen
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
-import com.aritra.notify.ui.screens.todo.todoHomeScreen.TodoHomeScreen
 import kotlinx.coroutines.delay
 
 @Composable
@@ -104,9 +103,6 @@ fun NotifyApp(navController: NavHostController = rememberNavController(), onLoad
                     noteId = noteId,
                     navigateBack = { navController.popBackStack() }
                 )
-            }
-            composable(NotifyScreens.TodoHome.name) {
-                TodoHomeScreen()
             }
             composable(NotifyScreens.AddNotes.name) {
                 AddNotesScreen(navigateBack = { navController.popBackStack() })
