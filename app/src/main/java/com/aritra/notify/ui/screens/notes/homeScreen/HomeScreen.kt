@@ -162,7 +162,7 @@ fun SwapDelete(
         icon = {
             Icon(
                 modifier = Modifier.padding(12.dp),
-                imageVector = Icons.Default.Delete,
+                painter = painterResource(R.drawable.ic_delete),
                 contentDescription = null,
                 tint = Color.White
             )

@@ -36,6 +36,7 @@ import com.aritra.notify.R
 import com.aritra.notify.components.actions.ShareOption
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.ui.screens.notes.editNoteScreen.EditScreenViewModel
+import com.aritra.notify.utils.shareNoteAsText
 import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,7 +77,7 @@ fun EditNoteTopBar(
         actions = {
             IconButton(onClick = { showSheet = true }) {
                 Icon(
-                    painterResource(R.drawable.share),
+                    painterResource(R.drawable.ic_share),
                     contentDescription = stringResource(R.string.share)
                 )
             }
@@ -95,19 +96,7 @@ fun EditNoteTopBar(
                         ShareOption(
                             text = stringResource(R.string.share_note_as_text),
                             onClick = {
-                                val sharingIntent = Intent(Intent.ACTION_SEND)
-                                sharingIntent.type = "text/plain"
-
-                                sharingIntent.putExtra(
-                                    Intent.EXTRA_TEXT,
-                                    "${"Title: $title"}\n${"Note: $description"}"
-                                )
-                                context.startActivity(
-                                    Intent.createChooser(
-                                        sharingIntent,
-                                        "Share via"
-                                    )
-                                )
+                                shareNoteAsText(context, title, description)
                                 showSheet = false
                             }
                         )
