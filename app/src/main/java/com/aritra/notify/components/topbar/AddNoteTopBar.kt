@@ -35,12 +35,12 @@ import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.ShareOption
 import com.aritra.notify.data.models.Note
-import com.aritra.notify.screens.notes.addNoteScreen.AddNoteViewModel
-import eu.wewox.modalsheet.ExperimentalSheetApi
+import com.aritra.notify.ui.screens.notes.addNoteScreen.AddNoteViewModel
+import com.aritra.notify.utils.shareNoteAsText
 import java.util.Date
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSheetApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddNoteTopBar(
     viewModel: AddNoteViewModel,
@@ -72,7 +72,7 @@ fun AddNoteTopBar(
             IconButton(onClick = { onBackPress() }) {
                 Icon(
                     painterResource(R.drawable.back),
-                    contentDescription = "back"
+                    contentDescription = stringResource(R.string.back)
                 )
             }
         },
@@ -80,13 +80,13 @@ fun AddNoteTopBar(
             if (title.isNotEmpty() && description.isNotEmpty()) {
                 IconButton(onClick = { showSheet = true }) {
                     Icon(
-                        painterResource(R.drawable.share),
-                        contentDescription = "share"
+                        painterResource(R.drawable.ic_share),
+                        contentDescription = stringResource(R.string.share)
                     )
                 }
-                if (showSheet){
+                if (showSheet) {
                     ModalBottomSheet(
-                        onDismissRequest = {showSheet = false},
+                        onDismissRequest = { showSheet = false },
                         sheetState = bottomSheetState
                     ) {
                         Column(
@@ -99,16 +99,13 @@ fun AddNoteTopBar(
                             ShareOption(
                                 text = stringResource(R.string.share_note_as_text),
                                 onClick = {
-                                    val sharingIntent = Intent(Intent.ACTION_SEND)
-                                    sharingIntent.type = "text/plain"
-
-                                    sharingIntent.putExtra(Intent.EXTRA_TEXT, "${"Title: $title"}\n${"Note: $description"}")
-                                    context.startActivity(Intent.createChooser(sharingIntent, "Share via"))
+                                    shareNoteAsText(context, title, description)
                                     showSheet = false
                                 }
                             )
                             Spacer(modifier = Modifier.height(14.dp))
-                            Button(onClick = { showSheet = false },
+                            Button(
+                                onClick = { showSheet = false },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(10.dp),
@@ -125,7 +122,8 @@ fun AddNoteTopBar(
                 }
 
                 IconButton(onClick = {
-                    val noteDB = Note(id = 0, title = title,note = description, dateTime = dateTime)
+                    val noteDB =
+                        Note(id = 0, title = title, note = description, dateTime = dateTime)
                     viewModel.insertNote(noteDB)
                     onSave()
                     Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
@@ -133,7 +131,7 @@ fun AddNoteTopBar(
                 }) {
                     Icon(
                         painterResource(R.drawable.save),
-                        contentDescription = "save"
+                        contentDescription = stringResource(R.string.save)
                     )
                 }
             }

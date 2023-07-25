@@ -1,4 +1,4 @@
-package com.aritra.notify.screens.settingsScreen
+package com.aritra.notify.data.repository
 
 import android.content.Context
 import android.net.Uri

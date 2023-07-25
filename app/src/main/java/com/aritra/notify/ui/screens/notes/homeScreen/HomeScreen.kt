@@ -1,8 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.aritra.notify.screens.notes.homeScreen
-
-
+package com.aritra.notify.ui.screens.notes.homeScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -18,7 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
@@ -35,7 +32,6 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -75,13 +71,15 @@ fun HomeScreen(
     var searchQuery by rememberSaveable { mutableStateOf("") }
 
     val scrollState = rememberLazyListState()
-    val fabVisibleState = scrollState.firstVisibleItemIndex > 0
+    val fabVisibleState = remember {
+        mutableStateOf(scrollState.firstVisibleItemIndex > 0)
+    }
 
     Scaffold(
         topBar = { TopBar() },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                text = { Text(text = "Compose") },
+                text = { Text(text = stringResource(R.string.compose)) },
                 icon = {
                     Icon(
                         imageVector = Icons.Outlined.Edit,
@@ -89,7 +87,7 @@ fun HomeScreen(
                     )
                 },
                 onClick = { onFabClicked() },
-                expanded = !fabVisibleState
+                expanded = fabVisibleState.value.not()
             )
         },
     ) {
@@ -105,8 +103,8 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .padding(10.dp),
                     query = searchQuery,
-                    onQueryChange = {
-                        searchQuery = it
+                    onQueryChange = { search ->
+                        searchQuery = search
                     },
                     onSearch = {},
                     active = false,
@@ -164,7 +162,7 @@ fun SwapDelete(
         icon = {
             Icon(
                 modifier = Modifier.padding(12.dp),
-                imageVector = Icons.Default.Delete,
+                painter = painterResource(R.drawable.ic_delete),
                 contentDescription = null,
                 tint = Color.White
             )
