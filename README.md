@@ -34,6 +34,7 @@ _Notify_ focuses on the following key things:
     - [Hilt-Dagger](https://dagger.dev/hilt/) - A standard way to incorporate Dagger dependency injection into an Android application.
     - [Hilt-ViewModel](https://developer.android.com/training/dependency-injection/hilt-jetpack) - DI for injecting ```ViewModel```. 
 - [Material Components for Android](https://github.com/material-components/material-components-android) - Modular and customizable Material Design UI components for Android.
+- [Accompanist](https://google.github.io/accompanist/) - A collection of extension libraries for Jetpack Compose
 
 ## Architecture 👷‍♂️
 
