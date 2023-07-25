@@ -26,4 +26,6 @@
     <string name="export_or_import_of_your_notes_internally_on_your_phone">Export or Import of your notes internally on your phone.</string>
     <string name="export">Export</string>
     <string name="Import">Import</string>
+    <string name="no_notes_added">No Notes added</string>
+    <string name="click_on_the_compose_button_to_add">Click on the \(Compose\) button to add</string>
 </resources>

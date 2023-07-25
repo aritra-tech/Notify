@@ -27,12 +27,7 @@ import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
 import kotlinx.coroutines.delay
 
 @Composable
-fun NotifyApp(navController: NavHostController = rememberNavController(), onLoaded: () -> Unit) {
-
-    LaunchedEffect(key1 = Unit) {
-        delay(2000)
-        onLoaded()
-    }
+fun NotifyApp(navController: NavHostController = rememberNavController()) {
 
     val bottomNavItem = listOf(
         BottomNavItem(

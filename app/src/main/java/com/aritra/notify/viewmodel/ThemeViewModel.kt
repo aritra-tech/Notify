@@ -1,4 +1,4 @@
-package com.aritra.notify.ui.theme
+package com.aritra.notify.viewmodel
 
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel

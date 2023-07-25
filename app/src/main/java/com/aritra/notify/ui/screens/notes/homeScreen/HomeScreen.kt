@@ -2,7 +2,6 @@
 
 package com.aritra.notify.ui.screens.notes.homeScreen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +16,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Card
@@ -45,11 +43,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
+import com.aritra.notify.components.actions.NoList
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.topbar.TopBar
 import com.aritra.notify.data.models.Note
@@ -122,24 +120,27 @@ fun HomeScreen(
                     }
                 ) {
                 }
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(0.dp, 5.dp, 0.dp, 0.dp),
-                    state = scrollState
-                ) {
 
-                    if (listOfAllNotes.isNotEmpty()) {
+                if (listOfAllNotes.isNotEmpty()) {
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(0.dp, 5.dp, 0.dp, 0.dp),
+                        state = scrollState
+                    ) {
+
                         items(listOfAllNotes.filter { note ->
                             note.title.contains(searchQuery, true)
                         }) { notesModel ->
                             SwapDelete(notesModel, viewModel, navigateToUpdateNoteScreen)
                         }
-                    } else {
-                        item {
-                            NoList()
-                        }
                     }
+                } else {
+                    NoList(
+                        contentDescription = stringResource(R.string.no_notes_added),
+                        message = stringResource(R.string.click_on_the_compose_button_to_add)
+                    )
                 }
             }
         }
@@ -235,38 +236,6 @@ fun NotesCard(
                 color = Color.Gray
             )
         }
-    }
-}
-
-@Composable
-fun NoList() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(30.dp, 130.dp, 0.dp, 0.dp)
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.no_list),
-            contentDescription = "empty",
-            modifier = Modifier.fillMaxWidth(),
-            alignment = Alignment.Center
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(
-            text = "No notes found",
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            fontFamily = FontFamily(Font(R.font.poppins_semibold)),
-            fontSize = 20.sp
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(
-            text = "When you add a notes. You will see your notes here",
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            fontFamily = FontFamily(Font(R.font.poppins_light)),
-            fontSize = 18.sp
-        )
     }
 }
 

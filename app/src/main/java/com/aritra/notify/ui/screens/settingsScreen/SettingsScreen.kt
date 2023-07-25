@@ -2,7 +2,6 @@ package com.aritra.notify.ui.screens.settingsScreen
 
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -25,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,17 +41,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.SettingsComponent
 import com.aritra.notify.components.topbar.SettingsTopAppBar
-import com.aritra.notify.ui.theme.ThemeViewModel
+import com.aritra.notify.viewmodel.ThemeViewModel
 import com.aritra.notify.utils.Const
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen() {
     val settingsViewModel = hiltViewModel<SettingsViewModel>()
     val context = LocalContext.current
     var isDialogShowingState by rememberSaveable { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
     val themeViewModel: ThemeViewModel = hiltViewModel()
     val themeState by themeViewModel.themeState.collectAsState()
 
@@ -67,10 +62,6 @@ fun SettingsScreen() {
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri ->
             uri?.let { settingsViewModel.onImport(uri) }
-            coroutineScope.launch {
-                delay(100)
-                Toast.makeText(context, "Successfully Imported your data", Toast.LENGTH_SHORT).show()
-            }
         }
     )
 
