@@ -68,118 +68,118 @@ fun AddNotesScreen(
     val currentTime = timeFormat.format(Calendar.getInstance().time).uppercase(Locale.getDefault())
     val focus = LocalFocusManager.current
 
-    NotifyTheme {
-        Scaffold(
-            topBar = {
-                AddNoteTopBar(
-                    addViewModel,
-                    onBackPress = { cancelDialogState.value = true },
-                    onSave = { navigateBack() },
-                    title,
-                    description,
-                    dateTime,
-                )
-            },
+
+    Scaffold(
+        topBar = {
+            AddNoteTopBar(
+                addViewModel,
+                onBackPress = { cancelDialogState.value = true },
+                onSave = { navigateBack() },
+                title,
+                description,
+                dateTime,
+            )
+        },
+    ) {
+        Surface(
+            modifier = Modifier.padding(it)
         ) {
-            Surface(
-                modifier = Modifier.padding(it)
+            Column(
+                modifier = Modifier.fillMaxSize()
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        value = title,
-                        onValueChange = { newTitle ->
-                            title = newTitle
-                            characterCount = title.length + description.length
-                        },
-                        placeholder = {
-                            Text(
-                                stringResource(R.string.title),
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.W700,
-                                color = Color.Gray,
-                                fontFamily = FontFamily(Font(R.font.poppins_medium))
-                            )
-                        },
-                        textStyle = TextStyle(
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    value = title,
+                    onValueChange = { newTitle ->
+                        title = newTitle
+                        characterCount = title.length + description.length
+                    },
+                    placeholder = {
+                        Text(
+                            stringResource(R.string.title),
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.W700,
+                            color = Color.Gray,
+                            fontFamily = FontFamily(Font(R.font.poppins_medium))
+                        )
+                    },
+                    textStyle = TextStyle(
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                    ),
+                    maxLines = Int.MAX_VALUE,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        disabledContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(onNext = {
+                        focus.moveFocus(FocusDirection.Down)
+                    }),
+                )
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = "$currentDate, $currentTime   |  $characterCount characters",
+                    onValueChange = { },
+                    textStyle = TextStyle(
+                        fontSize = 15.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_light))
+                    ),
+                    readOnly = true,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        disabledContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text,
+                    ),
+                )
+                TextField(
+                    modifier = Modifier.fillMaxSize(),
+                    value = description,
+                    onValueChange = { newDescription ->
+                        description = newDescription
+                        characterCount = title.length + description.length
+                    },
+                    placeholder = {
+                        Text(
+                            stringResource(R.string.notes),
                             fontSize = 20.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_medium)),
-                        ),
-                        maxLines = Int.MAX_VALUE,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                            disabledContainerColor = MaterialTheme.colorScheme.onSecondary,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                        ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            capitalization = KeyboardCapitalization.Sentences,
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Next
-                        ),
-                        keyboardActions = KeyboardActions(onNext = {
-                            focus.moveFocus(FocusDirection.Down)
-                        }),
-                    )
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = "$currentDate, $currentTime   |  $characterCount characters",
-                        onValueChange = { },
-                        textStyle = TextStyle(
-                            fontSize = 15.sp,
+                            fontWeight = FontWeight.W500,
+                            color = Color.Gray,
                             fontFamily = FontFamily(Font(R.font.poppins_light))
-                        ),
-                        readOnly = true,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                            disabledContainerColor = MaterialTheme.colorScheme.onSecondary,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                        ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Text,
-                        ),
-                    )
-                    TextField(
-                        modifier = Modifier.fillMaxSize(),
-                        value = description,
-                        onValueChange = { newDescription ->
-                            description = newDescription
-                            characterCount = title.length + description.length
-                        },
-                        placeholder = {
-                            Text(
-                                stringResource(R.string.notes),
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.W500,
-                                color = Color.Gray,
-                                fontFamily = FontFamily(Font(R.font.poppins_light))
-                            )
-                        },
-                        textStyle = TextStyle(
-                            fontSize = 18.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_light)),
-                        ),
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = MaterialTheme.colorScheme.onSecondary,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            capitalization = KeyboardCapitalization.Sentences,
-                            keyboardType = KeyboardType.Text,
-                        ),
-                        maxLines = Int.MAX_VALUE,
-                    )
-                }
+                        )
+                    },
+                    textStyle = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_light)),
+                    ),
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = MaterialTheme.colorScheme.onSecondary,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        keyboardType = KeyboardType.Text,
+                    ),
+                    maxLines = Int.MAX_VALUE,
+                )
             }
         }
     }
+
     TextDialog(
         title = stringResource(R.string.are_you_sure),
         description = stringResource(R.string.the_text_change_will_not_be_saved),
