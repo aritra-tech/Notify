@@ -3,28 +3,37 @@
 package com.aritra.notify.ui.screens.notes.homeScreen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DismissDirection.*
 import androidx.compose.material3.DismissValue.*
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Surface
@@ -47,8 +56,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
+import com.aritra.notify.components.actions.LayoutToggleButton
 import com.aritra.notify.components.actions.NoList
+import com.aritra.notify.components.actions.SwipeDelete
 import com.aritra.notify.components.dialog.TextDialog
+import com.aritra.notify.components.note.GridNoteCard
+import com.aritra.notify.components.note.NotesCard
 import com.aritra.notify.components.topbar.TopBar
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.utils.Const
@@ -67,26 +80,19 @@ fun HomeScreen(
     val viewModel = hiltViewModel<HomeScreenViewModel>()
     val listOfAllNotes by viewModel.listOfNotes.observeAsState(listOf())
     var searchQuery by rememberSaveable { mutableStateOf("") }
-
-    val scrollState = rememberLazyListState()
-    val fabVisibleState = remember {
-        mutableStateOf(scrollState.firstVisibleItemIndex > 0)
-    }
+    var isGridView by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = { TopBar() },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                text = { Text(text = stringResource(R.string.compose)) },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Outlined.Edit,
-                        contentDescription = null
-                    )
-                },
-                onClick = { onFabClicked() },
-                expanded = fabVisibleState.value.not()
-            )
+            FloatingActionButton(
+                onClick = { onFabClicked() }
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Edit,
+                    contentDescription = null
+                )
+            }
         },
     ) {
         Surface(
@@ -104,7 +110,9 @@ fun HomeScreen(
                     onQueryChange = { search ->
                         searchQuery = search
                     },
-                    onSearch = {},
+                    onSearch = {
+                        isGridView = !isGridView
+                    },
                     active = false,
                     onActiveChange = {},
                     placeholder = { Text(stringResource(R.string.search_your_notes)) },
@@ -116,24 +124,43 @@ fun HomeScreen(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = null
                             )
+                        } else {
+                            LayoutToggleButton(
+                                isGridView = isGridView,
+                                onToggleClick = { isGridView = !isGridView }
+                            )
                         }
                     }
                 ) {
                 }
-
                 if (listOfAllNotes.isNotEmpty()) {
 
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(0.dp, 5.dp, 0.dp, 0.dp),
-                        state = scrollState
-                    ) {
+                    if (isGridView) {
+                        LazyVerticalStaggeredGrid(
+                            columns = StaggeredGridCells.Fixed(2),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(0.dp, 5.dp, 0.dp, 0.dp),
+                        ) {
+                            itemsIndexed(listOfAllNotes.filter { note ->
+                                note.title.contains(searchQuery, true)
+                            }) { _, notesModel ->
+                                GridNoteCard(notesModel, viewModel, navigateToUpdateNoteScreen, isGridView)
+                            }
+                        }
+                    } else {
 
-                        items(listOfAllNotes.filter { note ->
-                            note.title.contains(searchQuery, true)
-                        }) { notesModel ->
-                            SwapDelete(notesModel, viewModel, navigateToUpdateNoteScreen)
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(0.dp, 5.dp, 0.dp, 0.dp),
+                        ) {
+
+                            items(listOfAllNotes.filter { note ->
+                                note.title.contains(searchQuery, true)
+                            }) { notesModel ->
+                                SwipeDelete(notesModel, viewModel, navigateToUpdateNoteScreen)
+                            }
                         }
                     }
                 } else {
@@ -146,96 +173,3 @@ fun HomeScreen(
         }
     }
 }
-
-@Composable
-fun SwapDelete(
-    notesModel: Note,
-    viewModel: HomeScreenViewModel,
-    navigateToUpdateNoteScreen: (noteId: Int) -> Unit
-) {
-
-    val deleteDialogVisible = remember { mutableStateOf(false) }
-
-    val delete = SwipeAction(
-        onSwipe = {
-            deleteDialogVisible.value = true
-        },
-        icon = {
-            Icon(
-                modifier = Modifier.padding(12.dp),
-                painter = painterResource(R.drawable.ic_delete),
-                contentDescription = null,
-                tint = Color.White
-            )
-        },
-        background = Color.Red,
-    )
-
-    SwipeableActionsBox(
-        modifier = Modifier.padding(10.dp),
-        swipeThreshold = 100.dp,
-        endActions = listOf(delete)
-    ) {
-        NotesCard(notesModel, navigateToUpdateNoteScreen)
-
-    }
-    if (deleteDialogVisible.value) {
-        TextDialog(
-            title = stringResource(R.string.warning),
-            description = stringResource(R.string.are_you_sure_want_to_delete_these_items_it_cannot_be_recovered),
-            isOpened = deleteDialogVisible.value,
-            onDismissCallback = { deleteDialogVisible.value = false },
-            onConfirmCallback = {
-                viewModel.deleteNote(notesModel)
-                deleteDialogVisible.value = false
-            }
-        )
-    }
-}
-
-@Composable
-fun NotesCard(
-    noteModel: Note,
-    navigateToUpdateNoteScreen: (noteId: Int) -> Unit
-) {
-
-    Card(
-        modifier = Modifier
-            .padding(2.dp)
-            .fillMaxHeight()
-            .clickable { navigateToUpdateNoteScreen(noteModel.id) },
-        elevation = CardDefaults.cardElevation(3.dp),
-        shape = RoundedCornerShape(8.dp),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp)
-        ) {
-            Text(
-                text = noteModel.title,
-                fontSize = 22.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_semibold))
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = noteModel.note,
-                fontSize = 16.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_light))
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            val formattedDateTime =
-                SimpleDateFormat(
-                    Const.DATE_TIME_FORMAT,
-                    Locale.getDefault()
-                ).format(noteModel.dateTime)
-            Text(
-                text = formattedDateTime,
-                fontSize = 14.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_medium)),
-                color = Color.Gray
-            )
-        }
-    }
-}
-
