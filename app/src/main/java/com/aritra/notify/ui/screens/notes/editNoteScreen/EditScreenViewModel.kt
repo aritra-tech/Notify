@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.data.repository.NoteRepository
@@ -20,12 +21,11 @@ class EditScreenViewModel @Inject constructor(
     private val editScreenRepository: NoteRepository
 ) : AndroidViewModel(application) {
 
-
-    var noteModel by mutableStateOf(Note(0, "", "", Date()))
+    var noteModel = MutableLiveData(Note(0,"","",Date()))
 
     fun getNoteById(noteId: Int) = viewModelScope.launch(Dispatchers.IO) {
         editScreenRepository.getNoteByIdFromRoom(noteId).collect { response ->
-            noteModel = response
+            noteModel.postValue(response)
         }
     }
 
@@ -34,10 +34,10 @@ class EditScreenViewModel @Inject constructor(
     }
 
     fun updateTitle(title: String) {
-        noteModel = noteModel.copy(title = title)
+        noteModel.postValue(noteModel.value?.copy(title = title))
     }
 
     fun updateDescription(description: String) {
-        noteModel = noteModel.copy(note = description)
+        noteModel.postValue(noteModel.value?.copy(note = description))
     }
 }

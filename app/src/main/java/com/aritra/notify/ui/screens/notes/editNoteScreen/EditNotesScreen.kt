@@ -14,6 +14,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -42,13 +43,12 @@ fun EditNotesScreen(
     navigateBack: () -> Unit
 ) {
     val editViewModel = hiltViewModel<EditScreenViewModel>()
-    val title = editViewModel.noteModel.title
-    val description = editViewModel.noteModel.note
-    val dateTime = editViewModel.noteModel.dateTime
+    val title = editViewModel.noteModel.observeAsState().value?.title ?: ""
+    val description = editViewModel.noteModel.observeAsState().value?.note ?: ""
+    val dateTime = editViewModel.noteModel.observeAsState().value?.dateTime
     val focus = LocalFocusManager.current
-    val characterCount = remember { mutableIntStateOf(title.length + description.length) }
     val formattedDateTime = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
-    val formattedCharacterCount = "${characterCount.value} characters"
+    val formattedCharacterCount = "${(title.length) + (description.length)} characters"
 
     LaunchedEffect(Unit) {
         editViewModel.getNoteById(noteId)
@@ -72,7 +72,6 @@ fun EditNotesScreen(
                     value = title,
                     onValueChange = { newTitle ->
                         editViewModel.updateTitle(newTitle)
-                        characterCount.value = newTitle.length + description.length
                     },
                     placeholder = {
                         Text(
@@ -130,7 +129,6 @@ fun EditNotesScreen(
                     value = description,
                     onValueChange = { newDescription ->
                         editViewModel.updateDescription(newDescription)
-                        characterCount.value = title.length + newDescription.length
                     },
                     placeholder = {
                         Text(
