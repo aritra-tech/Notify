@@ -61,9 +61,16 @@ fun GridNoteCard(
             modifier = Modifier.padding(12.dp).fillMaxWidth()
         ) {
             Row(
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                Text(
+                    modifier = Modifier.padding(top = 10.dp),
+                    text = notesModel.title,
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily(Font(R.font.poppins_semibold))
+                )
+
                 if (isGridView) {
                     IconButton(
                         onClick = { expanded = true }
@@ -103,11 +110,6 @@ fun GridNoteCard(
                     }
                 }
             }
-            Text(
-                text = notesModel.title,
-                fontSize = 20.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_semibold))
-            )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = notesModel.note,
