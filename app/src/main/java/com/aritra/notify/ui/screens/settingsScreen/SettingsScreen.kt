@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -39,7 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.SettingsComponent
-import com.aritra.notify.components.topbar.SettingsTopAppBar
+import com.aritra.notify.components.topbar.TopBar
 import com.aritra.notify.viewmodel.ThemeViewModel
 import com.aritra.notify.utils.Const
 
@@ -64,110 +65,131 @@ fun SettingsScreen() {
     )
 
     Scaffold(
-        topBar = { SettingsTopAppBar() }
+        topBar = {
+            TopBar(
+                title = stringResource(R.string.settings)
+            )
+        }
     ) {
         Surface(
             modifier = Modifier.padding(it)
         ) {
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(14.dp)
             ) {
                 /** App Settings. */
 
-                Text(
-                    modifier = Modifier.padding(start = 5.dp),
-                    text = stringResource(R.string.app_settings),
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily(Font(R.font.poppins_medium))
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                Card(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surface),
-                    elevation = CardDefaults.cardElevation(5.dp)
-                ) {
-                    Row(
+                item {
+                    Text(
+                        modifier = Modifier.padding(start = 5.dp),
+                        text = stringResource(R.string.app_settings),
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_medium))
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Card(
                         modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
+                            .clip(RoundedCornerShape(10.dp))
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(5.dp)
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.moon_icon),
-                            contentDescription = stringResource(R.string.icon),
-                            modifier = Modifier.size(30.dp),
-                        )
-                        Text(
-                            modifier = Modifier.padding(start = 10.dp),
-                            text = stringResource(R.string.dark_mode),
-                            fontSize = 20.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_semibold))
-                        )
-                        Switch(
+                        Row(
                             modifier = Modifier
-                                .semantics { contentDescription = "Theme Switch" }
-                                .padding(start = 120.dp),
-                            checked = themeState.isDarkMode,
-                            onCheckedChange = { themeViewModel.toggleTheme() }
-                        )
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.moon_icon),
+                                contentDescription = stringResource(R.string.icon),
+                                modifier = Modifier.size(30.dp),
+                            )
+                            Text(
+                                modifier = Modifier.padding(start = 10.dp),
+                                text = stringResource(R.string.dark_mode),
+                                fontSize = 20.sp,
+                                fontFamily = FontFamily(Font(R.font.poppins_semibold))
+                            )
+                            Switch(
+                                modifier = Modifier
+                                    .semantics { contentDescription = "Theme Switch" }
+                                    .padding(start = 120.dp),
+                                checked = themeState.isDarkMode,
+                                onCheckedChange = { themeViewModel.toggleTheme() }
+                            )
+                        }
                     }
                 }
 
                 /** Import & Export. **/
 
-                Spacer(modifier = Modifier.height(20.dp))
-                Text(
-                    modifier = Modifier.padding(start = 5.dp),
-                    text = stringResource(R.string.import_export),
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily(Font(R.font.poppins_medium))
-                )
-                SettingsComponent(
-                    settingHeaderText = stringResource(R.string.backup_data),
-                    painterResourceID = R.drawable.backup_icon
-                ) {
-                    exportLauncher.launch(Const.DATABASE_FILE_NAME)
-                }
-                SettingsComponent(
-                    settingHeaderText = stringResource(R.string.import_data),
-                    painterResourceID = R.drawable.import_icon
-                ) {
-                    importLauncher.launch(arrayOf("*/*"))
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        modifier = Modifier.padding(start = 5.dp),
+                        text = stringResource(R.string.import_export),
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_medium))
+                    )
+                    SettingsComponent(
+                        settingHeaderText = stringResource(R.string.backup_data),
+                        painterResourceID = R.drawable.backup_icon
+                    ) {
+                        exportLauncher.launch(Const.DATABASE_FILE_NAME)
+                    }
+                    SettingsComponent(
+                        settingHeaderText = stringResource(R.string.import_data),
+                        painterResourceID = R.drawable.import_icon
+                    ) {
+                        importLauncher.launch(arrayOf("*/*"))
+                    }
                 }
 
                 /** Product. **/
 
-                Spacer(modifier = Modifier.height(20.dp))
-                Text(
-                    modifier = Modifier.padding(start = 5.dp),
-                    text = stringResource(R.string.product),
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily(Font(R.font.poppins_medium))
-                )
-                SettingsComponent(
-                    settingHeaderText = stringResource(R.string.visit_github),
-                    painterResourceID = R.drawable.github_icon
-                ) {
-                    val intent = Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse(Const.GITHUB_URL)
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        modifier = Modifier.padding(start = 5.dp),
+                        text = stringResource(R.string.product),
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_medium))
                     )
-                    context.startActivity(intent)
+                    SettingsComponent(
+                        settingHeaderText = stringResource(R.string.visit_github),
+                        painterResourceID = R.drawable.github_icon
+                    ) {
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(Const.GITHUB_URL)
+                        )
+                        context.startActivity(intent)
+                    }
+                    SettingsComponent(
+                        settingHeaderText = stringResource(R.string.request_feature),
+                        painterResourceID = R.drawable.code
+                    ) {
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(Const.GITHUB_ISSUE)
+                        )
+                        context.startActivity(intent)
+                    }
+                    SettingsComponent(
+                        settingHeaderText = stringResource(R.string.privacy_policy),
+                        painterResourceID = R.drawable.policy
+                    ) {
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(Const.PRIVACY_POLICY)
+                        )
+                        context.startActivity(intent)
+                    }
                 }
-                SettingsComponent(
-                    settingHeaderText = stringResource(R.string.request_feature),
-                    painterResourceID = R.drawable.code
-                ) {
-                    val intent = Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse(Const.GITHUB_ISSUE)
-                    )
-                    context.startActivity(intent)
-                }
+
             }
         }
     }
