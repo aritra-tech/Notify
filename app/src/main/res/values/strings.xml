@@ -27,4 +27,5 @@
     <string name="product">Product</string>
     <string name="request_feature">Request Feature</string>
     <string name="share_notify">Share Notify</string>
+    <string name="app_settings">App Settings</string>
 </resources>

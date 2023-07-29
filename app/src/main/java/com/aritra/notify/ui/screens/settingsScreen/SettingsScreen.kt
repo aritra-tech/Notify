@@ -78,11 +78,11 @@ fun SettingsScreen() {
 
                 Text(
                     modifier = Modifier.padding(start = 5.dp),
-                    text = "App Settings",
-                    fontSize = 18.sp,
+                    text = stringResource(R.string.app_settings),
+                    fontSize = 14.sp,
                     fontFamily = FontFamily(Font(R.font.poppins_medium))
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(6.dp))
                 Card(
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
@@ -123,10 +123,9 @@ fun SettingsScreen() {
                 Text(
                     modifier = Modifier.padding(start = 5.dp),
                     text = stringResource(R.string.import_export),
-                    fontSize = 18.sp,
+                    fontSize = 14.sp,
                     fontFamily = FontFamily(Font(R.font.poppins_medium))
                 )
-                Spacer(modifier = Modifier.height(5.dp))
                 SettingsComponent(
                     settingHeaderText = stringResource(R.string.backup_data),
                     painterResourceID = R.drawable.backup_icon
@@ -146,7 +145,7 @@ fun SettingsScreen() {
                 Text(
                     modifier = Modifier.padding(start = 5.dp),
                     text = stringResource(R.string.product),
-                    fontSize = 18.sp,
+                    fontSize = 14.sp,
                     fontFamily = FontFamily(Font(R.font.poppins_medium))
                 )
                 SettingsComponent(

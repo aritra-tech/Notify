@@ -34,7 +34,7 @@ fun SettingsComponent(
     painterResourceID: Int,
     clickable: () -> Unit
 ) {
-    Spacer(modifier = modifier.height(12.dp))
+    Spacer(modifier = modifier.height(6.dp))
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -47,7 +47,7 @@ fun SettingsComponent(
     ) {
         Row(
             modifier = modifier
-                .padding(12.dp)
+                .padding(16.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
