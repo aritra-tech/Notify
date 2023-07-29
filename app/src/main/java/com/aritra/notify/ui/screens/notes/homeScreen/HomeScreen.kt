@@ -43,6 +43,7 @@ import com.aritra.notify.components.actions.SwipeDelete
 import com.aritra.notify.components.note.GridNoteCard
 import com.aritra.notify.components.topbar.TopBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onFabClicked: () -> Unit,
