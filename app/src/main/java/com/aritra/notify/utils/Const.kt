@@ -11,6 +11,5 @@ object Const {
     const val DISMISS_BUTTON = "dismiss_button"
     const val GITHUB_URL = "https://github.com/aritra-tech/Notify"
     const val GITHUB_ISSUE = "https://github.com/aritra-tech/Notify/issues"
-    const val TERMS_AND_CONDITION = "https://www.freeprivacypolicy.com/live/48a09fcc-8451-4a03-acfb-29a0d8b536d5"
     const val PRIVACY_POLICY = "https://www.freeprivacypolicy.com/live/e4342ac0-aedf-4b36-9a7c-95900bf66074"
 }

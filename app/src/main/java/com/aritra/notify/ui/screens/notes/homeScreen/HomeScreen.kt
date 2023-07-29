@@ -56,7 +56,11 @@ fun HomeScreen(
     var isGridView by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
-        topBar = { TopBar() },
+        topBar = {
+            TopBar(
+                title = stringResource(R.string.all_notes)
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onFabClicked() }
@@ -118,7 +122,12 @@ fun HomeScreen(
                             itemsIndexed(listOfAllNotes.filter { note ->
                                 note.title.contains(searchQuery, true)
                             }) { _, notesModel ->
-                                GridNoteCard(notesModel, viewModel, navigateToUpdateNoteScreen, isGridView)
+                                GridNoteCard(
+                                    notesModel,
+                                    viewModel,
+                                    navigateToUpdateNoteScreen,
+                                    isGridView
+                                )
                             }
                         }
                     } else {
