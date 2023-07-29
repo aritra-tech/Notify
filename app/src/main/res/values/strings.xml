@@ -18,14 +18,13 @@
     <string name="save">save</string>
     <string name="compose">Compose</string>
     <string name="dark_mode">Dark Mode</string>
-    <string name="export_import">Export/Import</string>
-    <string name="export_or_import_your_notes_to_a_file">Export or Import your notes to a file.</string>
     <string name="visit_github">Visit Github</string>
-    <string name="notify_is_completely_open_source_have_a_feedback_visit_github">Notify is completely open source. \n Have a feedback visit Github!</string>
-    <string name="export_and_import"><![CDATA[Export & Import]]></string>
-    <string name="export_or_import_of_your_notes_internally_on_your_phone">Export or Import of your notes internally on your phone.</string>
-    <string name="export">Export</string>
-    <string name="Import">Import</string>
     <string name="no_notes_added">No Notes added</string>
     <string name="click_on_the_compose_button_to_add">Click on the \(Compose\) button to add</string>
+    <string name="import_export"><![CDATA[Import & Export]]></string>
+    <string name="backup_data">Backup Data</string>
+    <string name="import_data">Import Data</string>
+    <string name="product">Product</string>
+    <string name="request_feature">Request Feature</string>
+    <string name="share_notify">Share Notify</string>
 </resources>
