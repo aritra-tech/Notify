@@ -31,7 +31,6 @@ import com.aritra.notify.R
 fun SettingsComponent(
     modifier: Modifier = Modifier,
     settingHeaderText: String,
-    settingText: String,
     painterResourceID: Int,
     clickable: () -> Unit
 ) {
@@ -51,13 +50,16 @@ fun SettingsComponent(
                 .padding(12.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            Icon(
+                painter = painterResource(painterResourceID),
+                contentDescription = stringResource(R.string.icon),
+                modifier = modifier.size(30.dp),
+            )
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start,
-                modifier = modifier
-                    .padding(10.dp)
+                modifier = modifier.padding(10.dp)
             ) {
                 Text(
                     text = settingHeaderText,
@@ -65,19 +67,8 @@ fun SettingsComponent(
                     fontFamily = FontFamily(Font(R.font.poppins_semibold))
                 )
 
-                Text(
-                    text = settingText,
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(R.font.poppins_light))
-                )
             }
-            Icon(
-                painter = painterResource(painterResourceID),
-                contentDescription = stringResource(R.string.icon),
-                modifier = modifier
-                    .size(35.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
+
         }
     }
 }
