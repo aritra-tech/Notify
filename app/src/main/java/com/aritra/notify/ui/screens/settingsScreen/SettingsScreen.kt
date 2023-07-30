@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.SettingsComponent
+import com.aritra.notify.components.actions.SettingsSwitchCard
 import com.aritra.notify.components.topbar.TopBar
 import com.aritra.notify.viewmodel.ThemeViewModel
 import com.aritra.notify.utils.Const
@@ -89,39 +90,12 @@ fun SettingsScreen() {
                         fontFamily = FontFamily(Font(R.font.poppins_medium))
                     )
                     Spacer(modifier = Modifier.height(6.dp))
-                    Card(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surface),
-                        elevation = CardDefaults.cardElevation(5.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.moon_icon),
-                                contentDescription = stringResource(R.string.icon),
-                                modifier = Modifier.size(30.dp),
-                            )
-                            Text(
-                                modifier = Modifier.padding(start = 10.dp),
-                                text = stringResource(R.string.dark_mode),
-                                fontSize = 20.sp,
-                                fontFamily = FontFamily(Font(R.font.poppins_semibold))
-                            )
-                            Switch(
-                                modifier = Modifier
-                                    .semantics { contentDescription = "Theme Switch" }
-                                    .padding(start = 120.dp),
-                                checked = themeState.isDarkMode,
-                                onCheckedChange = { themeViewModel.toggleTheme() }
-                            )
+                    SettingsSwitchCard(
+                        isDarkMode = themeState.isDarkMode,
+                        onToggleTheme = {
+                            themeViewModel.toggleTheme()
                         }
-                    }
+                    )
                 }
 
                 /** Import & Export. **/
@@ -172,11 +146,9 @@ fun SettingsScreen() {
                         settingHeaderText = stringResource(R.string.request_feature),
                         painterResourceID = R.drawable.code
                     ) {
-                        val intent = Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(Const.GITHUB_ISSUE)
-                        )
-                        context.startActivity(intent)
+                        val openURL = Intent(Intent.ACTION_VIEW)
+                        openURL.data = Uri.parse(context.resources.getString(R.string.mailTo))
+                        context.startActivity(openURL)
                     }
                     SettingsComponent(
                         settingHeaderText = stringResource(R.string.privacy_policy),
