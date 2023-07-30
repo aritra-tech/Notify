@@ -23,7 +23,7 @@ class BackupRepository(
                 provider.close()
 
                 context.contentResolver.openOutputStream(uri)?.use { stream ->
-                    context.getDatabasePath(Const.NAME).inputStream().copyTo(stream)
+                    context.getDatabasePath(Const.DB_NAME).inputStream().copyTo(stream)
                 }
             }
         }
@@ -35,7 +35,7 @@ class BackupRepository(
                 provider.close()
 
                 context.contentResolver.openInputStream(uri)?.use { stream ->
-                    val dbFile = context.getDatabasePath(Const.NAME)
+                    val dbFile = context.getDatabasePath(Const.DB_NAME)
                     dbFile?.delete()
                     stream.copyTo(dbFile.outputStream())
                 }
