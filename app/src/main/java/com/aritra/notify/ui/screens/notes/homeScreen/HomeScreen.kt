@@ -37,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
+import com.aritra.notify.components.actions.BackPressHandler
 import com.aritra.notify.components.actions.LayoutToggleButton
 import com.aritra.notify.components.actions.NoList
 import com.aritra.notify.components.actions.SwipeDelete
@@ -49,6 +50,8 @@ fun HomeScreen(
     onFabClicked: () -> Unit,
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit
 ) {
+
+    BackPressHandler()
 
     val viewModel = hiltViewModel<HomeScreenViewModel>()
     val listOfAllNotes by viewModel.listOfNotes.observeAsState(listOf())
