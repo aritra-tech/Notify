@@ -1,14 +1,14 @@
+<p align="center">
+  <img src="art/banner_notify.png" height="470"/>
+</p>
 
-![Niotify](https://github.com/aritra-tech/Notify/assets/80090908/cce1cf41-a9e3-4379-88fb-99702ba23a9f)
-
-
-## Notify 📱
+# Notify 📱
 
 📝 _**Notify**_ is a simple note application which is build with _Modern Android development_ tools.    
 This project showcases _Good implementation_ of Android with proper architecture design.              
 _Made with ♥ for all Android Developers_   
 
-## Features  👓
+# Features  👓
 
 _Notify_ focuses on the following key things:
 
@@ -20,7 +20,16 @@ _Notify_ focuses on the following key things:
 - [x] Jetpack Compose UI
 - [ ] Tests
 
-## Built with 🛠
+# Design ✨
+#### 🌞 Light Mode
+
+![](art/light_mode.png)
+
+#### 🌞 Light Mode
+
+![](art/dark_mode.png)
+
+# Built with 🛠
 
 - [Kotlin](https://kotlinlang.org/) - First class and official programming language for Android development.
 - [Coroutines](https://kotlinlang.org/docs/reference/coroutines-overview.html) - For asynchronous calls and tasks to utilize threads.
@@ -36,8 +45,7 @@ _Notify_ focuses on the following key things:
 - [Material Components for Android](https://github.com/material-components/material-components-android) - Modular and customizable Material Design UI components for Android.
 - [Accompanist](https://google.github.io/accompanist/) - A collection of extension libraries for Jetpack Compose
 
-## Architecture 👷‍♂️
-
-![mvvm](https://github.com/aritra-tech/Notify/assets/80090908/6adb42b6-c3b9-4134-8213-88d4ac002cf8)
-
+# Architecture 👷‍♂️
 This app uses [MVVM(Model View View-Model)](https://developer.android.com/topic/architecture#recommended-app-arch) architecture.
+
+![MVVM](art/mvvm.png)
