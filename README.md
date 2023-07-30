@@ -25,7 +25,7 @@ _Notify_ focuses on the following key things:
 
 ![](art/light_mode.png)
 
-#### 🌞 Light Mode
+#### 🌛 Dark Mode
 
 ![](art/dark_mode.png)
 
