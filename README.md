@@ -8,6 +8,8 @@
 This project showcases _Good implementation_ of Android with proper architecture design.              
 _Made with ♥ for all Android Developers_   
 
+<a href="https://play.google.com/store/apps/details?id=com.aritra.notify"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height=80px />
+
 # Features  👓
 
 _Notify_ focuses on the following key things:
