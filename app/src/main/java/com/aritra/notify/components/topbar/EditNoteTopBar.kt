@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -36,6 +37,7 @@ import com.aritra.notify.R
 import com.aritra.notify.components.actions.ShareOption
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.ui.screens.notes.editNoteScreen.EditScreenViewModel
+import com.aritra.notify.utils.shareAsImage
 import com.aritra.notify.utils.shareNoteAsText
 import java.util.Date
 
@@ -55,6 +57,8 @@ fun EditNoteTopBar(
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
+    val view = LocalView.current
+    val bitmapSize = view.width to view.height
 
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -92,7 +96,7 @@ fun EditNoteTopBar(
                             .navigationBarsPadding()
                             .padding(16.dp)
                     ) {
-                        Spacer(modifier = Modifier.height(15.dp))
+                        Spacer(modifier = Modifier.height(5.dp))
                         ShareOption(
                             text = stringResource(R.string.share_note_as_text),
                             onClick = {
@@ -100,20 +104,14 @@ fun EditNoteTopBar(
                                 showSheet = false
                             }
                         )
-                        Spacer(modifier = Modifier.height(14.dp))
-                        Button(
-                            onClick = { showSheet = false },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(10.dp),
-                        ) {
-                            Text(
-                                text = stringResource(R.string.cancel),
-                                fontSize = 16.sp,
-                                textAlign = TextAlign.Center,
-                                fontFamily = FontFamily(Font(R.font.poppins_medium))
-                            )
-                        }
+                        Spacer(modifier = Modifier.height(15.dp))
+                        ShareOption(
+                            text = stringResource(R.string.share_note_as_picture),
+                            onClick = {
+                                shareAsImage(view, bitmapSize)
+                                showSheet = false
+                            }
+                        )
                     }
                 }
             }

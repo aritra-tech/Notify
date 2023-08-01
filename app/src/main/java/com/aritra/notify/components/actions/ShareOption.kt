@@ -17,7 +17,7 @@ fun ShareOption(
     Text(
         text = text,
         fontSize = 18.sp,
-        fontFamily = FontFamily(Font(R.font.poppins_medium)),
+        fontFamily = FontFamily(Font(R.font.poppins_light)),
         modifier = Modifier.clickable { onClick() }
     )
 }
