@@ -1,6 +1,6 @@
 package com.aritra.notify.components.topbar
 
-import android.content.Intent
+
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -36,6 +38,7 @@ import com.aritra.notify.R
 import com.aritra.notify.components.actions.ShareOption
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.ui.screens.notes.addNoteScreen.AddNoteViewModel
+import com.aritra.notify.utils.shareAsImage
 import com.aritra.notify.utils.shareNoteAsText
 import java.util.Date
 
@@ -56,6 +59,9 @@ fun AddNoteTopBar(
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
+    val view = LocalView.current
+    val bitmapSize = view.width to view.height
+
 
 
     CenterAlignedTopAppBar(
@@ -87,7 +93,8 @@ fun AddNoteTopBar(
                 if (showSheet) {
                     ModalBottomSheet(
                         onDismissRequest = { showSheet = false },
-                        sheetState = bottomSheetState
+                        sheetState = bottomSheetState,
+                        dragHandle = { BottomSheetDefaults.DragHandle() }
                     ) {
                         Column(
                             modifier = Modifier
@@ -95,7 +102,7 @@ fun AddNoteTopBar(
                                 .navigationBarsPadding()
                                 .padding(16.dp)
                         ) {
-                            Spacer(modifier = Modifier.height(15.dp))
+                            Spacer(modifier = Modifier.height(5.dp))
                             ShareOption(
                                 text = stringResource(R.string.share_note_as_text),
                                 onClick = {
@@ -103,20 +110,14 @@ fun AddNoteTopBar(
                                     showSheet = false
                                 }
                             )
-                            Spacer(modifier = Modifier.height(14.dp))
-                            Button(
-                                onClick = { showSheet = false },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.cancel),
-                                    fontSize = 16.sp,
-                                    textAlign = TextAlign.Center,
-                                    fontFamily = FontFamily(Font(R.font.poppins_medium))
-                                )
-                            }
+                            Spacer(modifier = Modifier.height(15.dp))
+                            ShareOption(
+                                text = stringResource(R.string.share_note_as_picture),
+                                onClick = {
+                                    shareAsImage(view, bitmapSize)
+                                    showSheet = false
+                                }
+                            )
                         }
                     }
                 }
@@ -138,3 +139,4 @@ fun AddNoteTopBar(
         }
     )
 }
+

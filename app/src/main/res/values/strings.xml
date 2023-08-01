@@ -8,8 +8,8 @@
     <string name="the_text_change_will_not_be_saved">The text change will not be saved</string>
     <string name="notes">Notes</string>
     <string name="title">Title</string>
-    <string name="share_note_as_text">Share note as text</string>
-    <string name="share_note_as_picture">Share note as picture</string>
+    <string name="share_note_as_text">Share as Text</string>
+    <string name="share_note_as_picture">Share as Image</string>
     <string name="cancel">Cancel</string>
     <string name="search_your_notes">Search your notes</string>
     <string name="icon">icon</string>
