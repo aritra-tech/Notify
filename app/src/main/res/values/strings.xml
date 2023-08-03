@@ -34,4 +34,5 @@
     <string name="settings">Settings</string>
     <string name="all_notes">All Notes</string>
     <string name="mailTo">mailto:aritrarick2002@gmail.com?Subject=Your%20feedback%20is%20important%20to%20us%21</string>
+    <string name="share_as_pdf">Share as PDF</string>
 </resources>
