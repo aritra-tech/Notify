@@ -14,14 +14,14 @@ import com.aritra.notify.R
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.note.NotesCard
 import com.aritra.notify.data.models.Note
-import com.aritra.notify.ui.screens.notes.homeScreen.HomeScreenViewModel
+import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 
 @Composable
 fun SwipeDelete(
     notesModel: Note,
-    viewModel: HomeScreenViewModel,
+    viewModel: NoteScreenViewModel,
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit
 ) {
 

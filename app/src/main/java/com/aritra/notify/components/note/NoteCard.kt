@@ -45,8 +45,8 @@ fun NotesCard(
         ) {
             Text(
                 text = noteModel.title,
-                fontSize = 20.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_semibold))
+                fontSize = 22.sp,
+                fontFamily = FontFamily(Font(R.font.poppins_medium))
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
@@ -56,16 +56,20 @@ fun NotesCard(
             )
             Spacer(modifier = Modifier.height(10.dp))
             val formattedDateTime =
-                SimpleDateFormat(
-                    Const.DATE_TIME_FORMAT,
-                    Locale.getDefault()
-                ).format(noteModel.dateTime)
-            Text(
-                text = formattedDateTime,
-                fontSize = 14.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_medium)),
-                color = Color.Gray
-            )
+                noteModel.dateTime?.let {
+                    SimpleDateFormat(
+                        Const.DATE_TIME_FORMAT,
+                        Locale.getDefault()
+                    ).format(it)
+                }
+            formattedDateTime?.let {
+                Text(
+                    text = formattedDateTime,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.poppins_light)),
+                    color = Color.Gray
+                )
+            }
         }
     }
 }

@@ -19,8 +19,8 @@
     <string name="compose">Compose</string>
     <string name="dark_mode">Dark Mode</string>
     <string name="visit_github">Visit Github</string>
-    <string name="no_notes_added">No Notes added</string>
-    <string name="click_on_the_compose_button_to_add">Click on the \(Compose\) button to add</string>
+    <string name="no_notes_added">No Notes </string>
+    <string name="click_on_the_compose_button_to_add">Tap \(✎\) to create note</string>
     <string name="import_export"><![CDATA[Import & Export]]></string>
     <string name="backup_data">Backup Data</string>
     <string name="import_data">Import Data</string>

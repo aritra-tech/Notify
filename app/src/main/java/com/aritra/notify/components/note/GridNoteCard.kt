@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.data.models.Note
-import com.aritra.notify.ui.screens.notes.homeScreen.HomeScreenViewModel
+import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
 import com.aritra.notify.utils.Const
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -42,7 +42,7 @@ import java.util.Locale
 @Composable
 fun GridNoteCard(
     notesModel: Note,
-    viewModel: HomeScreenViewModel,
+    viewModel: NoteScreenViewModel,
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
     isGridView: Boolean
 ) {
