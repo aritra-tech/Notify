@@ -38,6 +38,7 @@ import com.aritra.notify.components.actions.ShareOption
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.ui.screens.notes.editNoteScreen.EditScreenViewModel
 import com.aritra.notify.utils.shareAsImage
+import com.aritra.notify.utils.shareAsPdf
 import com.aritra.notify.utils.shareNoteAsText
 import java.util.Date
 
@@ -109,6 +110,14 @@ fun EditNoteTopBar(
                             text = stringResource(R.string.share_note_as_picture),
                             onClick = {
                                 shareAsImage(view, bitmapSize)
+                                showSheet = false
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(15.dp))
+                        ShareOption(
+                            text = stringResource(R.string.share_as_pdf),
+                            onClick = {
+                                shareAsPdf(view, "Notify")
                                 showSheet = false
                             }
                         )

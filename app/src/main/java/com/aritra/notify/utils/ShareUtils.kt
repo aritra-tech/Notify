@@ -12,8 +12,6 @@ import android.view.View
 import androidx.core.content.FileProvider
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
-
 fun shareNoteAsText(context: Context, title: String, description: String) {
 
     val shareMsg = "Title: $title\nNote: $description"
@@ -59,9 +57,9 @@ private fun saveBitmapToCache(context: Context, bitmap: Bitmap): Uri {
 }
 fun shareAsPdf(view: View, pdfFileName: String) {
     val bitmap = createBitmapFromView(view, view.width, view.height)
-    if (bitmap != null) {
+    bitmap?.let {
         val pdfFile = saveBitmapAsPdf(view.context, bitmap, pdfFileName)
-        if (pdfFile != null) {
+        pdfFile?.let {
             val uri = FileProvider.getUriForFile(view.context, "${view.context.packageName}.provider", pdfFile)
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "application/pdf"
@@ -72,28 +70,23 @@ fun shareAsPdf(view: View, pdfFileName: String) {
     }
 }
 private fun saveBitmapAsPdf(context: Context, bitmap: Bitmap, pdfFileName: String): File? {
-    val pdfDir = File(context.cacheDir, "pdfs")
-    pdfDir.mkdirs()
+    val pdfDir = File(context.cacheDir, "pdfs").apply { mkdirs() }
     val pdfFile = File(pdfDir, "$pdfFileName.pdf")
 
-    try {
-        pdfFile.createNewFile()
-        val outputStream = FileOutputStream(pdfFile)
-        val document = PdfDocument()
+    pdfFile.createNewFile()
+    val outputStream = FileOutputStream(pdfFile)
+    PdfDocument().apply {
         val pageInfo = PdfDocument.PageInfo.Builder(bitmap.width, bitmap.height, 1).create()
-        val page = document.startPage(pageInfo)
+        val page = startPage(pageInfo)
         val canvas = page.canvas
-        val paint = Paint()
-        paint.color = Color.parseColor("#FFFFFF")
+        val paint = Paint().apply { color = Color.WHITE }
         canvas.drawPaint(paint)
         canvas.drawBitmap(bitmap, 0f, 0f, null)
-        document.finishPage(page)
-        document.writeTo(outputStream)
+        finishPage(page)
+        writeTo(outputStream)
         outputStream.close()
-        document.close()
-        return pdfFile
-    } catch (e: IOException) {
-        e.printStackTrace()
+        close()
     }
-    return null
+
+    return pdfFile
 }
