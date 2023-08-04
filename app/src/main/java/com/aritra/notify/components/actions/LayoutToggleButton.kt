@@ -27,6 +27,6 @@ fun LayoutToggleButton(
         onClick = onToggleClick,
         modifier = Modifier.padding(4.dp)
     ) {
-        Image(imageToShow, contentDescription = null, colorFilter = ColorFilter.tint(tint))
+        Image(imageToShow, contentDescription = "Toggle Button", colorFilter = ColorFilter.tint(tint))
     }
 }

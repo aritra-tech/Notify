@@ -46,14 +46,14 @@ import com.aritra.notify.components.topbar.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
+fun NoteScreen(
     onFabClicked: () -> Unit,
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit
 ) {
 
     BackPressHandler()
 
-    val viewModel = hiltViewModel<HomeScreenViewModel>()
+    val viewModel = hiltViewModel<NoteScreenViewModel>()
     val listOfAllNotes by viewModel.listOfNotes.observeAsState(listOf())
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var isGridView by rememberSaveable { mutableStateOf(false) }
@@ -70,7 +70,7 @@ fun HomeScreen(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Edit,
-                    contentDescription = null
+                    contentDescription = "Add Notes"
                 )
             }
         },
@@ -102,7 +102,7 @@ fun HomeScreen(
                             Icon(
                                 modifier = Modifier.clickable { searchQuery = "" },
                                 imageVector = Icons.Default.Close,
-                                contentDescription = null
+                                contentDescription = "Close"
                             )
                         } else {
                             LayoutToggleButton(

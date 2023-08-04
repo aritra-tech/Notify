@@ -8,7 +8,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -22,21 +21,20 @@ import androidx.navigation.navArgument
 import com.aritra.notify.R
 import com.aritra.notify.ui.screens.notes.addNoteScreen.AddNotesScreen
 import com.aritra.notify.ui.screens.notes.editNoteScreen.EditNotesScreen
-import com.aritra.notify.ui.screens.notes.homeScreen.HomeScreen
+import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
-import kotlinx.coroutines.delay
 
 @Composable
 fun NotifyApp(navController: NavHostController = rememberNavController()) {
 
     val bottomNavItem = listOf(
         BottomNavItem(
-            route = NotifyScreens.Home.name,
-            Icon = R.drawable.home_outline
+            route = NotifyScreens.Notes.name,
+            icon = R.drawable.note_outline
         ),
         BottomNavItem(
             route = NotifyScreens.Settings.name,
-            Icon = R.drawable.settings_outline
+            icon = R.drawable.settings_outline
         ),
     )
     val screensWithHiddenNavBar = listOf(
@@ -54,7 +52,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                             alwaysShowLabel = true,
                             icon = {
                                 Icon(
-                                    painter = painterResource(id = item.Icon),
+                                    painter = painterResource(id = item.icon),
                                     contentDescription = null,
                                     tint = if (backStackEntry.value?.destination?.route == item.route)
                                         MaterialTheme.colorScheme.onSurface
@@ -77,12 +75,12 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
     ) {
         NavHost(
             navController = navController,
-            startDestination = NotifyScreens.Home.name,
+            startDestination = NotifyScreens.Notes.name,
             modifier = Modifier
                 .padding(it)
         ) {
-            composable(route = NotifyScreens.Home.name) {
-                HomeScreen(
+            composable(route = NotifyScreens.Notes.name) {
+                NoteScreen(
                     onFabClicked = { navController.navigate(NotifyScreens.AddNotes.name) },
                     navigateToUpdateNoteScreen = { noteId ->
                         navController.navigate("${NotifyScreens.UpdateNotes.name}/$noteId")
