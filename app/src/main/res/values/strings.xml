@@ -35,4 +35,7 @@
     <string name="all_notes">All Notes</string>
     <string name="mailTo">mailto:aritrarick2002@gmail.com?Subject=Your%20feedback%20is%20important%20to%20us%21</string>
     <string name="share_as_pdf">Share as PDF</string>
+    <string name="others">Others</string>
+    <string name="rate_us_on_google_play">Rate us on Google Play</string>
+    <string name="on_share_message">https://play.google.com/store/apps/details?id=com.aritra.notify</string>
 </resources>

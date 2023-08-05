@@ -28,6 +28,7 @@ import com.aritra.notify.components.actions.SettingsComponent
 import com.aritra.notify.components.actions.SettingsSwitchCard
 import com.aritra.notify.viewmodel.ThemeViewModel
 import com.aritra.notify.utils.Const
+import com.aritra.notify.utils.shareApp
 
 @Composable
 fun SettingsScreen() {
@@ -97,6 +98,34 @@ fun SettingsScreen() {
                         painterResourceID = R.drawable.import_icon
                     ) {
                         importLauncher.launch(arrayOf("*/*"))
+                    }
+                }
+
+                /** Others. **/
+
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        modifier = Modifier.padding(start = 5.dp),
+                        text = stringResource(R.string.others),
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_medium))
+                    )
+                    SettingsComponent(
+                        settingHeaderText = stringResource(R.string.rate_us_on_google_play),
+                        painterResourceID = R.drawable.star_icon
+                    ) {
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(Const.PLAY_STORE)
+                        )
+                        context.startActivity(intent)
+                    }
+                    SettingsComponent(
+                        settingHeaderText = stringResource(R.string.share_notify),
+                        painterResourceID = R.drawable.share_icon
+                    ) {
+                        shareApp(context)
                     }
                 }
 
