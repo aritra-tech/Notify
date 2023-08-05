@@ -10,6 +10,7 @@ import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.view.View
 import androidx.core.content.FileProvider
+import com.aritra.notify.R
 import java.io.File
 import java.io.FileOutputStream
 fun shareNoteAsText(context: Context, title: String, description: String) {
@@ -89,4 +90,14 @@ private fun saveBitmapAsPdf(context: Context, bitmap: Bitmap, pdfFileName: Strin
     }
 
     return pdfFile
+}
+
+fun shareApp(context: Context) {
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, context.getString(R.string.on_share_message))
+        type = "text/plain"
+    }
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    context.startActivity(shareIntent)
 }

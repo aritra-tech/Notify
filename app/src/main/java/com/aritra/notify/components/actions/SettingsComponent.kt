@@ -54,7 +54,7 @@ fun SettingsComponent(
             Icon(
                 painter = painterResource(painterResourceID),
                 contentDescription = stringResource(R.string.icon),
-                modifier = modifier.size(30.dp),
+                modifier = modifier.size(25.dp),
             )
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -63,7 +63,7 @@ fun SettingsComponent(
             ) {
                 Text(
                     text = settingHeaderText,
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     fontFamily = FontFamily(Font(R.font.poppins_semibold))
                 )
 

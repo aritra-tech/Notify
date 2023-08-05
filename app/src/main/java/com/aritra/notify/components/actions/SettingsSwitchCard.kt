@@ -49,12 +49,12 @@ fun SettingsSwitchCard(
             Icon(
                 painter = painterResource(id = R.drawable.moon_icon),
                 contentDescription = stringResource(R.string.icon),
-                modifier = Modifier.size(30.dp),
+                modifier = Modifier.size(25.dp),
             )
             Text(
                 modifier = Modifier.padding(start = 10.dp),
                 text = stringResource(R.string.dark_mode),
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 fontFamily = FontFamily(Font(R.font.poppins_semibold))
             )
             Switch(
