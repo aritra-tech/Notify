@@ -50,7 +50,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
     Scaffold(
         bottomBar = {
             if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
-                NavigationBar(modifier = Modifier.height(60.dp)) {
+                NavigationBar(modifier = Modifier.height(80.dp)) {
                     bottomNavItem.forEach { item ->
                         NavigationBarItem(
                             alwaysShowLabel = true,

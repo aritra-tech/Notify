@@ -42,7 +42,6 @@ import com.aritra.notify.components.actions.LayoutToggleButton
 import com.aritra.notify.components.actions.NoList
 import com.aritra.notify.components.actions.SwipeDelete
 import com.aritra.notify.components.note.GridNoteCard
-import com.aritra.notify.components.topbar.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,11 +58,6 @@ fun NoteScreen(
     var isGridView by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
-        topBar = {
-            TopBar(
-                title = stringResource(R.string.all_notes)
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onFabClicked() }
