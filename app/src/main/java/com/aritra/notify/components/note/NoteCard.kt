@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
@@ -46,13 +47,17 @@ fun NotesCard(
             Text(
                 text = noteModel.title,
                 fontSize = 22.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_medium))
+                fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = noteModel.note,
                 fontSize = 18.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_light))
+                fontFamily = FontFamily(Font(R.font.poppins_light)),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(10.dp))
             val formattedDateTime =

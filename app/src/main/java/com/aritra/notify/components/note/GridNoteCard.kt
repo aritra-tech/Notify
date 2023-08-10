@@ -24,11 +24,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
@@ -64,12 +66,19 @@ fun GridNoteCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    modifier = Modifier.padding(top = 10.dp),
-                    text = notesModel.title,
-                    fontSize = 20.sp,
-                    fontFamily = FontFamily(Font(R.font.poppins_semibold))
-                )
+                Row(
+                    modifier = Modifier.weight(2f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.padding(top = 10.dp),
+                        text = notesModel.title,
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_semibold)),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
 
                 if (isGridView) {
                     IconButton(
@@ -114,7 +123,9 @@ fun GridNoteCard(
             Text(
                 text = notesModel.note,
                 fontSize = 18.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_light))
+                fontFamily = FontFamily(Font(R.font.poppins_light)),
+                maxLines = 4,
+                overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(10.dp))
             val formattedDateTime =
