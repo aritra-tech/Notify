@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
@@ -68,7 +69,9 @@ fun GridNoteCard(
                     modifier = Modifier.padding(top = 10.dp),
                     text = notesModel.title,
                     fontSize = 20.sp,
-                    fontFamily = FontFamily(Font(R.font.poppins_semibold))
+                    fontFamily = FontFamily(Font(R.font.poppins_semibold)),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 if (isGridView) {
@@ -114,7 +117,9 @@ fun GridNoteCard(
             Text(
                 text = notesModel.note,
                 fontSize = 18.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_light))
+                fontFamily = FontFamily(Font(R.font.poppins_light)),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(10.dp))
             val formattedDateTime =
