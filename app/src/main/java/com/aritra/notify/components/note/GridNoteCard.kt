@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -65,14 +66,19 @@ fun GridNoteCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    modifier = Modifier.padding(top = 10.dp),
-                    text = notesModel.title,
-                    fontSize = 20.sp,
-                    fontFamily = FontFamily(Font(R.font.poppins_semibold)),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Row(
+                    modifier = Modifier.weight(2f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.padding(top = 10.dp),
+                        text = notesModel.title,
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_semibold)),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
 
                 if (isGridView) {
                     IconButton(
@@ -118,7 +124,7 @@ fun GridNoteCard(
                 text = notesModel.note,
                 fontSize = 18.sp,
                 fontFamily = FontFamily(Font(R.font.poppins_light)),
-                maxLines = 2,
+                maxLines = 4,
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(10.dp))
