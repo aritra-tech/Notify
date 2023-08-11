@@ -6,18 +6,19 @@ plugins {
     id ("com.google.dagger.hilt.android")
     id ("com.google.gms.google-services")
     id ("com.google.firebase.crashlytics")
+    id ("com.google.devtools.ksp")
 }
 
 android {
     namespace = "com.aritra.notify"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.aritra.notify"
         minSdk = 24
-        targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 34
+        versionCode = 2
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -35,17 +36,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility =  JavaVersion.VERSION_1_8
-        targetCompatibility =  JavaVersion.VERSION_1_8
+        sourceCompatibility =  JavaVersion.VERSION_17
+        targetCompatibility =  JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.2"
+        kotlinCompilerExtensionVersion = "1.4.4"
     }
     packaging {
         resources {
@@ -58,6 +59,8 @@ dependencies {
 
     val lifecycleVersion = "2.6.1"
     val roomVersion = "2.5.2"
+    val navVersion = "2.7.0-rc01"
+
 
     implementation ("androidx.core:core-ktx:1.10.1")
     implementation (platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
@@ -79,10 +82,10 @@ dependencies {
     debugImplementation ("androidx.compose.ui:ui-test-manifest")
 
     // Navigation
-    implementation ("androidx.navigation:navigation-compose:2.7.0-beta01")
+    implementation ("androidx.navigation:navigation-compose:$navVersion")
 
     // Accompanist
-    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.28.0")
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
 
     // Material 3
     implementation ("androidx.compose.material3:material3:1.1.1")
@@ -97,7 +100,7 @@ dependencies {
     implementation ("androidx.room:room-ktx:$roomVersion")
     implementation ("androidx.compose.runtime:runtime-livedata:1.4.3")
     annotationProcessor ("androidx.room:room-compiler:$roomVersion")
-    kapt ("androidx.room:room-compiler:$roomVersion")
+    ksp ("androidx.room:room-compiler:$roomVersion")
 
     // Lifecycle
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
