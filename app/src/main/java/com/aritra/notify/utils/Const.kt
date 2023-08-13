@@ -4,8 +4,8 @@ object Const {
 
     const val DATABASE_FILE_NAME = "Notify.db"
     const val DB_NAME = "Note_database"
-    const val DATE_TIME_FORMAT = "dd MMMM, hh:mm a"
-    const val DATE_FORMAT = "dd MMMM"
+    const val DATE_TIME_FORMAT = "dd MMM, hh:mm a"
+    const val DATE_FORMAT = "dd MMM"
     const val TIME_FORMAT = "hh:mm a"
     const val CONFIRM_BUTTON = "confirm_button"
     const val DISMISS_BUTTON = "dismiss_button"
