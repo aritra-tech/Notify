@@ -126,4 +126,6 @@ dependencies {
     implementation ("com.google.firebase:firebase-crashlytics-ktx:18.4.0")
     implementation ("com.google.firebase:firebase-analytics-ktx:21.3.0")
 
+    //Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }
