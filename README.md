@@ -25,7 +25,7 @@
       <img src="https://img.shields.io/github/v/release/aritra-tech/notify?color=purple&include_prereleases&logo=github&style=for-the-badge"/>
   </a>
   <a href="https://play.google.com/store/apps/details?id=com.aritra.notify">
-      <img src="https://img.shields.io/endpoint?color=purple&logo=google-play&style=for-the-badge&label=Play%20store&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dru.tech.imageresizershrinker%26l%3DAndroid%26m%3D%24version"/>
+      <img src="https://img.shields.io/endpoint?color=purple&logo=google-play&style=for-the-badge&label=Play%20store&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.aritra.notify%26l%3DAndroid%26m%3D%24version"/>
   </a>
   </br>
 </p>
