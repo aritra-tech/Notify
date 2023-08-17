@@ -1,26 +1,55 @@
+<div align="center">
+</br>
+<img src="art/Notify_Logo.png" width="200" />
+
+</div>
+
+<h1 align="center">Notify</h1>
+
+</br>
 <p align="center">
-  <img src="art/banner_notify.png" height="470"/>
+  <img alt="API" src="https://img.shields.io/badge/Api%2021+-50f270?logo=android&logoColor=black&style=for-the-badge"/></a>
+  <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-a503fc?logo=kotlin&logoColor=white&style=for-the-badge"/></a>
+  <img alt="Jetpack Compose" src="https://img.shields.io/static/v1?style=for-the-badge&message=Jetpack+Compose&color=4285F4&logo=Jetpack+Compose&logoColor=FFFFFF&label="/></a> 
+  <img alt="material" src="https://custom-icon-badges.demolab.com/badge/material%20you-lightblue?style=for-the-badge&logoColor=333&logo=material-you"/></a>
+  </br>
+  </br>
+    <a href="https://github.com/aritra-tech/Notify/stargazers">
+      <img src="https://img.shields.io/github/stars/aritra-tech/Notify?color=ffff00&style=for-the-badge"/>
+  </a>
+  <a href="https://github.com/aritra-tech/Notify/releases">
+      <img src="https://img.shields.io/github/downloads/aritra-tech/notify/total?color=orange&style=for-the-badge"/>
+  </a>
+  <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/aritra-tech/Notify?style=for-the-badge">
+  <a href="">
+      <img src="https://img.shields.io/github/v/release/aritra-tech/notify?color=purple&include_prereleases&logo=github&style=for-the-badge"/>
+  </a>
+  <a href="https://play.google.com/store/apps/details?id=com.aritra.notify">
+      <img src="https://img.shields.io/endpoint?color=purple&logo=google-play&style=for-the-badge&label=Play%20store&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.aritra.notify%26l%3DAndroid%26m%3D%24version"/>
+  </a>
+  </br>
 </p>
 
-# Notify 📱
+<h4>📝Notify is a simple note application that is built with Modern Android development tools.    
+This project showcases the Good implementation of Android with proper architecture design.              
+Made with ♥ for all Android Developers</h4>
 
-📝 _**Notify**_ is a simple note application which is build with _Modern Android development_ tools.    
-This project showcases _Good implementation_ of Android with proper architecture design.              
-_Made with ♥ for all Android Developers_   
-
+# ⬇️ Download
 <a href="https://play.google.com/store/apps/details?id=com.aritra.notify"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height=80px />
+<a href="https://github.com/aritra-tech/notify/releases/latest"><img alt="Get it on GitHub" src="https://user-images.githubusercontent.com/69304392/148696068-0cfea65d-b18f-4685-82b5-329a330b1c0d.png" height=80px />
 
-# Features  👓
+# Features ✨
 
 _Notify_ focuses on the following key things:
 
-- [x] Single Activity Design
-- [x] Offline Capability - Notes ✈️
-- [x] Clean and Simple Material UI 🎨
-- [X] Dark mode 🌗
-- [X] Back/Restore feature 👀
-- [x] Jetpack Compose UI
-- [ ] Tests
+- [x] Single Activity Design.
+- [x] Offline Capability - Notes. ✈️
+- [x] Clean and Simple Material UI. 🎨
+- [X] Dark mode. 🌗
+- [X] Back/Restore feature. 👀
+- [x] Jetpack Compose UI. 🖌
+- [x] Switch between layouts. 🌟
+- [x] Share the notes in the form of Text, Image & PDF 📤
 
 # Design ✨
 #### 🌞 Light Mode
