@@ -1,6 +1,7 @@
 package com.aritra.notify.components.topbar
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -50,7 +51,7 @@ fun EditNoteTopBar(
     navigateBack: () -> Unit,
     title: String,
     description: String,
-    dateTime: Date,
+    imagePath: Bitmap?
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -126,7 +127,7 @@ fun EditNoteTopBar(
             }
             IconButton(onClick = {
                 val currentDateTime = Date()
-                val updateNote = Note(noteId, title, description, currentDateTime)
+                val updateNote = Note(noteId, title, description, currentDateTime, imagePath)
                 viewModel.updateNotes(updateNote)
                 navigateBack()
                 Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()

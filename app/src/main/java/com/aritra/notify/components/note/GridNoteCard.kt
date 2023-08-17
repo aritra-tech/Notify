@@ -23,16 +23,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.aritra.notify.R
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.data.models.Note
@@ -50,6 +55,8 @@ fun GridNoteCard(
 ) {
     var expanded by remember { mutableStateOf(false) }
     val deleteDialogVisible = remember { mutableStateOf(false) }
+    val painter = rememberSaveable { mutableStateOf(notesModel.imagePath) }
+    val context = LocalContext.current
 
     Card(
         modifier = Modifier
@@ -62,6 +69,14 @@ fun GridNoteCard(
         Column(
             modifier = Modifier.padding(12.dp).fillMaxWidth()
         ) {
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data(painter.value)
+                    .build(),
+                contentDescription = "Image",
+                modifier = Modifier.fillMaxWidth()
+
+            )
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()

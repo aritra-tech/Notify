@@ -1,9 +1,12 @@
 package com.aritra.notify.ui.screens.notes.editNoteScreen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +21,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
@@ -29,8 +33,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberImagePainter
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.EditNoteTopBar
 import com.aritra.notify.utils.Const
@@ -45,6 +51,7 @@ fun EditNotesScreen(
     val editViewModel = hiltViewModel<EditScreenViewModel>()
     val title = editViewModel.noteModel.observeAsState().value?.title ?: ""
     val description = editViewModel.noteModel.observeAsState().value?.note ?: ""
+    val imagePath = editViewModel.noteModel.observeAsState().value?.imagePath
     val dateTime = editViewModel.noteModel.observeAsState().value?.dateTime
     val focus = LocalFocusManager.current
     val formattedDateTime = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
@@ -55,8 +62,8 @@ fun EditNotesScreen(
     }
     Scaffold(
         topBar = {
-            if (dateTime != null) {
-                EditNoteTopBar(editViewModel, noteId, navigateBack, title, description, dateTime)
+            dateTime?.let {
+                EditNoteTopBar(editViewModel, noteId, navigateBack, title, description, imagePath)
             }
         }
     ) {
@@ -66,6 +73,13 @@ fun EditNotesScreen(
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
+                imagePath?.let {
+                    Image(
+                        painter = rememberImagePainter(imagePath),
+                        contentDescription = "Image",
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth(),
