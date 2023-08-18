@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -39,12 +40,13 @@ fun NotesCard(
 ) {
     val painter = rememberSaveable { mutableStateOf(noteModel.imagePath) }
     val context = LocalContext.current
-    Card(
+
+    OutlinedCard(
+        border = CardDefaults.outlinedCardBorder().copy(0.dp),
         modifier = Modifier
             .padding(2.dp)
             .fillMaxHeight()
             .clickable { navigateToUpdateNoteScreen(noteModel.id) },
-        elevation = CardDefaults.cardElevation(3.dp),
         shape = RoundedCornerShape(8.dp),
     ) {
         Column(

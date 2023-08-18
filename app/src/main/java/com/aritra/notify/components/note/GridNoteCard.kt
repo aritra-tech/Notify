@@ -18,6 +18,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -58,12 +59,12 @@ fun GridNoteCard(
     val painter = rememberSaveable { mutableStateOf(notesModel.imagePath) }
     val context = LocalContext.current
 
-    Card(
+    OutlinedCard(
+        border = CardDefaults.outlinedCardBorder().copy(0.dp),
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth()
             .clickable { navigateToUpdateNoteScreen(notesModel.id) },
-        elevation = CardDefaults.cardElevation(3.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(
