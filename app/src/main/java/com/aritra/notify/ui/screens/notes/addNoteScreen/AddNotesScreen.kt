@@ -11,8 +11,10 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -20,6 +22,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,6 +44,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
@@ -93,23 +99,24 @@ fun AddNotesScreen(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
     var photoUri: Uri? by remember { mutableStateOf(null) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        photoUri = uri
-    }
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            photoUri = uri
+        }
     val context = LocalContext.current
 
 
     Scaffold(
         topBar = {
-                AddNoteTopBar(
-                    addViewModel,
-                    onBackPress = { cancelDialogState.value = true },
-                    onSave = { navigateBack() },
-                    title,
-                    description,
-                    dateTime,
-                    imagePath
-                )
+            AddNoteTopBar(
+                addViewModel,
+                onBackPress = { cancelDialogState.value = true },
+                onSave = { navigateBack() },
+                title,
+                description,
+                dateTime,
+                imagePath
+            )
         },
         bottomBar = {
             BottomAppBar(
@@ -136,9 +143,11 @@ fun AddNotesScreen(
                                     text = "Add image",
                                     icon = painterResource(id = R.drawable.gallery_icon),
                                     onClick = {
-                                        launcher.launch(PickVisualMediaRequest(
-                                            mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                        ))
+                                        launcher.launch(
+                                            PickVisualMediaRequest(
+                                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                            )
+                                        )
                                         showSheet = false
                                     }
                                 )
@@ -157,6 +166,25 @@ fun AddNotesScreen(
                     .fillMaxSize()
             ) {
                 photoUri?.let {
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        IconButton(
+                            onClick = {
+                                photoUri = null
+                                imagePath = null
+                            },
+
+                            ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Close,
+                                contentDescription = "Clear Image"
+                            )
+                        }
+                    }
+
                     val painter = rememberAsyncImagePainter(
                         ImageRequest.Builder(LocalContext.current).data(data = photoUri).build()
                     )
@@ -166,7 +194,12 @@ fun AddNotesScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                     val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, photoUri!!))
+                        ImageDecoder.decodeBitmap(
+                            ImageDecoder.createSource(
+                                context.contentResolver,
+                                photoUri!!
+                            )
+                        )
                     } else {
                         MediaStore.Images.Media.getBitmap(context.contentResolver, photoUri!!)
                     }

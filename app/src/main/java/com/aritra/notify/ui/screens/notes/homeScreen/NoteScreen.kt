@@ -84,7 +84,9 @@ fun NoteScreen(
                     onQueryChange = { search ->
                         searchQuery = search
                     },
-                    onSearch = {},
+                    onSearch = {
+                        isGridView = !isGridView
+                    },
                     active = false,
                     onActiveChange = {},
                     placeholder = { Text(stringResource(R.string.search_your_notes)) },
