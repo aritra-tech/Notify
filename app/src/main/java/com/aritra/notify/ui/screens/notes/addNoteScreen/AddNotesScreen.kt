@@ -191,8 +191,6 @@ fun AddNotesScreen(
                             }
                         }
 
-                        val painter = rememberAsyncImagePainter(model = photoUri)
-
                         val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                             ImageDecoder.decodeBitmap(
                                 ImageDecoder.createSource(
@@ -234,11 +232,13 @@ fun AddNotesScreen(
                             fontFamily = FontFamily(Font(R.font.poppins_medium)),
                         ),
                         maxLines = Int.MAX_VALUE,
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            disabledContainerColor = MaterialTheme.colorScheme.surface,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
+                            disabledIndicatorColor = Color.Transparent,
                         ),
                         keyboardOptions = KeyboardOptions.Default.copy(
                             capitalization = KeyboardCapitalization.Sentences,
@@ -259,11 +259,13 @@ fun AddNotesScreen(
                             fontFamily = FontFamily(Font(R.font.poppins_light))
                         ),
                         readOnly = true,
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            disabledContainerColor = MaterialTheme.colorScheme.surface,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
+                            disabledIndicatorColor = Color.Transparent,
                         ),
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
@@ -290,11 +292,13 @@ fun AddNotesScreen(
                             fontSize = 18.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_light)),
                         ),
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            disabledContainerColor = MaterialTheme.colorScheme.surface,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
+                            disabledIndicatorColor = Color.Transparent,
                         ),
                         keyboardOptions = KeyboardOptions.Default.copy(
                             capitalization = KeyboardCapitalization.Sentences,
