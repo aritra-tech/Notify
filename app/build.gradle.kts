@@ -92,7 +92,7 @@ dependencies {
     implementation ("androidx.compose.material3:material3-window-size-class:1.1.1")
 
     // Bottom sheet
-    implementation ("io.github.oleksandrbalan:modalsheet:0.5.0")
+    implementation ("io.github.oleksandrbalan:modalsheet:0.6.0")
 
     // Room
     implementation ("androidx.room:room-runtime:$roomVersion")
