@@ -6,19 +6,24 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -49,6 +54,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -65,6 +72,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BottomSheetOptions
@@ -162,139 +170,139 @@ fun AddNotesScreen(
             modifier = Modifier.padding(it)
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
+                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
             ) {
-                photoUri?.let {
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        IconButton(
-                            onClick = {
-                                photoUri = null
-                                imagePath = null
-                            },
-
+                    photoUri?.let {
+                        Log.d("URI","Photo uri $photoUri")
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    photoUri = null
+                                    imagePath = null
+                                },
                             ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Close,
-                                contentDescription = "Clear Image"
-                            )
+                                Icon(
+                                    imageVector = Icons.Outlined.Close,
+                                    contentDescription = "Clear Image"
+                                )
+                            }
                         }
-                    }
 
-                    val painter = rememberAsyncImagePainter(
-                        ImageRequest.Builder(LocalContext.current).data(data = photoUri).build()
-                    )
-                    Image(
-                        painter = painter,
-                        contentDescription = "image",
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        ImageDecoder.decodeBitmap(
-                            ImageDecoder.createSource(
-                                context.contentResolver,
-                                photoUri!!
+                        val painter = rememberAsyncImagePainter(model = photoUri)
+
+                        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            ImageDecoder.decodeBitmap(
+                                ImageDecoder.createSource(
+                                    context.contentResolver,
+                                    photoUri!!
+                                )
                             )
+                        } else {
+                            MediaStore.Images.Media.getBitmap(context.contentResolver, photoUri!!)
+                        }
+                        Image(
+                            bitmap = bitmap.asImageBitmap(),
+                            contentDescription = "image",
+                            modifier = Modifier.fillMaxWidth(),
+                            contentScale = ContentScale.FillWidth
                         )
-                    } else {
-                        MediaStore.Images.Media.getBitmap(context.contentResolver, photoUri!!)
-                    }
-                    imagePath = bitmap
-                }
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    value = title,
-                    onValueChange = { newTitle ->
-                        title = newTitle
-                        characterCount = title.length + description.length
-                    },
-                    placeholder = {
-                        Text(
-                            stringResource(R.string.title),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.W700,
-                            color = Color.Gray,
-                            fontFamily = FontFamily(Font(R.font.poppins_medium))
-                        )
-                    },
-                    textStyle = TextStyle(
-                        fontSize = 24.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_medium)),
-                    ),
-                    maxLines = Int.MAX_VALUE,
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        capitalization = KeyboardCapitalization.Sentences,
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focus.moveFocus(FocusDirection.Down)
-                    }),
-                )
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = "$currentDate, $currentTime   |  $characterCount characters",
-                    onValueChange = { },
-                    textStyle = TextStyle(
-                        fontSize = 15.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_light))
-                    ),
-                    readOnly = true,
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
-                    ),
-                )
-                TextField(
-                    modifier = Modifier.fillMaxSize(),
-                    value = description,
-                    onValueChange = { newDescription ->
-                        description = newDescription
-                        characterCount = title.length + description.length
-                    },
-                    placeholder = {
-                        Text(
-                            stringResource(R.string.notes),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.W500,
-                            color = Color.Gray,
-                            fontFamily = FontFamily(Font(R.font.poppins_light))
-                        )
-                    },
-                    textStyle = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_light)),
-                    ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        capitalization = KeyboardCapitalization.Sentences,
-                        keyboardType = KeyboardType.Text,
-                    ),
-                    maxLines = Int.MAX_VALUE,
-                )
 
-            }
+                        imagePath = bitmap
+                    }
+
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = title,
+                        onValueChange = { newTitle ->
+                            title = newTitle
+                            characterCount = title.length + description.length
+                        },
+                        placeholder = {
+                            Text(
+                                stringResource(R.string.title),
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.W700,
+                                color = Color.Gray,
+                                fontFamily = FontFamily(Font(R.font.poppins_medium))
+                            )
+                        },
+                        textStyle = TextStyle(
+                            fontSize = 24.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                        ),
+                        maxLines = Int.MAX_VALUE,
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            capitalization = KeyboardCapitalization.Sentences,
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(onNext = {
+                            focus.moveFocus(FocusDirection.Down)
+                        }),
+                    )
+
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = "$currentDate, $currentTime   |  $characterCount characters",
+                        onValueChange = { },
+                        textStyle = TextStyle(
+                            fontSize = 15.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_light))
+                        ),
+                        readOnly = true,
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Text,
+                        ),
+                    )
+
+                    TextField(
+                        modifier = Modifier.fillMaxSize(),
+                        value = description,
+                        onValueChange = { newDescription ->
+                            description = newDescription
+                            characterCount = title.length + description.length
+                        },
+                        placeholder = {
+                            Text(
+                                stringResource(R.string.notes),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.W500,
+                                color = Color.Gray,
+                                fontFamily = FontFamily(Font(R.font.poppins_light))
+                            )
+                        },
+                        textStyle = TextStyle(
+                            fontSize = 18.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_light)),
+                        ),
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            capitalization = KeyboardCapitalization.Sentences,
+                            keyboardType = KeyboardType.Text,
+                        ),
+                        maxLines = Int.MAX_VALUE,
+                    )
+                }
         }
     }
 
