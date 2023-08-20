@@ -38,8 +38,10 @@ import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.EditNoteTopBar
+import com.aritra.notify.data.models.Note
 import com.aritra.notify.utils.Const
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,6 +50,7 @@ fun EditNotesScreen(
     noteId: Int,
     navigateBack: () -> Unit
 ) {
+    val note = Note(noteId, "","", Date(),null)
     val editViewModel = hiltViewModel<EditScreenViewModel>()
     val title = editViewModel.noteModel.observeAsState().value?.title ?: ""
     val description = editViewModel.noteModel.observeAsState().value?.note ?: ""
@@ -63,7 +66,7 @@ fun EditNotesScreen(
     Scaffold(
         topBar = {
             dateTime?.let {
-                EditNoteTopBar(editViewModel, noteId, navigateBack, title, description, imagePath)
+                EditNoteTopBar(note,editViewModel, noteId, navigateBack, title, description, imagePath)
             }
         }
     ) {

@@ -1,6 +1,5 @@
 package com.aritra.notify.components.topbar
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,13 +29,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.ShareOption
+import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.ui.screens.notes.editNoteScreen.EditScreenViewModel
+import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
 import com.aritra.notify.utils.shareAsImage
 import com.aritra.notify.utils.shareAsPdf
 import com.aritra.notify.utils.shareNoteAsText
@@ -46,6 +45,7 @@ import java.util.Date
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditNoteTopBar(
+    note: Note,
     viewModel: EditScreenViewModel,
     noteId: Int,
     navigateBack: () -> Unit,
@@ -53,6 +53,7 @@ fun EditNoteTopBar(
     description: String,
     imagePath: Bitmap?
 ) {
+    val noteScreenViewModel = hiltViewModel<NoteScreenViewModel>()
     var showSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val skipPartiallyExpanded by remember { mutableStateOf(false) }
@@ -61,6 +62,8 @@ fun EditNoteTopBar(
     )
     val view = LocalView.current
     val bitmapSize = view.width to view.height
+    val currentDateTime = Date()
+    val deleteDialogVisible = remember { mutableStateOf(false) }
 
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -81,6 +84,28 @@ fun EditNoteTopBar(
             }
         },
         actions = {
+            IconButton(onClick = { deleteDialogVisible.value = true })
+            {
+                Icon(
+                    painter = painterResource(R.drawable.ic_delete),
+                    contentDescription = "Delete",
+                    tint = androidx.compose.ui.graphics.Color.White
+                )
+            }
+
+            if (deleteDialogVisible.value) {
+                TextDialog(
+                    title = stringResource(R.string.warning),
+                    description = stringResource(R.string.are_you_sure_want_to_delete_these_items_it_cannot_be_recovered),
+                    isOpened = deleteDialogVisible.value,
+                    onDismissCallback = { deleteDialogVisible.value = false },
+                    onConfirmCallback = {
+                        noteScreenViewModel.deleteNote(note)
+                        deleteDialogVisible.value = false
+                        navigateBack()
+                    }
+                )
+            }
             IconButton(onClick = { showSheet = true }) {
                 Icon(
                     painterResource(R.drawable.ic_share),
@@ -126,7 +151,6 @@ fun EditNoteTopBar(
                 }
             }
             IconButton(onClick = {
-                val currentDateTime = Date()
                 val updateNote = Note(noteId, title, description, currentDateTime, imagePath)
                 viewModel.updateNotes(updateNote)
                 navigateBack()
