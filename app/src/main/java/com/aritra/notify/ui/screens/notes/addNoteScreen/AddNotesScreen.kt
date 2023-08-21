@@ -1,6 +1,7 @@
 package com.aritra.notify.ui.screens.notes.addNoteScreen
 
 
+import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -11,24 +12,19 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetDefaults
@@ -38,22 +34,20 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -70,20 +64,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImagePainter.State.Empty.painter
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import coil.request.ImageRequest
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BottomSheetOptions
+import com.aritra.notify.components.actions.SpeechRecognizerContract
 import com.aritra.notify.components.topbar.AddNoteTopBar
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.utils.Const
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun AddNotesScreen(
     navigateBack: () -> Unit
@@ -106,13 +100,31 @@ fun AddNotesScreen(
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
+    val context = LocalContext.current
     var photoUri: Uri? by remember { mutableStateOf(null) }
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             photoUri = uri
         }
-    val context = LocalContext.current
 
+    val permissionState = rememberPermissionState(
+        permission = Manifest.permission.RECORD_AUDIO
+    )
+    SideEffect {
+        permissionState.launchPermissionRequest()
+    }
+
+    val speechRecognizerLauncher = rememberLauncherForActivityResult(
+        contract = SpeechRecognizerContract(),
+        onResult = {
+            it?.let {
+                for (st in it) {
+                    description += " $st"
+                    Log.d("", "Text is: $st\t")
+                }
+            }
+        }
+    )
 
     Scaffold(
         topBar = {
@@ -159,6 +171,18 @@ fun AddNotesScreen(
                                         showSheet = false
                                     }
                                 )
+                                BottomSheetOptions(
+                                    text = "Speech to Text",
+                                    icon = painterResource(id = R.drawable.mic_icon),
+                                    onClick = {
+                                        if (permissionState.status.isGranted) {
+                                            speechRecognizerLauncher.launch(Unit)
+                                        } else {
+                                            permissionState.launchPermissionRequest()
+                                        }
+                                        showSheet = false
+                                    }
+                                )
                             }
                         }
                     }
@@ -170,143 +194,146 @@ fun AddNotesScreen(
             modifier = Modifier.padding(it)
         ) {
             Column(
-                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
             ) {
-                    photoUri?.let {
-                        Log.d("URI","Photo uri $photoUri")
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
+                photoUri?.let {
+                    Log.d("URI", "Photo uri $photoUri")
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        IconButton(
+                            onClick = {
+                                photoUri = null
+                                imagePath = null
+                            },
                         ) {
-                            IconButton(
-                                onClick = {
-                                    photoUri = null
-                                    imagePath = null
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Close,
-                                    contentDescription = "Clear Image"
-                                )
-                            }
-                        }
-
-                        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            ImageDecoder.decodeBitmap(
-                                ImageDecoder.createSource(
-                                    context.contentResolver,
-                                    photoUri!!
-                                )
+                            Icon(
+                                imageVector = Icons.Outlined.Close,
+                                contentDescription = "Clear Image"
                             )
-                        } else {
-                            MediaStore.Images.Media.getBitmap(context.contentResolver, photoUri!!)
                         }
-                        Image(
-                            bitmap = bitmap.asImageBitmap(),
-                            contentDescription = "image",
-                            modifier = Modifier.fillMaxWidth(),
-                            contentScale = ContentScale.FillWidth
-                        )
-
-                        imagePath = bitmap
                     }
 
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = title,
-                        onValueChange = { newTitle ->
-                            title = newTitle
-                            characterCount = title.length + description.length
-                        },
-                        placeholder = {
-                            Text(
-                                stringResource(R.string.title),
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.W700,
-                                color = Color.Gray,
-                                fontFamily = FontFamily(Font(R.font.poppins_medium))
+                    val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        ImageDecoder.decodeBitmap(
+                            ImageDecoder.createSource(
+                                context.contentResolver,
+                                photoUri!!
                             )
-                        },
-                        textStyle = TextStyle(
-                            fontSize = 24.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_medium)),
-                        ),
-                        maxLines = Int.MAX_VALUE,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                            disabledContainerColor = MaterialTheme.colorScheme.surface,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                        ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            capitalization = KeyboardCapitalization.Sentences,
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Next
-                        ),
-                        keyboardActions = KeyboardActions(onNext = {
-                            focus.moveFocus(FocusDirection.Down)
-                        }),
+                        )
+                    } else {
+                        MediaStore.Images.Media.getBitmap(context.contentResolver, photoUri!!)
+                    }
+                    Image(
+                        bitmap = bitmap.asImageBitmap(),
+                        contentDescription = "image",
+                        modifier = Modifier.fillMaxWidth(),
+                        contentScale = ContentScale.FillWidth
                     )
 
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = "$currentDate, $currentTime   |  $characterCount characters",
-                        onValueChange = { },
-                        textStyle = TextStyle(
-                            fontSize = 15.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_light))
-                        ),
-                        readOnly = true,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                            disabledContainerColor = MaterialTheme.colorScheme.surface,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                        ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Text,
-                        ),
-                    )
-
-                    TextField(
-                        modifier = Modifier.fillMaxSize(),
-                        value = description,
-                        onValueChange = { newDescription ->
-                            description = newDescription
-                            characterCount = title.length + description.length
-                        },
-                        placeholder = {
-                            Text(
-                                stringResource(R.string.notes),
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.W500,
-                                color = Color.Gray,
-                                fontFamily = FontFamily(Font(R.font.poppins_light))
-                            )
-                        },
-                        textStyle = TextStyle(
-                            fontSize = 18.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_light)),
-                        ),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                            disabledContainerColor = MaterialTheme.colorScheme.surface,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                        ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            capitalization = KeyboardCapitalization.Sentences,
-                            keyboardType = KeyboardType.Text,
-                        ),
-                        maxLines = Int.MAX_VALUE,
-                    )
+                    imagePath = bitmap
                 }
+
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = title,
+                    onValueChange = { newTitle ->
+                        title = newTitle
+                        characterCount = title.length + description.length
+                    },
+                    placeholder = {
+                        Text(
+                            stringResource(R.string.title),
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.W700,
+                            color = Color.Gray,
+                            fontFamily = FontFamily(Font(R.font.poppins_medium))
+                        )
+                    },
+                    textStyle = TextStyle(
+                        fontSize = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                    ),
+                    maxLines = Int.MAX_VALUE,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(onNext = {
+                        focus.moveFocus(FocusDirection.Down)
+                    }),
+                )
+
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = "$currentDate, $currentTime   |  $characterCount characters",
+                    onValueChange = { },
+                    textStyle = TextStyle(
+                        fontSize = 15.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_light))
+                    ),
+                    readOnly = true,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text,
+                    ),
+                )
+
+                TextField(
+                    modifier = Modifier.fillMaxSize(),
+                    value = description,
+                    onValueChange = { newDescription ->
+                        description = newDescription
+                        characterCount = title.length + description.length
+                    },
+                    placeholder = {
+                        Text(
+                            stringResource(R.string.notes),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.W500,
+                            color = Color.Gray,
+                            fontFamily = FontFamily(Font(R.font.poppins_light))
+                        )
+                    },
+                    textStyle = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_light)),
+                    ),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        keyboardType = KeyboardType.Text,
+                    ),
+                    maxLines = Int.MAX_VALUE,
+                )
+
+            }
         }
     }
 
