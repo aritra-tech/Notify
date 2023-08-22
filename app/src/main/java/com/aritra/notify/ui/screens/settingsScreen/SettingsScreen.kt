@@ -150,6 +150,16 @@ fun SettingsScreen() {
                         context.startActivity(intent)
                     }
                     SettingsComponent(
+                        settingHeaderText = "Roadmap",
+                        painterResourceID = R.drawable.roadmap_icon
+                    ) {
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(Const.ROADMAP)
+                        )
+                        context.startActivity(intent)
+                    }
+                    SettingsComponent(
                         settingHeaderText = stringResource(R.string.request_feature),
                         painterResourceID = R.drawable.code
                     ) {
