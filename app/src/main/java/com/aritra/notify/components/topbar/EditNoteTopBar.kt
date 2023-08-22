@@ -89,7 +89,6 @@ fun EditNoteTopBar(
                 Icon(
                     painter = painterResource(R.drawable.ic_delete),
                     contentDescription = "Delete",
-                    tint = androidx.compose.ui.graphics.Color.White
                 )
             }
 
