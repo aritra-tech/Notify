@@ -120,7 +120,6 @@ fun AddNotesScreen(
             it?.let {
                 for (st in it) {
                     description += " $st"
-                    Log.d("", "Text is: $st\t")
                 }
             }
         }
@@ -144,7 +143,7 @@ fun AddNotesScreen(
                     IconButton(onClick = { showSheet = true }) {
                         Icon(
                             painter = painterResource(id = R.drawable.add_box_icon),
-                            contentDescription = "Add Box"
+                            contentDescription = stringResource(R.string.add_box)
                         )
                     }
                     if (showSheet) {
@@ -160,7 +159,7 @@ fun AddNotesScreen(
                                     .padding(16.dp)
                             ) {
                                 BottomSheetOptions(
-                                    text = "Add image",
+                                    text = stringResource(R.string.add_image),
                                     icon = painterResource(id = R.drawable.gallery_icon),
                                     onClick = {
                                         launcher.launch(
@@ -172,7 +171,7 @@ fun AddNotesScreen(
                                     }
                                 )
                                 BottomSheetOptions(
-                                    text = "Speech to Text",
+                                    text = stringResource(R.string.speech_to_text),
                                     icon = painterResource(id = R.drawable.mic_icon),
                                     onClick = {
                                         if (permissionState.status.isGranted) {
@@ -212,7 +211,7 @@ fun AddNotesScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Close,
-                                contentDescription = "Clear Image"
+                                contentDescription = stringResource(R.string.clear_image)
                             )
                         }
                     }
@@ -229,7 +228,7 @@ fun AddNotesScreen(
                     }
                     Image(
                         bitmap = bitmap.asImageBitmap(),
-                        contentDescription = "image",
+                        contentDescription = stringResource(R.string.image),
                         modifier = Modifier.fillMaxWidth(),
                         contentScale = ContentScale.FillWidth
                     )

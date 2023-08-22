@@ -80,13 +80,17 @@ fun EditNotesScreen(
             modifier = Modifier.padding(it)
         ) {
             Column(
-                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
                 imagePath?.let {
                     Image(
                         painter = rememberAsyncImagePainter(imagePath),
-                        contentDescription = "Image",
-                        modifier = Modifier.fillMaxWidth().size(500.dp),
+                        contentDescription = stringResource(R.string.image),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .size(500.dp),
                         contentScale = ContentScale.Fit
                     )
                 }

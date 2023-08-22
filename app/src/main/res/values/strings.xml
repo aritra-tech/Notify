@@ -38,4 +38,9 @@
     <string name="others">Others</string>
     <string name="rate_us_on_google_play">Rate us on Google Play</string>
     <string name="on_share_message">https://play.google.com/store/apps/details?id=com.aritra.notify</string>
+    <string name="image">Image</string>
+    <string name="clear_image">Clear Image</string>
+    <string name="speech_to_text">Speech to Text</string>
+    <string name="add_image">Add image</string>
+    <string name="add_box">Add Box</string>
 </resources>
