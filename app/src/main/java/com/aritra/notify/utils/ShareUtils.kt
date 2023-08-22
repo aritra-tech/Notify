@@ -52,7 +52,7 @@ private fun saveBitmapToCache(context: Context, bitmap: Bitmap): Uri {
     imagesDir.mkdirs()
     val file = File(imagesDir, "note_image.png")
     val outputStream = FileOutputStream(file)
-    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+    bitmap.compress(Bitmap.CompressFormat.PNG, 50, outputStream)
     outputStream.close()
     return FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", file)
 }
