@@ -1,11 +1,22 @@
 package com.aritra.notify.ui.screens.notes.editNoteScreen
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -15,11 +26,10 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -29,12 +39,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.EditNoteTopBar
+import com.aritra.notify.data.models.Note
 import com.aritra.notify.utils.Const
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -42,9 +56,11 @@ fun EditNotesScreen(
     noteId: Int,
     navigateBack: () -> Unit
 ) {
+    val note = Note(noteId, "","", Date(),null)
     val editViewModel = hiltViewModel<EditScreenViewModel>()
     val title = editViewModel.noteModel.observeAsState().value?.title ?: ""
     val description = editViewModel.noteModel.observeAsState().value?.note ?: ""
+    val imagePath = editViewModel.noteModel.observeAsState().value?.imagePath
     val dateTime = editViewModel.noteModel.observeAsState().value?.dateTime
     val focus = LocalFocusManager.current
     val formattedDateTime = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
@@ -55,17 +71,29 @@ fun EditNotesScreen(
     }
     Scaffold(
         topBar = {
-            if (dateTime != null) {
-                EditNoteTopBar(editViewModel, noteId, navigateBack, title, description, dateTime)
+            dateTime?.let {
+                EditNoteTopBar(note,editViewModel, noteId, navigateBack, title, description, imagePath)
             }
         }
     ) {
-        Surface(
+        Box(
             modifier = Modifier.padding(it)
         ) {
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
+                imagePath?.let {
+                    Image(
+                        painter = rememberAsyncImagePainter(imagePath),
+                        contentDescription = stringResource(R.string.image),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .size(500.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -88,11 +116,12 @@ fun EditNotesScreen(
                     ),
                     maxLines = Int.MAX_VALUE,
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                        disabledContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         capitalization = KeyboardCapitalization.Sentences,
@@ -101,8 +130,7 @@ fun EditNotesScreen(
                     ),
                     keyboardActions = KeyboardActions(onNext = {
                         focus.moveFocus(FocusDirection.Down)
-                    }
-                    ),
+                    }),
                 )
                 TextField(
                     value = "$formattedDateTime  |  $formattedCharacterCount",
@@ -114,11 +142,12 @@ fun EditNotesScreen(
                         fontFamily = FontFamily(Font(R.font.poppins_light))
                     ),
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                        disabledContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
@@ -144,11 +173,12 @@ fun EditNotesScreen(
                         fontFamily = FontFamily(Font(R.font.poppins_light)),
                     ),
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                        disabledContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         capitalization = KeyboardCapitalization.Sentences,

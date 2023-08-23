@@ -1,19 +1,48 @@
 package com.aritra.notify.ui.screens.notes.addNoteScreen
 
 
+import android.Manifest
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -22,7 +51,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -31,16 +64,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
+import com.aritra.notify.components.actions.BottomSheetOptions
+import com.aritra.notify.components.actions.SpeechRecognizerContract
 import com.aritra.notify.components.topbar.AddNoteTopBar
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.utils.Const
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun AddNotesScreen(
     navigateBack: () -> Unit
@@ -49,15 +89,44 @@ fun AddNotesScreen(
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     val dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
+    var imagePath by remember { mutableStateOf<Bitmap?>(null) }
     var characterCount by remember { mutableIntStateOf(title.length + description.length) }
     val cancelDialogState = remember { mutableStateOf(false) }
+    var showSheet by remember { mutableStateOf(false) }
     val dateFormat = SimpleDateFormat(Const.DATE_FORMAT, Locale.getDefault())
     val timeFormat = SimpleDateFormat(Const.TIME_FORMAT, Locale.getDefault())
     timeFormat.isLenient = false
     val currentDate = dateFormat.format(Calendar.getInstance().time)
     val currentTime = timeFormat.format(Calendar.getInstance().time).uppercase(Locale.getDefault())
     val focus = LocalFocusManager.current
+    val skipPartiallyExpanded by remember { mutableStateOf(false) }
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = skipPartiallyExpanded
+    )
+    val context = LocalContext.current
+    var photoUri: Uri? by remember { mutableStateOf(null) }
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            photoUri = uri
+        }
 
+    val permissionState = rememberPermissionState(
+        permission = Manifest.permission.RECORD_AUDIO
+    )
+    SideEffect {
+        permissionState.launchPermissionRequest()
+    }
+
+    val speechRecognizerLauncher = rememberLauncherForActivityResult(
+        contract = SpeechRecognizerContract(),
+        onResult = {
+            it?.let {
+                for (st in it) {
+                    description += " $st"
+                }
+            }
+        }
+    )
 
     Scaffold(
         topBar = {
@@ -68,18 +137,116 @@ fun AddNotesScreen(
                 title,
                 description,
                 dateTime,
+                imagePath
             )
         },
+        bottomBar = {
+            Column(
+                Modifier
+                    .navigationBarsPadding()
+                    .imePadding()
+            ) {
+                BottomAppBar(
+                    content = {
+                        IconButton(onClick = { showSheet = true }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.add_box_icon),
+                                contentDescription = stringResource(R.string.add_box)
+                            )
+                        }
+                        if (showSheet) {
+                            ModalBottomSheet(
+                                onDismissRequest = { showSheet = false },
+                                sheetState = bottomSheetState,
+                                dragHandle = { BottomSheetDefaults.DragHandle() }
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .navigationBarsPadding()
+                                        .padding(16.dp)
+                                ) {
+                                    BottomSheetOptions(
+                                        text = stringResource(R.string.add_image),
+                                        icon = painterResource(id = R.drawable.gallery_icon),
+                                        onClick = {
+                                            launcher.launch(
+                                                PickVisualMediaRequest(
+                                                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                                )
+                                            )
+                                            showSheet = false
+                                        }
+                                    )
+                                    BottomSheetOptions(
+                                        text = stringResource(R.string.speech_to_text),
+                                        icon = painterResource(id = R.drawable.mic_icon),
+                                        onClick = {
+                                            if (permissionState.status.isGranted) {
+                                                speechRecognizerLauncher.launch(Unit)
+                                            } else {
+                                                permissionState.launchPermissionRequest()
+                                            }
+                                            showSheet = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+        }
     ) {
-        Surface(
+        Box(
             modifier = Modifier.padding(it)
         ) {
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
             ) {
+                photoUri?.let {
+                    Log.d("URI", "Photo uri $photoUri")
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        IconButton(
+                            onClick = {
+                                photoUri = null
+                                imagePath = null
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Close,
+                                contentDescription = stringResource(R.string.clear_image)
+                            )
+                        }
+                    }
+
+                    val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        ImageDecoder.decodeBitmap(
+                            ImageDecoder.createSource(
+                                context.contentResolver,
+                                photoUri!!
+                            )
+                        )
+                    } else {
+                        MediaStore.Images.Media.getBitmap(context.contentResolver, photoUri!!)
+                    }
+                    Image(
+                        bitmap = bitmap.asImageBitmap(),
+                        contentDescription = stringResource(R.string.image),
+                        modifier = Modifier.fillMaxWidth(),
+                        contentScale = ContentScale.Crop
+                    )
+
+                    imagePath = bitmap
+                }
+
                 TextField(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     value = title,
                     onValueChange = { newTitle ->
                         title = newTitle
@@ -95,16 +262,17 @@ fun AddNotesScreen(
                         )
                     },
                     textStyle = TextStyle(
-                        fontSize = 20.sp,
+                        fontSize = 24.sp,
                         fontFamily = FontFamily(Font(R.font.poppins_medium)),
                     ),
                     maxLines = Int.MAX_VALUE,
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                        disabledContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         capitalization = KeyboardCapitalization.Sentences,
@@ -115,6 +283,7 @@ fun AddNotesScreen(
                         focus.moveFocus(FocusDirection.Down)
                     }),
                 )
+
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = "$currentDate, $currentTime   |  $characterCount characters",
@@ -125,16 +294,18 @@ fun AddNotesScreen(
                     ),
                     readOnly = true,
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                        disabledContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
                     ),
                 )
+
                 TextField(
                     modifier = Modifier.fillMaxSize(),
                     value = description,
@@ -156,11 +327,12 @@ fun AddNotesScreen(
                         fontFamily = FontFamily(Font(R.font.poppins_light)),
                     ),
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
-                        disabledContainerColor = MaterialTheme.colorScheme.onSecondary,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         capitalization = KeyboardCapitalization.Sentences,
@@ -168,6 +340,7 @@ fun AddNotesScreen(
                     ),
                     maxLines = Int.MAX_VALUE,
                 )
+
             }
         }
     }

@@ -27,11 +27,12 @@ android {
     }
 
     buildTypes {
-        named("release") {
-            isMinifyEnabled = false
+        getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles (getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
-        named("debug") {
+        getByName("debug") {
             isDebuggable = true
         }
     }
@@ -59,7 +60,7 @@ dependencies {
 
     val lifecycleVersion = "2.6.1"
     val roomVersion = "2.5.2"
-    val navVersion = "2.7.0-rc01"
+    val navVersion = "2.7.0"
 
 
     implementation ("androidx.core:core-ktx:1.10.1")
@@ -86,13 +87,12 @@ dependencies {
 
     // Accompanist
     implementation ("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
+    implementation ("com.google.accompanist:accompanist-permissions:0.24.11-rc")
 
     // Material 3
     implementation ("androidx.compose.material3:material3:1.1.1")
     implementation ("androidx.compose.material3:material3-window-size-class:1.1.1")
-
-    // Bottom sheet
-    implementation ("io.github.oleksandrbalan:modalsheet:0.5.0")
+    implementation ("androidx.compose.material:material-icons-extended:1.5.0")
 
     // Room
     implementation ("androidx.room:room-runtime:$roomVersion")
@@ -126,4 +126,6 @@ dependencies {
     implementation ("com.google.firebase:firebase-crashlytics-ktx:18.4.0")
     implementation ("com.google.firebase:firebase-analytics-ktx:21.3.0")
 
+    //Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }
