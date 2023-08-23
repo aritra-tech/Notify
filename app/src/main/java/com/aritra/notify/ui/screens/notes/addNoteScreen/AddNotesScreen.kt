@@ -12,12 +12,15 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -138,55 +141,61 @@ fun AddNotesScreen(
             )
         },
         bottomBar = {
-            BottomAppBar(
-                actions = {
-                    IconButton(onClick = { showSheet = true }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.add_box_icon),
-                            contentDescription = stringResource(R.string.add_box)
-                        )
-                    }
-                    if (showSheet) {
-                        ModalBottomSheet(
-                            onDismissRequest = { showSheet = false },
-                            sheetState = bottomSheetState,
-                            dragHandle = { BottomSheetDefaults.DragHandle() }
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .navigationBarsPadding()
-                                    .padding(16.dp)
+            Column(
+                Modifier
+                    .navigationBarsPadding()
+                    .imePadding()
+            ) {
+                BottomAppBar(
+                    content = {
+                        IconButton(onClick = { showSheet = true }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.add_box_icon),
+                                contentDescription = stringResource(R.string.add_box)
+                            )
+                        }
+                        if (showSheet) {
+                            ModalBottomSheet(
+                                onDismissRequest = { showSheet = false },
+                                sheetState = bottomSheetState,
+                                dragHandle = { BottomSheetDefaults.DragHandle() }
                             ) {
-                                BottomSheetOptions(
-                                    text = stringResource(R.string.add_image),
-                                    icon = painterResource(id = R.drawable.gallery_icon),
-                                    onClick = {
-                                        launcher.launch(
-                                            PickVisualMediaRequest(
-                                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .navigationBarsPadding()
+                                        .padding(16.dp)
+                                ) {
+                                    BottomSheetOptions(
+                                        text = stringResource(R.string.add_image),
+                                        icon = painterResource(id = R.drawable.gallery_icon),
+                                        onClick = {
+                                            launcher.launch(
+                                                PickVisualMediaRequest(
+                                                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                                )
                                             )
-                                        )
-                                        showSheet = false
-                                    }
-                                )
-                                BottomSheetOptions(
-                                    text = stringResource(R.string.speech_to_text),
-                                    icon = painterResource(id = R.drawable.mic_icon),
-                                    onClick = {
-                                        if (permissionState.status.isGranted) {
-                                            speechRecognizerLauncher.launch(Unit)
-                                        } else {
-                                            permissionState.launchPermissionRequest()
+                                            showSheet = false
                                         }
-                                        showSheet = false
-                                    }
-                                )
+                                    )
+                                    BottomSheetOptions(
+                                        text = stringResource(R.string.speech_to_text),
+                                        icon = painterResource(id = R.drawable.mic_icon),
+                                        onClick = {
+                                            if (permissionState.status.isGranted) {
+                                                speechRecognizerLauncher.launch(Unit)
+                                            } else {
+                                                permissionState.launchPermissionRequest()
+                                            }
+                                            showSheet = false
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
-                }
-            )
+                )
+            }
         }
     ) {
         Box(
@@ -230,7 +239,7 @@ fun AddNotesScreen(
                         bitmap = bitmap.asImageBitmap(),
                         contentDescription = stringResource(R.string.image),
                         modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.FillWidth
+                        contentScale = ContentScale.Crop
                     )
 
                     imagePath = bitmap
