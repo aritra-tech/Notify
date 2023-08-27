@@ -87,7 +87,7 @@ dependencies {
 
     // Accompanist
     implementation ("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
-    implementation ("com.google.accompanist:accompanist-permissions:0.24.11-rc")
+    implementation ("com.google.accompanist:accompanist-permissions:0.33.1-alpha")
 
     // Material 3
     implementation ("androidx.compose.material3:material3:1.1.1")
