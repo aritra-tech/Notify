@@ -43,4 +43,10 @@
     <string name="speech_to_text">Speech to Text</string>
     <string name="add_image">Add image</string>
     <string name="add_box">Add Box</string>
+    <string name="default_notification_channel_id">notify</string>
+    <string name="request_notification_permission">Request permission</string>
+    <string name="notification_permission_title">Notification permission</string>
+    <string name="notification_permission_description">The notification permission is important for this app. Please grant the permission.</string>
+    <string name="notification_permission_settings">The notification permission is important for this app. Please navigate to your device settings and enable notifications for Make it So.</string>
+    <string name="ok">OK</string>
 </resources>
