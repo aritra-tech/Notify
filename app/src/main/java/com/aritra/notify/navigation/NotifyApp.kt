@@ -1,5 +1,8 @@
 package com.aritra.notify.navigation
 
+import android.Manifest
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -21,13 +24,23 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aritra.notify.R
+import com.aritra.notify.components.dialog.PermissionDialog
+import com.aritra.notify.components.dialog.RationaleDialog
 import com.aritra.notify.ui.screens.notes.addNoteScreen.AddNotesScreen
 import com.aritra.notify.ui.screens.notes.editNoteScreen.EditNotesScreen
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 
 @Composable
 fun NotifyApp(navController: NavHostController = rememberNavController()) {
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        RequestNotificationPermissionDialog()
+    }
 
     val bottomNavItem = listOf(
         BottomNavItem(
@@ -121,5 +134,17 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                 SettingsScreen()
             }
         }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Composable
+fun RequestNotificationPermissionDialog() {
+    val permissionState = rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+
+    if (!permissionState.status.isGranted) {
+        if (permissionState.status.shouldShowRationale) RationaleDialog()
+        else PermissionDialog { permissionState.launchPermissionRequest() }
     }
 }
