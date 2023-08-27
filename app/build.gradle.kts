@@ -86,7 +86,7 @@ dependencies {
     implementation ("androidx.navigation:navigation-compose:$navVersion")
 
     // Accompanist
-    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
     implementation ("com.google.accompanist:accompanist-permissions:0.24.11-rc")
 
     // Material 3
