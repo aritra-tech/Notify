@@ -122,9 +122,11 @@ dependencies {
     // Splash API
     implementation ("androidx.core:core-splashscreen:1.0.1")
 
-    // Firebase Crashlytics
+    // Firebase
     implementation ("com.google.firebase:firebase-crashlytics-ktx:18.4.0")
     implementation ("com.google.firebase:firebase-analytics-ktx:21.3.0")
+    implementation("com.google.firebase:firebase-messaging-ktx:23.2.1")
+
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
