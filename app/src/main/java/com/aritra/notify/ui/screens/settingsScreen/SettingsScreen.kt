@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -26,9 +27,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.SettingsComponent
 import com.aritra.notify.components.actions.SettingsSwitchCard
-import com.aritra.notify.viewmodel.ThemeViewModel
+import com.aritra.notify.ui.screens.MainActivity
 import com.aritra.notify.utils.Const
 import com.aritra.notify.utils.shareApp
+import com.aritra.notify.viewmodel.ThemeViewModel
 
 @Composable
 fun SettingsScreen() {
@@ -36,6 +38,7 @@ fun SettingsScreen() {
     val context = LocalContext.current
     val themeViewModel: ThemeViewModel = hiltViewModel()
     val themeState by themeViewModel.themeState.collectAsState()
+    val biometricAuthState by settingsViewModel.biometricAuthState.collectAsState()
 
     val exportLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("*/*"),
@@ -70,10 +73,33 @@ fun SettingsScreen() {
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     SettingsSwitchCard(
-                        isDarkMode = themeState.isDarkMode,
-                        onToggleTheme = {
+                        text = stringResource(id = R.string.dark_mode),
+                        icon = painterResource(id = R.drawable.moon_icon),
+                        isChecked = themeState.isDarkMode,
+                        onCheckedChange = {
                             themeViewModel.toggleTheme()
-                        }
+                        },
+                    )
+                }
+
+                /** Security Settings. */
+
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        modifier = Modifier.padding(start = 5.dp),
+                        text = stringResource(R.string.security),
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    SettingsSwitchCard(
+                        text = stringResource(id = R.string.biometric),
+                        icon = painterResource(id = R.drawable.ic_fingerprint),
+                        isChecked = biometricAuthState,
+                        onCheckedChange = {
+                            settingsViewModel.showBiometricPrompt(context as MainActivity)
+                        },
                     )
                 }
 

@@ -28,6 +28,8 @@
     <string name="request_feature">Request Feature</string>
     <string name="share_notify">Share Notify</string>
     <string name="app_settings">App Settings</string>
+    <string name="security">Security</string>
+    <string name="biometric">Biometric</string>
     <string name="terms_conditions"><![CDATA[Terms & Conditions]]></string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="demo_text">Demo Text</string>

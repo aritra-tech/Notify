@@ -5,15 +5,23 @@ import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.aritra.notify.biometric.AppBioMetricManager
+import com.aritra.notify.biometric.BiometricAuthListener
 import com.aritra.notify.data.db.NoteDatabase
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.data.repository.BackupRepository
 import com.aritra.notify.data.repository.NoteRepository
+import com.aritra.notify.di.DataStoreUtil
+import com.aritra.notify.ui.screens.MainActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import javax.inject.Inject
@@ -21,7 +29,9 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     application: Application,
-    private val settingsRepository: NoteRepository
+    private val settingsRepository: NoteRepository,
+    private val appBioMetricManager: AppBioMetricManager,
+    dataStoreUtil: DataStoreUtil,
 ) : AndroidViewModel(application) {
 
     private val backupRepository = BackupRepository(
@@ -29,14 +39,47 @@ class SettingsViewModel @Inject constructor(
         context = application, // Pass the application context
         mutex = Mutex(), // Create a new Mutex instance
         scope = viewModelScope, // Pass the viewModelScope
-        dispatcher = Dispatchers.IO // Pass the appropriate coroutine dispatcher
+        dispatcher = Dispatchers.IO, // Pass the appropriate coroutine dispatcher
     )
     var notes by mutableStateOf(emptyList<Note>())
 
     private var observeNoteJob: Job? = null
 
+    private val dataStore = dataStoreUtil.dataStore
+    private val _biometricAuthState = MutableStateFlow(false)
+    val biometricAuthState: StateFlow<Boolean> = _biometricAuthState
+
     init {
         observe()
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStore.data.map { preferences ->
+                preferences[DataStoreUtil.IS_BIOMETRIC_AUTH_SET_KEY] ?: false
+            }.collect {
+                _biometricAuthState.value = it
+            }
+        }
+    }
+
+    fun showBiometricPrompt(activity: MainActivity) {
+        appBioMetricManager.initBiometricPrompt(
+            activity = activity,
+            listener = object : BiometricAuthListener {
+                override fun onBiometricAuthSuccess() {
+                    viewModelScope.launch {
+                        dataStore.edit { preferences ->
+                            preferences[DataStoreUtil.IS_BIOMETRIC_AUTH_SET_KEY] =
+                                !_biometricAuthState.value
+                        }
+                    }
+                }
+
+                override fun onUserCancelled() {
+                }
+
+                override fun onErrorOccurred() {
+                }
+            },
+        )
     }
 
     fun onExport(uri: Uri) {
