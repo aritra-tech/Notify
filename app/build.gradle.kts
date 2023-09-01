@@ -5,7 +5,6 @@ plugins {
     id ("kotlin-kapt")
     id ("com.google.dagger.hilt.android")
     id ("com.google.gms.google-services")
-    id ("com.google.firebase.crashlytics")
     id ("com.google.devtools.ksp")
 }
 
@@ -17,8 +16,8 @@ android {
         applicationId = "com.aritra.notify"
         minSdk = 24
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.2.0"
+        versionCode = 4
+        versionName = "1.3.0-beta01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -123,8 +122,6 @@ dependencies {
     implementation ("androidx.core:core-splashscreen:1.0.1")
 
     // Firebase
-    implementation ("com.google.firebase:firebase-crashlytics-ktx:18.4.0")
-    implementation ("com.google.firebase:firebase-analytics-ktx:21.3.0")
     implementation("com.google.firebase:firebase-messaging-ktx:23.2.1")
 
 
