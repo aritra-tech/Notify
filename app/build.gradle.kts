@@ -109,7 +109,7 @@ dependencies {
 
     // Hilt
     implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
-    implementation ("com.google.dagger:hilt-android:2.44")
+    implementation ("com.google.dagger:hilt-android:2.48")
     kapt ("com.google.dagger:hilt-compiler:2.44")
 
     // DataStore
