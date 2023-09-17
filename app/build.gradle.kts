@@ -124,10 +124,13 @@ dependencies {
     // Firebase
     implementation("com.google.firebase:firebase-messaging-ktx:23.2.1")
 
-
     //Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     // Biometric
     implementation("androidx.biometric:biometric:1.2.0-alpha05")
+
+    // In-App Update
+    implementation("com.google.android.play:app-update:2.1.0")
+    implementation("com.google.android.play:app-update-ktx:2.1.0")
 }
