@@ -3,6 +3,7 @@ package com.aritra.notify.components.topbar
 
 import android.graphics.Bitmap
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -62,7 +63,15 @@ fun AddNoteTopBar(
     val view = LocalView.current
     val bitmapSize = view.width to view.height
 
-
+    BackHandler {
+        if (title.isNotEmpty() && description.isNotEmpty()) {
+            val noteDB = Note(id = 0, title = title, note = description,
+                    dateTime = dateTime, imagePath = imagePath)
+            viewModel.insertNote(noteDB)
+            onSave()
+            Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
+        } else onBackPress()
+    }
 
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
