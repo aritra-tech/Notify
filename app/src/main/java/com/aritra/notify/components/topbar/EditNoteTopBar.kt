@@ -1,8 +1,5 @@
 package com.aritra.notify.components.topbar
 
-import android.graphics.Bitmap
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -43,18 +40,16 @@ import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
 import com.aritra.notify.utils.shareAsImage
 import com.aritra.notify.utils.shareAsPdf
 import com.aritra.notify.utils.shareNoteAsText
-import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditNoteTopBar(
     note: Note,
     viewModel: EditScreenViewModel,
-    noteId: Int,
     navigateBack: () -> Unit,
     title: String,
     description: String,
-    imagePath: Bitmap?
+    updateNote: () -> Unit,
 ) {
     val noteScreenViewModel = hiltViewModel<NoteScreenViewModel>()
     var showSheet by remember { mutableStateOf(false) }
@@ -65,15 +60,12 @@ fun EditNoteTopBar(
     )
     val view = LocalView.current
     val bitmapSize = view.width to view.height
-    val currentDateTime = Date()
     val deleteDialogVisible = remember { mutableStateOf(false) }
-    var noteHasBeenModified = viewModel.noteHasBeenModified.observeAsState().value?: false
+    val noteHasBeenModified = viewModel.noteHasBeenModified.observeAsState().value ?: false
 
     BackHandler {
         if (noteHasBeenModified) {
-            val updateNote = Note(noteId, title, description, currentDateTime, imagePath)
-            viewModel.updateNotes(updateNote)
-            Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
+            updateNote()
         }
         navigateBack()
     }
@@ -91,9 +83,7 @@ fun EditNoteTopBar(
         navigationIcon = {
             IconButton(onClick = {
                 if (noteHasBeenModified) {
-                    val updateNote = Note(noteId, title, description, currentDateTime, imagePath)
-                    viewModel.updateNotes(updateNote)
-                    Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
+                    updateNote()
                 }
                 navigateBack()
             }) {
@@ -170,10 +160,8 @@ fun EditNoteTopBar(
                 }
             }
             IconButton(onClick = {
-                val updateNote = Note(noteId, title, description, currentDateTime, imagePath)
-                viewModel.updateNotes(updateNote)
+                updateNote()
                 navigateBack()
-                Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
             }) {
                 Icon(
                     painterResource(R.drawable.save),

@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -29,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -56,7 +54,7 @@ fun GridNoteCard(
 ) {
     var expanded by remember { mutableStateOf(false) }
     val deleteDialogVisible = remember { mutableStateOf(false) }
-    val painter = rememberSaveable { mutableStateOf(notesModel.imagePath) }
+    val painter = rememberSaveable { mutableStateOf(notesModel.image) }
     val context = LocalContext.current
 
     OutlinedCard(

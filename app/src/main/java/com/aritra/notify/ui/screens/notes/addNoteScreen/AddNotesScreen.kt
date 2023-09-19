@@ -2,24 +2,18 @@ package com.aritra.notify.ui.screens.notes.addNoteScreen
 
 
 import android.Manifest
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -51,7 +45,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -67,11 +60,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BottomSheetOptions
 import com.aritra.notify.components.actions.SpeechRecognizerContract
 import com.aritra.notify.components.topbar.AddNoteTopBar
 import com.aritra.notify.components.dialog.TextDialog
+import com.aritra.notify.data.models.Note
 import com.aritra.notify.utils.Const
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -86,10 +81,10 @@ fun AddNotesScreen(
     navigateBack: () -> Unit
 ) {
     val addViewModel = hiltViewModel<AddNoteViewModel>()
+    val context = LocalContext.current
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     val dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
-    var imagePath by remember { mutableStateOf<Bitmap?>(null) }
     var characterCount by remember { mutableIntStateOf(title.length + description.length) }
     val cancelDialogState = remember { mutableStateOf(false) }
     var showSheet by remember { mutableStateOf(false) }
@@ -103,7 +98,6 @@ fun AddNotesScreen(
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
-    val context = LocalContext.current
     var photoUri: Uri? by remember { mutableStateOf(null) }
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -128,16 +122,28 @@ fun AddNotesScreen(
         }
     )
 
+    val saveNote = remember {
+        {
+            val note = Note(
+                id = 0,
+                title = title,
+                note = description,
+                dateTime = dateTime,
+                image = photoUri
+            )
+            addViewModel.insertNote(note)
+            navigateBack()
+            Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Scaffold(
         topBar = {
             AddNoteTopBar(
-                addViewModel,
+                title = title,
+                description = description,
                 onBackPress = { cancelDialogState.value = true },
-                onSave = { navigateBack() },
-                title,
-                description,
-                dateTime,
-                imagePath
+                saveNote = saveNote,
             )
         },
         bottomBar = {
@@ -215,7 +221,6 @@ fun AddNotesScreen(
                         IconButton(
                             onClick = {
                                 photoUri = null
-                                imagePath = null
                             },
                         ) {
                             Icon(
@@ -225,24 +230,12 @@ fun AddNotesScreen(
                         }
                     }
 
-                    val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        ImageDecoder.decodeBitmap(
-                            ImageDecoder.createSource(
-                                context.contentResolver,
-                                photoUri!!
-                            )
-                        )
-                    } else {
-                        MediaStore.Images.Media.getBitmap(context.contentResolver, photoUri!!)
-                    }
-                    Image(
-                        bitmap = bitmap.asImageBitmap(),
+                    AsyncImage(
+                        model = photoUri,
                         contentDescription = stringResource(R.string.image),
                         modifier = Modifier.fillMaxWidth(),
                         contentScale = ContentScale.Crop
                     )
-
-                    imagePath = bitmap
                 }
 
                 TextField(

@@ -2,9 +2,7 @@ package com.aritra.notify.ui.screens.notes.editNoteScreen
 
 import android.app.Application
 import android.graphics.Bitmap
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -44,8 +42,8 @@ class EditScreenViewModel @Inject constructor(
         if (noteHasBeenModified.value == false) noteHasBeenModified.value = true
     }
 
-    fun updateImage(image: Bitmap?) {
-        noteModel.postValue(noteModel.value?.copy(imagePath = image))
+    fun updateImage(image: Uri?) {
+        noteModel.postValue(noteModel.value?.copy(image = image))
         if (noteHasBeenModified.value == false) noteHasBeenModified.value = true
     }
 }
