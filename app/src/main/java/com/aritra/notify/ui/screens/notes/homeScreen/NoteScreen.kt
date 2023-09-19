@@ -119,9 +119,7 @@ fun NoteScreen(
                             }) { _, notesModel ->
                                 GridNoteCard(
                                     notesModel,
-                                    viewModel,
                                     navigateToUpdateNoteScreen,
-                                    isGridView
                                 )
                             }
                         }
