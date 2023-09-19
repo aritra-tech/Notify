@@ -45,19 +45,22 @@ import com.aritra.notify.data.models.Note
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
 import com.aritra.notify.utils.Const
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @Composable
 fun GridNoteCard(
     notesModel: Note,
-    viewModel: NoteScreenViewModel,
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
-    isGridView: Boolean
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    val deleteDialogVisible = remember { mutableStateOf(false) }
     val painter = rememberSaveable { mutableStateOf(notesModel.imagePath) }
     val context = LocalContext.current
+    val date = remember {
+        SimpleDateFormat(
+            Const.DATE_TIME_FORMAT,
+            Locale.getDefault()
+        ).format(notesModel.dateTime ?: Date())
+    }
 
     OutlinedCard(
         border = CardDefaults.outlinedCardBorder().copy(0.dp),
@@ -68,7 +71,9 @@ fun GridNoteCard(
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(
-            modifier = Modifier.padding(12.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth()
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(context)
@@ -95,45 +100,6 @@ fun GridNoteCard(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
-
-                if (isGridView) {
-                    IconButton(
-                        onClick = { expanded = true }
-                    ) {
-                        Icon(Icons.Default.MoreVert, "Options")
-                    }
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Delete") },
-                            onClick = {
-                                deleteDialogVisible.value = true
-                                expanded = false
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    modifier = Modifier.padding(12.dp),
-                                    imageVector = Icons.Outlined.Delete,
-                                    contentDescription = null
-                                )
-                            }
-                        )
-                    }
-                    if (deleteDialogVisible.value) {
-                        TextDialog(
-                            title = stringResource(R.string.warning),
-                            description = stringResource(R.string.are_you_sure_want_to_delete_these_items_it_cannot_be_recovered),
-                            isOpened = deleteDialogVisible.value,
-                            onDismissCallback = { deleteDialogVisible.value = false },
-                            onConfirmCallback = {
-                                viewModel.deleteNote(notesModel)
-                                deleteDialogVisible.value = false
-                            }
-                        )
-                    }
-                }
             }
             Spacer(modifier = Modifier.height(10.dp))
             Text(
@@ -144,13 +110,8 @@ fun GridNoteCard(
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(10.dp))
-            val formattedDateTime =
-                SimpleDateFormat(
-                    Const.DATE_TIME_FORMAT,
-                    Locale.getDefault()
-                ).format(notesModel.dateTime)
             Text(
-                text = formattedDateTime,
+                text = date,
                 fontSize = 14.sp,
                 fontFamily = FontFamily(Font(R.font.poppins_medium)),
                 color = Color.Gray
