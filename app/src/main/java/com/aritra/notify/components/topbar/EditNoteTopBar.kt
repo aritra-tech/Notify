@@ -1,7 +1,9 @@
 package com.aritra.notify.components.topbar
 
 import android.graphics.Bitmap
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +21,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -64,6 +67,16 @@ fun EditNoteTopBar(
     val bitmapSize = view.width to view.height
     val currentDateTime = Date()
     val deleteDialogVisible = remember { mutableStateOf(false) }
+    var noteHasBeenModified = viewModel.noteHasBeenModified.observeAsState().value?: false
+
+    BackHandler {
+        if (noteHasBeenModified) {
+            val updateNote = Note(noteId, title, description, currentDateTime, imagePath)
+            viewModel.updateNotes(updateNote)
+            Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
+        }
+        navigateBack()
+    }
 
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -76,7 +89,14 @@ fun EditNoteTopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = { navigateBack() }) {
+            IconButton(onClick = {
+                if (noteHasBeenModified) {
+                    val updateNote = Note(noteId, title, description, currentDateTime, imagePath)
+                    viewModel.updateNotes(updateNote)
+                    Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
+                }
+                navigateBack()
+            }) {
                 Icon(
                     painterResource(R.drawable.back),
                     contentDescription = stringResource(R.string.back)
