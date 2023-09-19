@@ -2,7 +2,7 @@ package com.aritra.notify.utils
 
 object Const {
 
-    const val DATABASE_FILE_NAME = "Notify.db"
+    const val DATABASE_FILE_NAME = "Notify.zip"
     const val DB_NAME = "Note_database"
     const val DATE_TIME_FORMAT = "dd MMM, hh:mm a"
     const val DATE_FORMAT = "dd MMM"

@@ -64,8 +64,8 @@ import coil.compose.AsyncImage
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BottomSheetOptions
 import com.aritra.notify.components.actions.SpeechRecognizerContract
-import com.aritra.notify.components.topbar.AddNoteTopBar
 import com.aritra.notify.components.dialog.TextDialog
+import com.aritra.notify.components.topbar.AddNoteTopBar
 import com.aritra.notify.data.models.Note
 import com.aritra.notify.utils.Const
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -124,16 +124,19 @@ fun AddNotesScreen(
 
     val saveNote = remember {
         {
-            val note = Note(
-                id = 0,
-                title = title,
-                note = description,
-                dateTime = dateTime,
-                image = photoUri
+            addViewModel.insertNote(
+                note = Note(
+                    id = 0,
+                    title = title,
+                    note = description,
+                    dateTime = dateTime,
+                    image = photoUri
+                ),
+                onSuccess = {
+                    navigateBack()
+                    Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
+                }
             )
-            addViewModel.insertNote(note)
-            navigateBack()
-            Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
         }
     }
 
