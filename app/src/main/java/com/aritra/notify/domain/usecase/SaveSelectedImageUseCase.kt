@@ -10,15 +10,27 @@ import androidx.core.content.FileProvider
 import java.io.File
 
 object SaveSelectedImageUseCase {
+    const val DIRECTORY = "image"
+
+    /**
+     * Returns the image file in the cache directory
+     */
+    fun image(context: Context, id: Int) = File(
+        File(context.externalCacheDir, DIRECTORY).apply {
+            if (!exists()) {
+                mkdirs()
+            }
+        },
+        "image_${id}.webp"
+    )
+
+    /**
+     * Saves the selected image to the cache directory and returns the uri of the saved image
+     */
     operator fun invoke(context: Context, uri: Uri, noteId: Int): Uri? = try {
         // copy the image to cache directory because opening the
         // image uri after app restart doesn't work for external storage uri on android 11 and above
-        val image = File(
-            File(context.externalCacheDir, "images").apply {
-                mkdirs()
-            },
-            "image_${noteId}.webp"
-        )
+        val image = image(context, noteId)
         val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             ImageDecoder.decodeBitmap(
                 ImageDecoder.createSource(
