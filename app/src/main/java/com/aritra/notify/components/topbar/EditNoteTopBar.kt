@@ -18,7 +18,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,7 +34,6 @@ import com.aritra.notify.R
 import com.aritra.notify.components.actions.ShareOption
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.data.models.Note
-import com.aritra.notify.ui.screens.notes.editNoteScreen.EditScreenViewModel
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
 import com.aritra.notify.utils.shareAsImage
 import com.aritra.notify.utils.shareAsPdf
@@ -45,7 +43,6 @@ import com.aritra.notify.utils.shareNoteAsText
 @Composable
 fun EditNoteTopBar(
     note: Note,
-    viewModel: EditScreenViewModel,
     navigateBack: () -> Unit,
     title: String,
     description: String,
@@ -61,14 +58,8 @@ fun EditNoteTopBar(
     val view = LocalView.current
     val bitmapSize = view.width to view.height
     val deleteDialogVisible = remember { mutableStateOf(false) }
-    val noteHasBeenModified = viewModel.noteHasBeenModified.observeAsState().value ?: false
 
-    BackHandler {
-        if (noteHasBeenModified) {
-            updateNote()
-        }
-        navigateBack()
-    }
+    BackHandler(onBack = updateNote)
 
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -81,12 +72,7 @@ fun EditNoteTopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = {
-                if (noteHasBeenModified) {
-                    updateNote()
-                }
-                navigateBack()
-            }) {
+            IconButton(onClick = updateNote) {
                 Icon(
                     painterResource(R.drawable.back),
                     contentDescription = stringResource(R.string.back)
@@ -159,16 +145,12 @@ fun EditNoteTopBar(
                     }
                 }
             }
-            IconButton(onClick = {
-                updateNote()
-                navigateBack()
-            }) {
+            IconButton(onClick = updateNote) {
                 Icon(
                     painterResource(R.drawable.save),
                     contentDescription = stringResource(R.string.save)
                 )
             }
-
         }
     )
 }

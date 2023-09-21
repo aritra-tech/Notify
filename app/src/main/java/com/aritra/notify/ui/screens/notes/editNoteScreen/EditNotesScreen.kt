@@ -64,11 +64,12 @@ fun EditNotesScreen(
         SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
     val formattedCharacterCount = "${(title.length) + (description.length)} characters"
 
-    val saveNote = remember {
+    val saveNote: () -> Unit = remember {
         {
-            val updateNote = Note(noteId, title, description, Date(), imagePath)
-            editViewModel.updateNotes(updateNote)
-            Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
+            editViewModel.updateNotes {
+                navigateBack()
+                Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -78,7 +79,7 @@ fun EditNotesScreen(
     Scaffold(
         topBar = {
             if (dateTime != null) {
-                EditNoteTopBar(note, editViewModel, navigateBack, title, description, saveNote)
+                EditNoteTopBar(note, navigateBack, title, description, saveNote)
             }
         }
     ) {

@@ -24,7 +24,7 @@ class AddNoteViewModel @Inject constructor(
 
             if (note.image != null) {
                 // update the note with the new image uri
-                addRepository.insertNoteToRoom(
+                addRepository.updateNoteInRoom(
                     note.copy(
                         id = id,
                         image = SaveSelectedImageUseCase(
