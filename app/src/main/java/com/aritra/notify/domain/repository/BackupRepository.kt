@@ -1,4 +1,4 @@
-package com.aritra.notify.data.repository
+package com.aritra.notify.domain.repository
 
 import android.content.Context
 import android.net.Uri
@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.core.content.FileProvider
 import com.aritra.notify.data.converters.DateTypeConverter
 import com.aritra.notify.data.db.NoteDatabase
-import com.aritra.notify.data.models.Note
+import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.usecase.SaveSelectedImageUseCase
 import com.aritra.notify.utils.CsvIo
 import kotlinx.coroutines.CoroutineDispatcher

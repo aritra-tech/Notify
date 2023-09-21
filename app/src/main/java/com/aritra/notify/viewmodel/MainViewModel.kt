@@ -2,8 +2,8 @@ package com.aritra.notify.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aritra.notify.biometric.AppBioMetricManager
-import com.aritra.notify.biometric.BiometricAuthListener
+import com.aritra.notify.components.biometric.AppBioMetricManager
+import com.aritra.notify.components.biometric.BiometricAuthListener
 import com.aritra.notify.di.DataStoreUtil
 import com.aritra.notify.ui.screens.MainActivity
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -10,7 +10,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.aritra.notify.biometric.AppBioMetricManager
+import com.aritra.notify.components.biometric.AppBioMetricManager
 import com.aritra.notify.navigation.NotifyApp
 import com.aritra.notify.ui.theme.NotifyTheme
 import com.aritra.notify.viewmodel.MainViewModel

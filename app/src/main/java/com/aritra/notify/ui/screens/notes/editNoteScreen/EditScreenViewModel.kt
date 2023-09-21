@@ -5,8 +5,8 @@ import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.aritra.notify.data.models.Note
-import com.aritra.notify.data.repository.NoteRepository
+import com.aritra.notify.domain.models.Note
+import com.aritra.notify.domain.repository.NoteRepository
 import com.aritra.notify.domain.usecase.SaveSelectedImageUseCase
 import com.aritra.notify.utils.toFile
 import dagger.hilt.android.lifecycle.HiltViewModel

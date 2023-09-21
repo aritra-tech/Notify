@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.aritra.notify.R
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.note.NotesCard
-import com.aritra.notify.data.models.Note
+import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox

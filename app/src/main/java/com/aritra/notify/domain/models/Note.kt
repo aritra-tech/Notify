@@ -1,4 +1,4 @@
-package com.aritra.notify.data.models
+package com.aritra.notify.domain.models
 
 import android.net.Uri
 import android.os.Parcelable

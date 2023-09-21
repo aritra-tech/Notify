@@ -3,8 +3,8 @@ package com.aritra.notify.ui.screens.notes.addNoteScreen
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.aritra.notify.data.models.Note
-import com.aritra.notify.data.repository.NoteRepository
+import com.aritra.notify.domain.models.Note
+import com.aritra.notify.domain.repository.NoteRepository
 import com.aritra.notify.domain.usecase.SaveSelectedImageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

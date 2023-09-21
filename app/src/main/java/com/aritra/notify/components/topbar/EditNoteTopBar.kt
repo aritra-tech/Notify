@@ -33,7 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.ShareOption
 import com.aritra.notify.components.dialog.TextDialog
-import com.aritra.notify.data.models.Note
+import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
 import com.aritra.notify.utils.shareAsImage
 import com.aritra.notify.utils.shareAsPdf

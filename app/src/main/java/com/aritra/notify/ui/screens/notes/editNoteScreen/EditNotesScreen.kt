@@ -41,7 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.EditNoteTopBar
-import com.aritra.notify.data.models.Note
+import com.aritra.notify.domain.models.Note
 import com.aritra.notify.utils.Const
 import java.text.SimpleDateFormat
 import java.util.Date

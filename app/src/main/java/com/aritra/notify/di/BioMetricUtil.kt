@@ -1,7 +1,7 @@
 package com.aritra.notify.di
 
 import android.content.Context
-import com.aritra.notify.biometric.AppBioMetricManager
+import com.aritra.notify.components.biometric.AppBioMetricManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

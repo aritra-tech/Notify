@@ -66,7 +66,7 @@ import com.aritra.notify.components.actions.BottomSheetOptions
 import com.aritra.notify.components.actions.SpeechRecognizerContract
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.topbar.AddNoteTopBar
-import com.aritra.notify.data.models.Note
+import com.aritra.notify.domain.models.Note
 import com.aritra.notify.utils.Const
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted

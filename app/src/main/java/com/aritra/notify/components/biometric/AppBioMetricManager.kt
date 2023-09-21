@@ -1,4 +1,4 @@
-package com.aritra.notify.biometric
+package com.aritra.notify.components.biometric
 
 import android.content.Context
 import androidx.biometric.BiometricManager

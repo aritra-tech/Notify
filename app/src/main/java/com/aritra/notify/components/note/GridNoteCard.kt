@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.aritra.notify.R
-import com.aritra.notify.data.models.Note
+import com.aritra.notify.domain.models.Note
 import com.aritra.notify.utils.Const
 import java.text.SimpleDateFormat
 import java.util.Date

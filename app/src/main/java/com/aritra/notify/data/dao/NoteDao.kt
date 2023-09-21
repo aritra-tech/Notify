@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.aritra.notify.data.models.Note
+import com.aritra.notify.domain.models.Note
 import kotlinx.coroutines.flow.Flow
 
 @Dao
