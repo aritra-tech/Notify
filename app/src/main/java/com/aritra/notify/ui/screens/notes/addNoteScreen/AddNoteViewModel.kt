@@ -21,21 +21,20 @@ class AddNoteViewModel @Inject constructor(
     fun insertNote(note: Note, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val id: Int = addRepository.insertNoteToRoom(note).toInt()
-            if (note.image == null) {
-                return@launch
-            }
 
-            // update the note with the new image uri
-            addRepository.insertNoteToRoom(
-                note.copy(
-                    id = id,
-                    image = SaveSelectedImageUseCase(
-                        context = getApplication(),
-                        uri = note.image!!,
-                        noteId = id
+            if (note.image != null) {
+                // update the note with the new image uri
+                addRepository.insertNoteToRoom(
+                    note.copy(
+                        id = id,
+                        image = SaveSelectedImageUseCase(
+                            context = getApplication(),
+                            uri = note.image!!,
+                            noteId = id
+                        )
                     )
                 )
-            )
+            }
 
             withContext(Dispatchers.Main) {
                 onSuccess()
