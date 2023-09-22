@@ -24,7 +24,6 @@ abstract class NoteDatabase : RoomDatabase() {
                         "Note_database"
                     )
                         .fallbackToDestructiveMigration()
-                        .allowMainThreadQueries()
                         .build()
                     INSTANCE = instance
                 }
