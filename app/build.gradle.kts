@@ -58,7 +58,7 @@ dependencies {
 
     val lifecycleVersion = "2.6.1"
     val roomVersion = "2.5.2"
-    val navVersion = "2.7.0"
+    val navVersion = "2.7.2"
 
 
     implementation ("androidx.core:core-ktx:1.10.1")
