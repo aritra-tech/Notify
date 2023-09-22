@@ -42,15 +42,15 @@ fun NotesCard(
     OutlinedCard(
         border = CardDefaults.outlinedCardBorder().copy(0.dp),
         modifier = Modifier
-            .padding(2.dp)
+            .padding(10.dp)
             .fillMaxHeight()
             .clickable { navigateToUpdateNoteScreen(noteModel.id) },
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(15.dp),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp)
+                .padding(16.dp)
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(context)

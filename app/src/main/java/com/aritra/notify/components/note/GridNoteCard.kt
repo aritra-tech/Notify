@@ -54,11 +54,11 @@ fun GridNoteCard(
             .padding(10.dp)
             .fillMaxWidth()
             .clickable { navigateToUpdateNoteScreen(notesModel.id) },
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(15.dp)
     ) {
         Column(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(16.dp)
                 .fillMaxWidth()
         ) {
             AsyncImage(
