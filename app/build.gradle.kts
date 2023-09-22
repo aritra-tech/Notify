@@ -56,7 +56,7 @@ android {
 
 dependencies {
 
-    val lifecycleVersion = "2.6.1"
+    val lifecycleVersion = "2.6.2"
     val roomVersion = "2.5.2"
     val navVersion = "2.7.2"
 
@@ -90,7 +90,7 @@ dependencies {
     // Material 3
     implementation ("androidx.compose.material3:material3:1.1.1")
     implementation ("androidx.compose.material3:material3-window-size-class:1.1.1")
-    implementation ("androidx.compose.material:material-icons-extended:1.5.0")
+    implementation ("androidx.compose.material:material-icons-extended:1.5.1")
 
     // Room
     implementation ("androidx.room:room-runtime:$roomVersion")
