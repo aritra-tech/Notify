@@ -4,7 +4,6 @@ plugins {
     id ("kotlin-parcelize")
     id ("kotlin-kapt")
     id ("com.google.dagger.hilt.android")
-    id ("com.google.gms.google-services")
     id ("com.google.devtools.ksp")
 }
 
@@ -115,14 +114,8 @@ dependencies {
     // DataStore
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
 
-    //Swipe
-    implementation ("me.saket.swipe:swipe:1.2.0")
-
     // Splash API
     implementation ("androidx.core:core-splashscreen:1.0.1")
-
-    // Firebase
-    implementation("com.google.firebase:firebase-messaging-ktx:23.2.1")
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
