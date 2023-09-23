@@ -38,10 +38,6 @@ import com.google.accompanist.permissions.shouldShowRationale
 @Composable
 fun NotifyApp(navController: NavHostController = rememberNavController()) {
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        RequestNotificationPermissionDialog()
-    }
-
     val bottomNavItem = listOf(
         BottomNavItem(
             name = "Notes",
@@ -134,17 +130,5 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                 SettingsScreen()
             }
         }
-    }
-}
-
-@OptIn(ExperimentalPermissionsApi::class)
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@Composable
-fun RequestNotificationPermissionDialog() {
-    val permissionState = rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
-
-    if (!permissionState.status.isGranted) {
-        if (permissionState.status.shouldShowRationale) RationaleDialog()
-        else PermissionDialog { permissionState.launchPermissionRequest() }
     }
 }

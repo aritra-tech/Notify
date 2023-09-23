@@ -1,9 +1,9 @@
-package com.aritra.notify.data.repository
+package com.aritra.notify.domain.repository
 
 import android.app.Application
 import com.aritra.notify.data.dao.NoteDao
 import com.aritra.notify.data.db.NoteDatabase
-import com.aritra.notify.data.models.Note
+import com.aritra.notify.domain.models.Note
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -21,7 +21,7 @@ class NoteRepository @Inject constructor(application: Application) {
     fun getNoteByIdFromRoom(noteId: Int): Flow<Note> = noteDao.getNoteById(noteId)
 
 
-    suspend fun insertNoteToRoom(note: Note) = noteDao.insertNote(note)
+    suspend fun insertNoteToRoom(note: Note): Long = noteDao.insertNote(note)
 
     suspend fun updateNoteInRoom(note: Note) = noteDao.updateNote(note)
 

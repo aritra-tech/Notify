@@ -1,8 +1,7 @@
 package com.aritra.notify.components.topbar
 
 
-import android.graphics.Bitmap
-import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,24 +33,19 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.ShareOption
-import com.aritra.notify.data.models.Note
-import com.aritra.notify.ui.screens.notes.addNoteScreen.AddNoteViewModel
 import com.aritra.notify.utils.shareAsImage
 import com.aritra.notify.utils.shareAsPdf
 import com.aritra.notify.utils.shareNoteAsText
-import java.util.Date
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddNoteTopBar(
-    viewModel: AddNoteViewModel,
-    onBackPress: () -> Unit,
-    onSave: () -> Unit,
     title: String,
     description: String,
-    dateTime: Date,
-    imagePath: Bitmap?,
+    modifier: Modifier = Modifier,
+    onBackPress: () -> Unit,
+    saveNote: () -> Unit,
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -62,9 +56,14 @@ fun AddNoteTopBar(
     val view = LocalView.current
     val bitmapSize = view.width to view.height
 
-
+    BackHandler {
+        if (title.isNotEmpty() && description.isNotEmpty()) {
+            saveNote()
+        } else onBackPress()
+    }
 
     CenterAlignedTopAppBar(
+        modifier = modifier,
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -130,14 +129,7 @@ fun AddNoteTopBar(
                     }
                 }
 
-                IconButton(onClick = {
-                    val noteDB =
-                        Note(id = 0, title = title, note = description, dateTime = dateTime, imagePath = imagePath)
-                    viewModel.insertNote(noteDB)
-                    onSave()
-                    Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
-
-                }) {
+                IconButton(onClick = saveNote) {
                     Icon(
                         painterResource(R.drawable.save),
                         contentDescription = stringResource(R.string.save)

@@ -4,7 +4,6 @@ plugins {
     id ("kotlin-parcelize")
     id ("kotlin-kapt")
     id ("com.google.dagger.hilt.android")
-    id ("com.google.gms.google-services")
     id ("com.google.devtools.ksp")
 }
 
@@ -16,8 +15,8 @@ android {
         applicationId = "com.aritra.notify"
         minSdk = 24
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.3.0-beta01"
+        versionCode = 5
+        versionName = "1.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -57,9 +56,9 @@ android {
 
 dependencies {
 
-    val lifecycleVersion = "2.6.1"
+    val lifecycleVersion = "2.6.2"
     val roomVersion = "2.5.2"
-    val navVersion = "2.7.0"
+    val navVersion = "2.7.2"
 
 
     implementation ("androidx.core:core-ktx:1.10.1")
@@ -91,7 +90,7 @@ dependencies {
     // Material 3
     implementation ("androidx.compose.material3:material3:1.1.1")
     implementation ("androidx.compose.material3:material3-window-size-class:1.1.1")
-    implementation ("androidx.compose.material:material-icons-extended:1.5.0")
+    implementation ("androidx.compose.material:material-icons-extended:1.5.1")
 
     // Room
     implementation ("androidx.room:room-runtime:$roomVersion")
@@ -115,14 +114,8 @@ dependencies {
     // DataStore
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
 
-    //Swipe
-    implementation ("me.saket.swipe:swipe:1.2.0")
-
     // Splash API
     implementation ("androidx.core:core-splashscreen:1.0.1")
-
-    // Firebase
-    implementation("com.google.firebase:firebase-messaging-ktx:23.2.1")
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.4.0")

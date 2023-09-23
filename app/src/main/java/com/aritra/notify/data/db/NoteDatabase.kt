@@ -4,14 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
-import androidx.room.TypeConverters
 import com.aritra.notify.data.dao.NoteDao
-import com.aritra.notify.data.models.BitmapConverters
-import com.aritra.notify.data.models.Note
+import com.aritra.notify.domain.models.Note
 
 @Database(entities = [Note::class], version = 2)
-@TypeConverters(BitmapConverters::class)
 abstract class NoteDatabase : RoomDatabase() {
 
     abstract fun noteDao(): NoteDao
@@ -28,7 +24,6 @@ abstract class NoteDatabase : RoomDatabase() {
                         "Note_database"
                     )
                         .fallbackToDestructiveMigration()
-                        .allowMainThreadQueries()
                         .build()
                     INSTANCE = instance
                 }

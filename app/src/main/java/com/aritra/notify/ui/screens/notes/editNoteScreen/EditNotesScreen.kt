@@ -1,10 +1,9 @@
 package com.aritra.notify.ui.screens.notes.editNoteScreen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,23 +12,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -45,7 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.EditNoteTopBar
-import com.aritra.notify.data.models.Note
+import com.aritra.notify.domain.models.Note
 import com.aritra.notify.utils.Const
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -56,23 +52,35 @@ fun EditNotesScreen(
     noteId: Int,
     navigateBack: () -> Unit
 ) {
-    val note = Note(noteId, "","", Date(),null)
+    val note = Note(noteId, "", "", Date(), null)
+    val context = LocalContext.current
     val editViewModel = hiltViewModel<EditScreenViewModel>()
     val title = editViewModel.noteModel.observeAsState().value?.title ?: ""
     val description = editViewModel.noteModel.observeAsState().value?.note ?: ""
-    val imagePath = editViewModel.noteModel.observeAsState().value?.imagePath
+    val imagePath = editViewModel.noteModel.observeAsState().value?.image
     val dateTime = editViewModel.noteModel.observeAsState().value?.dateTime
     val focus = LocalFocusManager.current
-    val formattedDateTime = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
+    val formattedDateTime =
+        SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
     val formattedCharacterCount = "${(title.length) + (description.length)} characters"
+
+    val saveNote: () -> Unit = remember {
+        {
+            editViewModel.updateNotes {
+                navigateBack()
+                Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
+            }
+            navigateBack()
+        }
+    }
 
     LaunchedEffect(Unit) {
         editViewModel.getNoteById(noteId)
     }
     Scaffold(
         topBar = {
-            dateTime?.let {
-                EditNoteTopBar(note,editViewModel, noteId, navigateBack, title, description, imagePath)
+            if (dateTime != null) {
+                EditNoteTopBar(note, navigateBack, title, description, saveNote)
             }
         }
     ) {

@@ -8,12 +8,12 @@ import androidx.compose.runtime.setValue
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.aritra.notify.biometric.AppBioMetricManager
-import com.aritra.notify.biometric.BiometricAuthListener
+import com.aritra.notify.components.biometric.AppBioMetricManager
+import com.aritra.notify.components.biometric.BiometricAuthListener
 import com.aritra.notify.data.db.NoteDatabase
-import com.aritra.notify.data.models.Note
-import com.aritra.notify.data.repository.BackupRepository
-import com.aritra.notify.data.repository.NoteRepository
+import com.aritra.notify.domain.models.Note
+import com.aritra.notify.domain.repository.BackupRepository
+import com.aritra.notify.domain.repository.NoteRepository
 import com.aritra.notify.di.DataStoreUtil
 import com.aritra.notify.ui.screens.MainActivity
 import dagger.hilt.android.lifecycle.HiltViewModel

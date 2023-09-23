@@ -2,7 +2,7 @@ package com.aritra.notify.di
 
 import android.app.Application
 import android.content.Context
-import com.aritra.notify.data.repository.NoteRepository
+import com.aritra.notify.domain.repository.NoteRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
