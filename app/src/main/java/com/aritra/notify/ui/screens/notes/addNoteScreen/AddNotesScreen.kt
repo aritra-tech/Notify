@@ -65,7 +65,7 @@ import com.aritra.notify.R
 import com.aritra.notify.components.actions.BottomSheetOptions
 import com.aritra.notify.components.actions.SpeechRecognizerContract
 import com.aritra.notify.components.dialog.TextDialog
-import com.aritra.notify.components.topbar.AddNoteTopBar
+import com.aritra.notify.components.topbar.AddEditTopBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.utils.Const
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -142,11 +142,13 @@ fun AddNotesScreen(
 
     Scaffold(
         topBar = {
-            AddNoteTopBar(
+            AddEditTopBar(
                 title = title,
                 description = description,
                 onBackPress = { cancelDialogState.value = true },
                 saveNote = saveNote,
+                updateNote = {},
+                note = null
             )
         },
         bottomBar = {
