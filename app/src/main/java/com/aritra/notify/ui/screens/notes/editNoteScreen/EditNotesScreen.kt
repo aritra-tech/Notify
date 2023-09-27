@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.aritra.notify.R
-import com.aritra.notify.components.topbar.EditNoteTopBar
+import com.aritra.notify.components.topbar.AddEditTopBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.utils.Const
 import java.text.SimpleDateFormat
@@ -80,7 +80,14 @@ fun EditNotesScreen(
     Scaffold(
         topBar = {
             if (dateTime != null) {
-                EditNoteTopBar(note, navigateBack, title, description, saveNote)
+                AddEditTopBar(
+                    note,
+                    onBackPress = navigateBack,
+                    title = title,
+                    description = description,
+                    updateNote = saveNote,
+                    saveNote = {}
+                )
             }
         }
     ) {

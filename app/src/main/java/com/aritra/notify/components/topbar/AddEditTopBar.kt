@@ -1,6 +1,5 @@
 package com.aritra.notify.components.topbar
 
-
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,25 +26,30 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.aritra.notify.domain.models.Note
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.ShareOption
+import com.aritra.notify.components.dialog.TextDialog
+import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
 import com.aritra.notify.utils.shareAsImage
 import com.aritra.notify.utils.shareAsPdf
 import com.aritra.notify.utils.shareNoteAsText
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddNoteTopBar(
+fun AddEditTopBar(
+    note: Note?,
     title: String,
     description: String,
-    modifier: Modifier = Modifier,
     onBackPress: () -> Unit,
     saveNote: () -> Unit,
+    updateNote: () -> Unit,
 ) {
+    val noteScreenViewModel = hiltViewModel<NoteScreenViewModel>()
     var showSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val skipPartiallyExpanded by remember { mutableStateOf(false) }
@@ -55,15 +58,17 @@ fun AddNoteTopBar(
     )
     val view = LocalView.current
     val bitmapSize = view.width to view.height
+    val deleteDialogVisible = remember { mutableStateOf(false) }
 
-    BackHandler {
-        if (title.isNotEmpty() && description.isNotEmpty()) {
-            saveNote()
-        } else onBackPress()
-    }
+    BackHandler(onBack = {
+        if (note != null) {
+            updateNote()
+        } else {
+            onBackPress()
+        }
+    })
 
     CenterAlignedTopAppBar(
-        modifier = modifier,
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -74,7 +79,13 @@ fun AddNoteTopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = { onBackPress() }) {
+            IconButton(onClick = {
+                if (note != null) {
+                    updateNote()
+                } else {
+                    onBackPress()
+                }
+            }) {
                 Icon(
                     painterResource(R.drawable.back),
                     contentDescription = stringResource(R.string.back)
@@ -82,6 +93,28 @@ fun AddNoteTopBar(
             }
         },
         actions = {
+            note?.let {
+                IconButton(onClick = { deleteDialogVisible.value = true }) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_delete),
+                        contentDescription = "Delete",
+                    )
+                }
+
+                if (deleteDialogVisible.value) {
+                    TextDialog(
+                        title = stringResource(R.string.warning),
+                        description = stringResource(R.string.are_you_sure_want_to_delete_these_items_it_cannot_be_recovered),
+                        isOpened = deleteDialogVisible.value,
+                        onDismissCallback = { deleteDialogVisible.value = false },
+                        onConfirmCallback = {
+                            noteScreenViewModel.deleteNote(note)
+                            deleteDialogVisible.value = false
+                            onBackPress()
+                        }
+                    )
+                }
+            }
             if (title.isNotEmpty() && description.isNotEmpty()) {
                 IconButton(onClick = { showSheet = true }) {
                     Icon(
@@ -92,8 +125,7 @@ fun AddNoteTopBar(
                 if (showSheet) {
                     ModalBottomSheet(
                         onDismissRequest = { showSheet = false },
-                        sheetState = bottomSheetState,
-                        dragHandle = { BottomSheetDefaults.DragHandle() }
+                        sheetState = bottomSheetState
                     ) {
                         Column(
                             modifier = Modifier
@@ -128,8 +160,13 @@ fun AddNoteTopBar(
                         }
                     }
                 }
-
-                IconButton(onClick = saveNote) {
+                IconButton(onClick = {
+                    if (note != null) {
+                        updateNote()
+                    } else {
+                        saveNote()
+                    }
+                }) {
                     Icon(
                         painterResource(R.drawable.save),
                         contentDescription = stringResource(R.string.save)
@@ -139,4 +176,3 @@ fun AddNoteTopBar(
         }
     )
 }
-

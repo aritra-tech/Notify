@@ -58,7 +58,7 @@ dependencies {
 
     val lifecycleVersion = "2.6.2"
     val roomVersion = "2.5.2"
-    val navVersion = "2.7.2"
+    val navVersion = "2.7.3"
 
 
     implementation ("androidx.core:core-ktx:1.10.1")
@@ -84,12 +84,12 @@ dependencies {
     implementation ("androidx.navigation:navigation-compose:$navVersion")
 
     // Accompanist
-    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
-    implementation ("com.google.accompanist:accompanist-permissions:0.24.11-rc")
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
+    implementation ("com.google.accompanist:accompanist-permissions:0.28.0")
 
     // Material 3
-    implementation ("androidx.compose.material3:material3:1.1.1")
-    implementation ("androidx.compose.material3:material3-window-size-class:1.1.1")
+    implementation ("androidx.compose.material3:material3:1.1.2")
+    implementation ("androidx.compose.material3:material3-window-size-class:1.1.2")
     implementation ("androidx.compose.material:material-icons-extended:1.5.1")
 
     // Room
