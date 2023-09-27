@@ -27,13 +27,13 @@
   </br>
 </p>
 
-<h3 align="center">📝Notify is a simple note application that is built with Modern Android development tools.    
+<h4 align="center">📝Notify is a simple note application that is built with Modern Android development tools.    
 This project showcases the Good implementation of Android with proper architecture design.              
 Made with ♥ for all Android Developers
 <br>
 <br>
 I’m building it in public. So the idea is for everyone to contribute, leave comments, suggest ideas, etc. using the <a href="https://github.com/aritra-tech/Notify/discussions">Discussions</a> tab.
-</h3>
+</h4>
 
 <div align="center">
 </br>
