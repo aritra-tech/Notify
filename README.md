@@ -14,7 +14,8 @@
   <img alt="material" src="https://custom-icon-badges.demolab.com/badge/material%20you-lightblue?style=for-the-badge&logoColor=333&logo=material-you"/></a>
   </br>
   </br>
-  <a href="https://github.com/aritra-tech/Notify/actions"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/aritra-tech/notify/ci_build.yml?label=Build&style=for-the-badge"/></a>
+  <a href="https://github.com/aritra-tech/Notify/actions">
+    <img alt="Build" src="https://img.shields.io/github/actions/workflow/status/aritra-tech/notify/ci_build.yml?label=Build&style=for-the-badge"/></a>
   <img alt="GitHub commits since tagged version (branch)" src="https://img.shields.io/github/commits-since/aritra-tech/Notify/v1.0?color=palegreen&label=Commits&style=for-the-badge">
   <a href="https://github.com/aritra-tech/Notify/stargazers"><img src="https://img.shields.io/github/stars/aritra-tech/Notify?color=ffff00&style=for-the-badge"/></a>
   <a href="https://hits.sh/github.com/aritra-tech/Notify/"><img alt="Hits" src="https://hits.sh/github.com/aritra-tech/Notify.svg?style=for-the-badge&label=Views&extraCount=10&color=54856b"/></a>
@@ -26,9 +27,19 @@
   </br>
 </p>
 
-<h4 align="center">📝Notify is a simple note application that is built with Modern Android development tools.    
+<h3 align="center">📝Notify is a simple note application that is built with Modern Android development tools.    
 This project showcases the Good implementation of Android with proper architecture design.              
-Made with ♥ for all Android Developers</h4>
+Made with ♥ for all Android Developers
+<br>
+<br>
+I’m building it in public. So the idea is for everyone to contribute, leave comments, suggest ideas, etc. using the <a href="https://github.com/aritra-tech/Notify/discussions">Discussions</a> tab.
+</h3>
+
+<div align="center">
+</br>
+<img src="art/notify_banner.svg"/>
+
+</div>
 
 <div align="center">
   
@@ -51,15 +62,6 @@ _Notify_ focuses on the following key things:
 - Switch between layouts. 🌟
 - Share the notes in the form of Text, Image & PDF 📤
 
-# Design ✨
-#### 🌞 Light Mode
-
-![](art/light_mode.png)
-
-#### 🌛 Dark Mode
-
-![](art/dark_mode.png)
-
 # Built with 🛠
 
 - [Kotlin](https://kotlinlang.org/) - First class and official programming language for Android development.
@@ -74,12 +76,25 @@ _Notify_ focuses on the following key things:
     - [Hilt-Dagger](https://dagger.dev/hilt/) - A standard way to incorporate Dagger dependency injection into an Android application.
     - [Hilt-ViewModel](https://developer.android.com/training/dependency-injection/hilt-jetpack) - DI for injecting ```ViewModel```. 
 - [Material Components for Android](https://github.com/material-components/material-components-android) - Modular and customizable Material Design UI components for Android.
-- [Accompanist](https://google.github.io/accompanist/) - A collection of extension libraries for Jetpack Compose
+- [Accompanist](https://google.github.io/accompanist/) - A collection of extension libraries for Jetpack Compose.
+- [Biometric](https://developer.android.com/jetpack/androidx/releases/biometric) - Authenticate with biometrics or device credentials, and perform cryptographic operations.
 
 # Architecture 👷‍♂️
 This app uses [MVVM(Model View View-Model)](https://developer.android.com/topic/architecture#recommended-app-arch) architecture.
 
 ![MVVM](art/mvvm.png)
+
+<div align="center">
+  
+# Contributors 📢
+
+<a href="https://github.com/aritra-tech/Notify/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=aritra-tech/Notify" />
+</a>
+
+# Star History ⭐
+
+[![Star History Chart](https://api.star-history.com/svg?repos=aritra-tech/Notify&type=Date)](https://star-history.com/#aritra-tech/Notify&Date)
 
 # Find this repository useful? ❤️
 
@@ -87,12 +102,4 @@ Support it by joining __[stargazers](https://github.com/aritra-tech/Notify/starg
 repository. :star: <br>
 And __[follow](https://github.com/aritra-tech)__ me for my next creations! 🤩
 
-# Star History ⭐
-
-[![Star History Chart](https://api.star-history.com/svg?repos=aritra-tech/Notify&type=Date)](https://star-history.com/#aritra-tech/Notify&Date)
-
-# Contributors 📢
-
-<a href="https://github.com/aritra-tech/Notify/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=aritra-tech/Notify" />
-</a>
+</div>
