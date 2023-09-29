@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.viewmodel.ThemeViewModel
 
@@ -92,6 +93,7 @@ fun NotifyTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor =  colorScheme.background.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !themeState.isDarkMode
         }
     }
 
