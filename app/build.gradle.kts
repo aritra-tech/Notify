@@ -1,10 +1,11 @@
+@file:Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id ("com.android.application")
-    kotlin ("android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     id ("kotlin-parcelize")
     id ("kotlin-kapt")
-    id ("com.google.dagger.hilt.android")
-    id ("com.google.devtools.ksp")
+    alias(libs.plugins.dagger.hilt.android)
+    alias(libs.plugins.devtools.ksp)
 }
 
 android {
