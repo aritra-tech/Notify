@@ -3,6 +3,7 @@ package com.aritra.notify.components.biometric
 import android.content.Context
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
+import com.aritra.notify.R
 import com.aritra.notify.ui.screens.MainActivity
 import javax.inject.Inject
 
@@ -54,9 +55,9 @@ class AppBioMetricManager @Inject constructor(appContext: Context) {
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
-            .setTitle("Biometric Authentication")
-            .setSubtitle("Log in with biometric auth")
-            .setNegativeButtonText("Cancel")
+            .setTitle(activity.getString(R.string.biometric_authentication))
+            .setSubtitle(activity.getString(R.string.log_in_with_biometric_auth))
+            .setNegativeButtonText(activity.getString(R.string.cancel))
             .build()
         biometricPrompt?.authenticate(promptInfo)
     }
