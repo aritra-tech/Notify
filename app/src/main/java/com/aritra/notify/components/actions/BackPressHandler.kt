@@ -8,8 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import com.aritra.notify.R
 import com.aritra.notify.utils.closeApp
 import com.aritra.notify.utils.toast
 import kotlinx.coroutines.delay
@@ -32,7 +30,7 @@ fun BackPressHandler() {
             context.closeApp()
         } else {
             exit = true
-            context.toast(context.getText(R.string.press_again_to_exit).toString())
+            context.toast("Press again to exit")
         }
     }
 

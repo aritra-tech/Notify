@@ -51,7 +51,4 @@
     <string name="notification_permission_description">The notification permission is important for this app. Please grant the permission.</string>
     <string name="notification_permission_settings">The notification permission is important for this app. Please navigate to your device settings and enable notifications for Make it So.</string>
     <string name="ok">OK</string>
-    <string name="press_again_to_exit">Press again to exit</string>
-    <string name="biometric_authentication">Biometric Authentication</string>
-    <string name="log_in_with_biometric_auth">Log in with biometric auth</string>
 </resources>
