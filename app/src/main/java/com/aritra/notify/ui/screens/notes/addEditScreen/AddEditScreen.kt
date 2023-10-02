@@ -1,4 +1,4 @@
-package com.aritra.notify.ui.screens.notes.addNoteScreen
+package com.aritra.notify.ui.screens.notes.addEditScreen
 
 
 import android.Manifest
@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -36,8 +38,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BottomSheetOptions
 import com.aritra.notify.components.actions.SpeechRecognizerContract
@@ -73,18 +78,30 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
-fun AddNotesScreen(
+fun AddEditScreen(
+    noteId: Int = 0,
     navigateBack: () -> Unit
 ) {
-    val addViewModel = hiltViewModel<AddNoteViewModel>()
+    val addEditViewModel = hiltViewModel<AddEditViewModel>()
     val context = LocalContext.current
+    val isNew = noteId == 0
+
+    val note = if (isNew) {
+        null
+    } else {
+        Note(noteId, "", "", Date(), null)
+    }
+
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    val dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
+    var dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
+    var photoUri: Uri? by remember { mutableStateOf(null) }
+
     var characterCount by remember { mutableIntStateOf(title.length + description.length) }
     val cancelDialogState = remember { mutableStateOf(false) }
     var showSheet by remember { mutableStateOf(false) }
@@ -98,7 +115,10 @@ fun AddNotesScreen(
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
-    var photoUri: Uri? by remember { mutableStateOf(null) }
+    val formattedDateTime =
+        SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
+    val formattedCharacterCount = "${(title.length) + (description.length)} characters"
+
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             photoUri = uri
@@ -107,10 +127,14 @@ fun AddNotesScreen(
     val permissionState = rememberPermissionState(
         permission = Manifest.permission.RECORD_AUDIO
     )
-    SideEffect {
-        permissionState.launchPermissionRequest()
-    }
 
+
+    //add note
+    if (isNew) {
+        SideEffect {
+            permissionState.launchPermissionRequest()
+        }
+    }
     val speechRecognizerLauncher = rememberLauncherForActivityResult(
         contract = SpeechRecognizerContract(),
         onResult = {
@@ -122,22 +146,53 @@ fun AddNotesScreen(
         }
     )
 
-    val saveNote = remember {
-        {
-            addViewModel.insertNote(
-                note = Note(
-                    id = 0,
-                    title = title,
-                    note = description,
-                    dateTime = dateTime,
-                    image = photoUri
-                ),
-                onSuccess = {
-                    navigateBack()
-                    Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
-                }
-            )
+
+//edit note
+    if (!isNew) {
+        title = addEditViewModel.noteModel.observeAsState().value?.title ?: ""
+        description = addEditViewModel.noteModel.observeAsState().value?.note ?: ""
+        photoUri = addEditViewModel.noteModel.observeAsState().value?.image
+        dateTime = addEditViewModel.noteModel.observeAsState().value?.dateTime
+
+        LaunchedEffect(Unit) {
+            addEditViewModel.getNoteById(noteId)
         }
+    }
+
+
+    val saveEditNote: () -> Unit = if (isNew) {
+        remember {
+            {
+                addEditViewModel.insertNote(
+                    note = Note(
+                        id = 0,
+                        title = title,
+                        note = description,
+                        dateTime = dateTime,
+                        image = photoUri
+                    ),
+                    onSuccess = {
+                        navigateBack()
+                        Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+        }
+    } else {
+        remember {
+            {
+                addEditViewModel.updateNotes { updated ->
+                    if (updated) {
+                        navigateBack()
+                        Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        navigateBack()
+                    }
+
+                }
+            }
+        }
+
     }
 
     Scaffold(
@@ -145,67 +200,83 @@ fun AddNotesScreen(
             AddEditTopBar(
                 title = title,
                 description = description,
-                onBackPress = { cancelDialogState.value = true },
-                saveNote = saveNote,
-                updateNote = {},
-                note = null
+                onBackPress = if (isNew) {
+                    { cancelDialogState.value = true }
+                } else {
+                    navigateBack
+                },
+                saveNote = if (isNew) {
+                    saveEditNote
+                } else {
+                    {}
+                },
+                updateNote = if (isNew) {
+                    {}
+                } else {
+                    saveEditNote
+                },
+                note = note
             )
         },
         bottomBar = {
-            Column(
-                Modifier
-                    .navigationBarsPadding()
-                    .imePadding()
-            ) {
-                BottomAppBar(
-                    content = {
-                        IconButton(onClick = { showSheet = true }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.add_box_icon),
-                                contentDescription = stringResource(R.string.add_box)
-                            )
-                        }
-                        if (showSheet) {
-                            ModalBottomSheet(
-                                onDismissRequest = { showSheet = false },
-                                sheetState = bottomSheetState,
-                                dragHandle = { BottomSheetDefaults.DragHandle() }
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .navigationBarsPadding()
-                                        .padding(16.dp)
+            if (isNew) {
+                Column(
+                    Modifier
+                        .navigationBarsPadding()
+                        .imePadding()
+                ) {
+                    BottomAppBar(
+                        content = {
+                            IconButton(onClick = { showSheet = true }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.add_box_icon),
+                                    contentDescription = stringResource(R.string.add_box)
+                                )
+                            }
+                            if (showSheet) {
+                                ModalBottomSheet(
+                                    onDismissRequest = { showSheet = false },
+                                    sheetState = bottomSheetState,
+                                    dragHandle = { BottomSheetDefaults.DragHandle() }
                                 ) {
-                                    BottomSheetOptions(
-                                        text = stringResource(R.string.add_image),
-                                        icon = painterResource(id = R.drawable.gallery_icon),
-                                        onClick = {
-                                            launcher.launch(
-                                                PickVisualMediaRequest(
-                                                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .navigationBarsPadding()
+                                            .padding(16.dp)
+                                    ) {
+                                        BottomSheetOptions(
+                                            text = stringResource(R.string.add_image),
+                                            icon = painterResource(id = R.drawable.gallery_icon),
+                                            onClick = {
+                                                launcher.launch(
+                                                    PickVisualMediaRequest(
+                                                        mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                                    )
                                                 )
-                                            )
-                                            showSheet = false
-                                        }
-                                    )
-                                    BottomSheetOptions(
-                                        text = stringResource(R.string.speech_to_text),
-                                        icon = painterResource(id = R.drawable.mic_icon),
-                                        onClick = {
-                                            if (permissionState.status.isGranted) {
-                                                speechRecognizerLauncher.launch(Unit)
-                                            } else {
-                                                permissionState.launchPermissionRequest()
+                                                showSheet = false
                                             }
-                                            showSheet = false
-                                        }
-                                    )
+                                        )
+                                        BottomSheetOptions(
+                                            text = stringResource(R.string.speech_to_text),
+                                            icon = painterResource(id = R.drawable.mic_icon),
+                                            onClick = {
+                                                if (permissionState.status.isGranted) {
+                                                    speechRecognizerLauncher.launch(Unit)
+                                                } else {
+                                                    permissionState.launchPermissionRequest()
+                                                }
+                                                showSheet = false
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
-                )
+                    )
+                }
+            } else {
+
             }
         }
     ) {
@@ -215,40 +286,58 @@ fun AddNotesScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(rememberScrollState())
             ) {
-                photoUri?.let {
-                    Log.d("URI", "Photo uri $photoUri")
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        IconButton(
-                            onClick = {
-                                photoUri = null
-                            },
+                if (isNew) {
+                    photoUri?.let {
+                        Log.d("URI", "Photo uri $photoUri")
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
                         ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Close,
-                                contentDescription = stringResource(R.string.clear_image)
-                            )
+                            IconButton(
+                                onClick = {
+                                    photoUri = null
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Close,
+                                    contentDescription = stringResource(R.string.clear_image)
+                                )
+                            }
                         }
-                    }
 
-                    AsyncImage(
-                        model = photoUri,
-                        contentDescription = stringResource(R.string.image),
-                        modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.Crop
-                    )
+                        AsyncImage(
+                            model = photoUri,
+                            contentDescription = stringResource(R.string.image),
+                            modifier = Modifier.fillMaxWidth(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                } else {
+                    photoUri?.let {
+                        Image(
+                            painter = rememberAsyncImagePainter(photoUri),
+                            contentDescription = stringResource(R.string.image),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .size(500.dp),
+                            contentScale = ContentScale.Fit
+                        )
+                    }
                 }
+
 
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = title,
                     onValueChange = { newTitle ->
-                        title = newTitle
-                        characterCount = title.length + description.length
+                        if (isNew) {
+                            title = newTitle
+                            characterCount = title.length + description.length
+                        } else {
+                            addEditViewModel.updateTitle(newTitle)
+                        }
                     },
                     placeholder = {
                         Text(
@@ -283,14 +372,20 @@ fun AddNotesScreen(
                 )
 
                 TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = "$currentDate, $currentTime   |  $characterCount characters",
+                    value = if (isNew) {
+                        "$currentDate, $currentTime   |  $characterCount characters"
+
+                    } else {
+                        "$formattedDateTime | $formattedCharacterCount"
+
+                    },
                     onValueChange = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true,
                     textStyle = TextStyle(
                         fontSize = 15.sp,
                         fontFamily = FontFamily(Font(R.font.poppins_light))
                     ),
-                    readOnly = true,
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -301,15 +396,20 @@ fun AddNotesScreen(
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
-                    ),
+                    )
                 )
 
                 TextField(
                     modifier = Modifier.fillMaxSize(),
                     value = description,
                     onValueChange = { newDescription ->
-                        description = newDescription
-                        characterCount = title.length + description.length
+                        if (isNew) {
+                            description = newDescription
+                            characterCount = title.length + description.length
+                        } else {
+                            addEditViewModel.updateDescription(newDescription)
+
+                        }
                     },
                     placeholder = {
                         Text(
@@ -337,8 +437,8 @@ fun AddNotesScreen(
                         keyboardType = KeyboardType.Text,
                     ),
                     maxLines = Int.MAX_VALUE,
-                )
 
+                    )
             }
         }
     }
