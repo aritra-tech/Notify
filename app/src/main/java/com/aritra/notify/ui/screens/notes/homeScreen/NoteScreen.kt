@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -54,7 +55,8 @@ import com.aritra.notify.components.note.NotesCard
 @Composable
 fun NoteScreen(
     onFabClicked: () -> Unit,
-    navigateToUpdateNoteScreen: (noteId: Int) -> Unit
+    navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
+    lazyListState: LazyListState
 ) {
 
     BackPressHandler()
@@ -135,7 +137,7 @@ fun NoteScreen(
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(0.dp, 5.dp, 0.dp, 0.dp),
+                                .padding(0.dp, 5.dp, 0.dp, 0.dp), state = lazyListState
                         ) {
 
                             items(listOfAllNotes.filter { note ->

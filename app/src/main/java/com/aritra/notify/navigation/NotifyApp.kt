@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -12,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +32,7 @@ import com.aritra.notify.ui.screens.notes.addNoteScreen.AddNotesScreen
 import com.aritra.notify.ui.screens.notes.editNoteScreen.EditNotesScreen
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
+import kotlinx.coroutines.launch
 
 @Composable
 fun NotifyApp(navController: NavHostController = rememberNavController()) {
@@ -40,13 +44,16 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
     )
     val backStackEntry = navController.currentBackStackEntryAsState()
 
+    val listState: LazyListState = rememberLazyListState()
+
     Scaffold(
         bottomBar = {
             BottomNavigationBar(
                 backStackEntry,
                 bottomNavItem,
                 screensWithHiddenNavBar,
-                navController
+                navController,
+                listState
             )
         }
     ) {
@@ -74,7 +81,8 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                     onFabClicked = { navController.navigate(NotifyScreens.AddNotes.name) },
                     navigateToUpdateNoteScreen = { noteId ->
                         navController.navigate("${NotifyScreens.UpdateNotes.name}/$noteId")
-                    }
+                    }, listState
+
                 )
             }
             composable(
@@ -104,10 +112,14 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
 @Composable
 fun BottomNavigationBar(
     backStackEntry: State<NavBackStackEntry?>,
-    bottomNavItem : List<BottomNavItem>,
+    bottomNavItem: List<BottomNavItem>,
     screensWithHiddenNavBar: List<String>,
-    navController: NavHostController
+    navController: NavHostController,
+    lazyListState: LazyListState
 ) {
+    val scope = rememberCoroutineScope()
+
+
     if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
         NavigationBar(modifier = Modifier.height(75.dp)) {
             bottomNavItem.forEach { item ->
@@ -138,6 +150,11 @@ fun BottomNavigationBar(
                     },
                     selected = backStackEntry.value?.destination?.route == item.route,
                     onClick = {
+                        if (item.name == getBottomNavItems().first().name) {
+                            scope.launch {
+                                lazyListState.scrollToItem(0)
+                            }
+                        }
                         navController.navigate(item.route) {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
