@@ -28,8 +28,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aritra.notify.R
-import com.aritra.notify.ui.screens.notes.addNoteScreen.AddNotesScreen
-import com.aritra.notify.ui.screens.notes.editNoteScreen.EditNotesScreen
+import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditScreen
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
 import kotlinx.coroutines.launch
@@ -39,8 +38,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
 
     val bottomNavItem = getBottomNavItems()
     val screensWithHiddenNavBar = listOf(
-        NotifyScreens.AddNotes.name,
-        "${NotifyScreens.UpdateNotes.name}/{noteId}"
+        "${NotifyScreens.AddEditNotes.name}/{noteId}"
     )
     val backStackEntry = navController.currentBackStackEntryAsState()
 
@@ -78,28 +76,24 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                 route = NotifyScreens.Notes.name,
             ) {
                 NoteScreen(
-                    onFabClicked = { navController.navigate(NotifyScreens.AddNotes.name) },
+                    onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name+"/0") },
                     navigateToUpdateNoteScreen = { noteId ->
-                        navController.navigate("${NotifyScreens.UpdateNotes.name}/$noteId")
+                        navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
                     }, listState
-
                 )
             }
+
             composable(
-                route = "${NotifyScreens.UpdateNotes.name}/{noteId}",
+                route = "${NotifyScreens.AddEditNotes.name}/{noteId}",
                 arguments = listOf(navArgument("noteId") { type = IntType }),
             ) { backStack ->
                 val noteId = backStack.arguments?.getInt("noteId") ?: 0
-                EditNotesScreen(
+                AddEditScreen(
                     noteId = noteId,
                     navigateBack = { navController.popBackStack() }
                 )
             }
-            composable(
-                route = NotifyScreens.AddNotes.name,
-            ) {
-                AddNotesScreen(navigateBack = { navController.popBackStack() })
-            }
+
             composable(
                 route = NotifyScreens.Settings.name,
             ) {

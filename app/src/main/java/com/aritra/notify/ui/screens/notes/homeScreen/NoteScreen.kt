@@ -66,6 +66,7 @@ fun NoteScreen(
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var isGridView by rememberSaveable { mutableStateOf(false) }
 
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -143,7 +144,10 @@ fun NoteScreen(
                             items(listOfAllNotes.filter { note ->
                                 note.title.contains(searchQuery, true)
                             }) { notesModel ->
-                                NotesCard(noteModel = notesModel, navigateToUpdateNoteScreen = navigateToUpdateNoteScreen)
+                                NotesCard(
+                                    noteModel = notesModel,
+                                    navigateToUpdateNoteScreen = navigateToUpdateNoteScreen
+                                )
                             }
                         }
                     }
