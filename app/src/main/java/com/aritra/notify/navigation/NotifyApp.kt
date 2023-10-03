@@ -74,6 +74,9 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                     onFabClicked = { navController.navigate(NotifyScreens.AddNotes.name) },
                     navigateToUpdateNoteScreen = { noteId ->
                         navController.navigate("${NotifyScreens.UpdateNotes.name}/$noteId")
+                    },
+                    addDestinationChangedListener = { listener ->
+                        navController.addOnDestinationChangedListener(listener)
                     }
                 )
             }
@@ -104,7 +107,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
 @Composable
 fun BottomNavigationBar(
     backStackEntry: State<NavBackStackEntry?>,
-    bottomNavItem : List<BottomNavItem>,
+    bottomNavItem: List<BottomNavItem>,
     screensWithHiddenNavBar: List<String>,
     navController: NavHostController
 ) {

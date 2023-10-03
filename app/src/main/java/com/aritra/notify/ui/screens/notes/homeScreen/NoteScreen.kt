@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -30,9 +32,11 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,17 +48,21 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BackPressHandler
 import com.aritra.notify.components.actions.LayoutToggleButton
 import com.aritra.notify.components.note.GridNoteCard
 import com.aritra.notify.components.note.NotesCard
+import com.aritra.notify.navigation.NotifyScreens
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteScreen(
     onFabClicked: () -> Unit,
-    navigateToUpdateNoteScreen: (noteId: Int) -> Unit
+    navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
+    addDestinationChangedListener: (listener: NavController.OnDestinationChangedListener) -> Unit,
 ) {
 
     BackPressHandler()
@@ -63,15 +71,28 @@ fun NoteScreen(
     val listOfAllNotes by viewModel.listOfNotes.observeAsState(listOf())
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var isGridView by rememberSaveable { mutableStateOf(false) }
+    val lazyStaggeredGridState = rememberLazyStaggeredGridState()
+    val lazyColumnState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+        if (destination.route == NotifyScreens.Notes.name) {
+            coroutineScope.launch {
+                lazyColumnState.scrollToItem(0)
+                lazyStaggeredGridState.scrollToItem(0)
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        addDestinationChangedListener(listener)
+    }
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onFabClicked() }
-            ) {
+            FloatingActionButton(onClick = { onFabClicked() }) {
                 Icon(
-                    imageVector = Icons.Outlined.Edit,
-                    contentDescription = "Add Notes"
+                    imageVector = Icons.Outlined.Edit, contentDescription = "Add Notes"
                 )
             }
         },
@@ -82,11 +103,10 @@ fun NoteScreen(
 
             Column(modifier = Modifier.fillMaxSize()) {
 
-                SearchBar(
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .fillMaxWidth()
-                        .padding(10.dp),
+                SearchBar(modifier = Modifier
+                    .align(Alignment.Start)
+                    .fillMaxWidth()
+                    .padding(10.dp),
                     query = searchQuery,
                     onQueryChange = { search ->
                         searchQuery = search
@@ -104,14 +124,10 @@ fun NoteScreen(
                                 contentDescription = "Close"
                             )
                         } else {
-                            LayoutToggleButton(
-                                isGridView = isGridView,
-                                onToggleClick = { isGridView = !isGridView }
-                            )
+                            LayoutToggleButton(isGridView = isGridView,
+                                onToggleClick = { isGridView = !isGridView })
                         }
-                    }
-                ) {
-                }
+                    }) {}
                 if (listOfAllNotes.isNotEmpty()) {
 
                     if (isGridView) {
@@ -120,6 +136,7 @@ fun NoteScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(0.dp, 5.dp, 0.dp, 0.dp),
+                            state = lazyStaggeredGridState
                         ) {
                             itemsIndexed(listOfAllNotes.filter { note ->
                                 note.title.contains(searchQuery, true)
@@ -136,12 +153,16 @@ fun NoteScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(0.dp, 5.dp, 0.dp, 0.dp),
+                            state = lazyColumnState
                         ) {
 
                             items(listOfAllNotes.filter { note ->
                                 note.title.contains(searchQuery, true)
                             }) { notesModel ->
-                                NotesCard(noteModel = notesModel, navigateToUpdateNoteScreen = navigateToUpdateNoteScreen)
+                                NotesCard(
+                                    noteModel = notesModel,
+                                    navigateToUpdateNoteScreen = navigateToUpdateNoteScreen
+                                )
                             }
                         }
                     }
@@ -159,7 +180,8 @@ fun NoteScreen(
 @Composable
 fun NoList(contentDescription: String, message: String) {
     Column(
-        Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
+        Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(

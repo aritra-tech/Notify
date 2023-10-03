@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <application
+        android:enableOnBackInvokedCallback="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,7 +15,7 @@
         android:roundIcon="@drawable/notify_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.Notify"
-        tools:targetApi="31">
+        tools:targetApi="tiramisu">
 
         <provider
             android:name="androidx.core.content.FileProvider"
