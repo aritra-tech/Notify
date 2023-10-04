@@ -78,7 +78,7 @@ fun SettingsScreen() {
                         isChecked = themeState.isDarkMode,
                         onCheckedChange = {
                             themeViewModel.toggleTheme()
-                        },
+                        }
                     )
                 }
 
@@ -90,7 +90,7 @@ fun SettingsScreen() {
                         modifier = Modifier.padding(start = 5.dp),
                         text = stringResource(R.string.security),
                         fontSize = 14.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                        fontFamily = FontFamily(Font(R.font.poppins_medium))
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     SettingsSwitchCard(
@@ -99,7 +99,7 @@ fun SettingsScreen() {
                         isChecked = biometricAuthState,
                         onCheckedChange = {
                             settingsViewModel.showBiometricPrompt(context as MainActivity)
-                        },
+                        }
                     )
                 }
 
@@ -204,7 +204,6 @@ fun SettingsScreen() {
                         context.startActivity(intent)
                     }
                 }
-
             }
         }
     }

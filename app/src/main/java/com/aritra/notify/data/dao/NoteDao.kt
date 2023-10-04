@@ -18,7 +18,6 @@ interface NoteDao {
     @Query("SELECT * FROM note WHERE id = :noteId")
     fun getNoteById(noteId: Int): Flow<Note>
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNote(noteModel: Note): Long
 

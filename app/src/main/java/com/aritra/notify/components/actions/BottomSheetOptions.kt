@@ -22,7 +22,7 @@ import com.aritra.notify.R
 fun BottomSheetOptions(
     text: String,
     icon: Painter,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,

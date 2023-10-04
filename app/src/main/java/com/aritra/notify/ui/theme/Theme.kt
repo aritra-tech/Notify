@@ -40,7 +40,7 @@ private val DarkColorPalette = darkColorScheme(
     surface = SurfaceDark,
     outline = OutlineDark,
     surfaceVariant = SurfaceVariantDark,
-    onSurfaceVariant = OnSurfaceVariantDark,
+    onSurfaceVariant = OnSurfaceVariantDark
 )
 
 private val LightColorPalette = lightColorScheme(
@@ -65,14 +65,14 @@ private val LightColorPalette = lightColorScheme(
     surface = SurfaceLight,
     outline = OutlineLight,
     surfaceVariant = SurfaceVariantLight,
-    onSurfaceVariant = OnSurfaceVariantLight,
+    onSurfaceVariant = OnSurfaceVariantLight
 )
 
 @Composable
 fun NotifyTheme(
     themeViewModel: ThemeViewModel = hiltViewModel(),
     // Dynamic color is available on Android 12+
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val themeState by themeViewModel.themeState.collectAsState()
 
@@ -92,11 +92,10 @@ fun NotifyTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor =  colorScheme.background.toArgb()
+            window.statusBarColor = colorScheme.background.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !themeState.isDarkMode
         }
     }
-
 
     MaterialTheme(
         colorScheme = colorScheme,

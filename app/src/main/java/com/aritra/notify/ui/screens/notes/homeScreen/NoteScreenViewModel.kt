@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NoteScreenViewModel @Inject constructor(
     application: Application,
-    private val homeRepository: NoteRepository
+    private val homeRepository: NoteRepository,
 ) : AndroidViewModel(application) {
 
     var listOfNotes = homeRepository.getAllNotesFromRoom().asLiveData()
@@ -23,5 +23,4 @@ class NoteScreenViewModel @Inject constructor(
             homeRepository.deleteNoteFromRoom(note)
         }
     }
-
 }

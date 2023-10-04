@@ -19,5 +19,5 @@ data class Note(
     var title: String,
     var note: String,
     var dateTime: Date?,
-    var image: Uri?
+    var image: Uri?,
 ) : Parcelable

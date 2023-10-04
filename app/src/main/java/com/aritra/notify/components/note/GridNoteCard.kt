@@ -54,7 +54,7 @@ fun GridNoteCard(
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth()
-            .clip(RoundedCornerShape(15.dp)) //make click effect rounded
+            .clip(RoundedCornerShape(15.dp)) // make click effect rounded
             .clickable { navigateToUpdateNoteScreen(notesModel.id) },
         shape = RoundedCornerShape(15.dp)
     ) {

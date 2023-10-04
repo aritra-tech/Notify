@@ -42,7 +42,7 @@ internal object CsvIo {
         private val separator: Char = DEFAULT_SEPARATOR,
         private val quoteChar: Char = DEFAULT_QUOTE_CHARACTER,
         private val escapeChar: Char = DEFAULT_ESCAPE_CHARACTER,
-        private val lineEnd: String = DEFAULT_LINE_END
+        private val lineEnd: String = DEFAULT_LINE_END,
     ) {
         init {
             // write the separator to the top of the file
@@ -64,8 +64,9 @@ internal object CsvIo {
                 }
                 val nextElement = nextLine[i]
 
-                if (quoteChar != NO_QUOTE_CHARACTER)
+                if (quoteChar != NO_QUOTE_CHARACTER) {
                     builder.append(quoteChar)
+                }
 
                 for (element in nextElement) {
                     if (escapeChar == NO_ESCAPE_CHARACTER && (element == quoteChar || element == escapeChar)) {
@@ -74,8 +75,9 @@ internal object CsvIo {
                     builder.append(element)
                 }
 
-                if (quoteChar != NO_QUOTE_CHARACTER)
+                if (quoteChar != NO_QUOTE_CHARACTER) {
                     builder.append(quoteChar)
+                }
             }
             builder.append(lineEnd)
             writer?.write(builder.toString())
@@ -109,7 +111,7 @@ internal object CsvIo {
         private val separator: Char = DEFAULT_SEPARATOR,
         private val quoteChar: Char = DEFAULT_QUOTE_CHARACTER,
         private val escapeChar: Char = DEFAULT_ESCAPE_CHARACTER,
-        private val lineEnd: String = DEFAULT_LINE_END
+        private val lineEnd: String = DEFAULT_LINE_END,
     ) {
 
         /**
@@ -120,7 +122,9 @@ internal object CsvIo {
             // remove the first line if it starts with "sep="
             lines = if (lines?.firstOrNull()?.startsWith("sep=") == true) {
                 lines.drop(1)
-            } else lines
+            } else {
+                lines
+            }
             // split the lines into chunks and trim the chunks
             return lines?.map { line ->
                 val tokens = line.split(separator)
