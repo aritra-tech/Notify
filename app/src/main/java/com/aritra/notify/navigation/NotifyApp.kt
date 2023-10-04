@@ -146,7 +146,7 @@ fun BottomNavigationBar(
                     onClick = {
                         if (item.name == getBottomNavItems().first().name) {
                             scope.launch {
-                                lazyListState.scrollToItem(0)
+                                lazyListState.animateScrollToItem(0)
                             }
                         }
                         navController.navigate(item.route) {
