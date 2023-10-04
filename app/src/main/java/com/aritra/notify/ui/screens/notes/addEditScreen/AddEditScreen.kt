@@ -98,6 +98,8 @@ import com.aritra.notify.utils.Const
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.mohamedrejeb.richeditor.model.rememberRichTextState
+import com.mohamedrejeb.richeditor.ui.BasicRichTextEditor
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -111,6 +113,7 @@ fun AddEditScreen(
     noteId: Int = 0,
     navigateBack: () -> Unit,
 ) {
+    val basicRichTextState = rememberRichTextState()
     val addEditViewModel = hiltViewModel<AddEditViewModel>()
     val context = LocalContext.current
     val isNew = noteId == 0
@@ -463,12 +466,37 @@ fun AddEditScreen(
                     )
                 }
 
-                DescriptionTextField(
-                    scrollOffset = descriptionScrollOffset,
-                    contentSize = contentSize,
-                    description = description,
-                    parentScrollState = scrollState,
-                    onDescriptionChange = { newDescription ->
+                RichTextStyleRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = basicRichTextState,
+                )
+
+                BasicRichTextEditor(
+
+                    state = basicRichTextState,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    textStyle = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_light)),
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        keyboardType = KeyboardType.Text,
+                    ),
+
+                    maxLines = Int.MAX_VALUE,
+                    decorationBox = { innerTextField ->
+                    }
+                )
+
+
+
+
+                TextField(
+                    modifier = Modifier.fillMaxSize(),
+                    value = description,
+                    onValueChange = { newDescription ->
                         if (isNew) {
                             description = newDescription
                             characterCount = title.length + description.length
