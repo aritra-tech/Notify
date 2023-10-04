@@ -21,8 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.DismissDirection.*
-import androidx.compose.material3.DismissValue.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -56,16 +54,14 @@ import com.aritra.notify.components.note.NotesCard
 fun NoteScreen(
     onFabClicked: () -> Unit,
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
-    lazyListState: LazyListState
+    lazyListState: LazyListState,
 ) {
-
     BackPressHandler()
 
     val viewModel = hiltViewModel<NoteScreenViewModel>()
     val listOfAllNotes by viewModel.listOfNotes.observeAsState(listOf())
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var isGridView by rememberSaveable { mutableStateOf(false) }
-
 
     Scaffold(
         floatingActionButton = {
@@ -77,14 +73,12 @@ fun NoteScreen(
                     contentDescription = "Add Notes"
                 )
             }
-        },
+        }
     ) {
         Surface(
             modifier = Modifier.padding(it)
         ) {
-
             Column(modifier = Modifier.fillMaxSize()) {
-
                 SearchBar(
                     modifier = Modifier
                         .align(Alignment.Start)
@@ -116,34 +110,36 @@ fun NoteScreen(
                 ) {
                 }
                 if (listOfAllNotes.isNotEmpty()) {
-
                     if (isGridView) {
                         LazyVerticalStaggeredGrid(
                             columns = StaggeredGridCells.Fixed(2),
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(0.dp, 5.dp, 0.dp, 0.dp),
+                                .padding(0.dp, 5.dp, 0.dp, 0.dp)
                         ) {
-                            itemsIndexed(listOfAllNotes.filter { note ->
-                                note.title.contains(searchQuery, true)
-                            }) { _, notesModel ->
+                            itemsIndexed(
+                                listOfAllNotes.filter { note ->
+                                    note.title.contains(searchQuery, true)
+                                }
+                            ) { _, notesModel ->
                                 GridNoteCard(
                                     notesModel,
-                                    navigateToUpdateNoteScreen,
+                                    navigateToUpdateNoteScreen
                                 )
                             }
                         }
                     } else {
-
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(0.dp, 5.dp, 0.dp, 0.dp), state = lazyListState
+                                .padding(0.dp, 5.dp, 0.dp, 0.dp),
+                            state = lazyListState
                         ) {
-
-                            items(listOfAllNotes.filter { note ->
-                                note.title.contains(searchQuery, true)
-                            }) { notesModel ->
+                            items(
+                                listOfAllNotes.filter { note ->
+                                    note.title.contains(searchQuery, true)
+                                }
+                            ) { notesModel ->
                                 NotesCard(
                                     noteModel = notesModel,
                                     navigateToUpdateNoteScreen = navigateToUpdateNoteScreen
@@ -165,7 +161,8 @@ fun NoteScreen(
 @Composable
 fun NoList(contentDescription: String, message: String) {
     Column(
-        Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
+        Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(

@@ -153,7 +153,9 @@ class BackupRepository(
                                 "${context.packageName}.provider",
                                 imageStore
                             )
-                        } else null
+                        } else {
+                            null
+                        }
                         val note = Note(
                             id = id,
                             title = title,

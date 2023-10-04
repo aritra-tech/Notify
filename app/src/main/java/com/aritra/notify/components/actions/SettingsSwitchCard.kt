@@ -38,31 +38,31 @@ fun SettingsSwitchCard(
             .clip(RoundedCornerShape(10.dp))
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(5.dp),
+        elevation = CardDefaults.cardElevation(5.dp)
     ) {
         Row(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = icon,
                 contentDescription = stringResource(R.string.icon),
-                modifier = Modifier.size(25.dp),
+                modifier = Modifier.size(25.dp)
             )
             Text(
                 modifier = Modifier.padding(start = 10.dp),
                 text = text,
                 fontSize = 18.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_semibold)),
+                fontFamily = FontFamily(Font(R.font.poppins_semibold))
             )
             Switch(
                 modifier = Modifier
                     .semantics { contentDescription = "Theme Switch" }
                     .padding(start = 130.dp),
                 checked = isChecked,
-                onCheckedChange = onCheckedChange,
+                onCheckedChange = onCheckedChange
             )
         }
     }

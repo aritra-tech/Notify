@@ -36,7 +36,7 @@ class AppBioMetricManager @Inject constructor(appContext: Context) {
                     val cancelled = errorCode in arrayListOf(
                         BiometricPrompt.ERROR_CANCELED,
                         BiometricPrompt.ERROR_USER_CANCELED,
-                        BiometricPrompt.ERROR_NEGATIVE_BUTTON,
+                        BiometricPrompt.ERROR_NEGATIVE_BUTTON
                     )
                     if (cancelled) {
                         listener.onUserCancelled()
@@ -49,7 +49,7 @@ class AppBioMetricManager @Inject constructor(appContext: Context) {
                     super.onAuthenticationSucceeded(result)
                     listener.onBiometricAuthSuccess()
                 }
-            },
+            }
         )
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()

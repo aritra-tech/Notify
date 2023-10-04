@@ -21,7 +21,7 @@ object SaveSelectedImageUseCase {
                 mkdirs()
             }
         },
-        "image_${id}.webp"
+        "image_$id.webp"
     )
 
     /**

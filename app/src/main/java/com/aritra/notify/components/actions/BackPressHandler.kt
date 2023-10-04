@@ -12,7 +12,6 @@ import com.aritra.notify.utils.closeApp
 import com.aritra.notify.utils.toast
 import kotlinx.coroutines.delay
 
-
 @Composable
 fun BackPressHandler() {
     var exit by remember { mutableStateOf(false) }
@@ -33,5 +32,4 @@ fun BackPressHandler() {
             context.toast("Press again to exit")
         }
     }
-
 }
