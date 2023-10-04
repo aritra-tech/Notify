@@ -22,14 +22,16 @@ class AddNoteViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val id: Int = addRepository.insertNoteToRoom(note).toInt()
 
-            if (note.image != null) {
+            val imageUris = note.image.filterNotNull()
+
+            if (imageUris.isNotEmpty()) {
                 // update the note with the new image uri
                 addRepository.updateNoteInRoom(
                     note.copy(
                         id = id,
                         image = SaveSelectedImageUseCase(
                             context = getApplication(),
-                            uri = note.image!!,
+                            uris = imageUris,
                             noteId = id
                         )
                     )

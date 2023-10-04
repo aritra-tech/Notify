@@ -117,7 +117,7 @@ dependencies {
     // Splash API
     implementation ("androidx.core:core-splashscreen:1.0.1")
 
-    //Coil
+    // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     // Biometric
@@ -126,4 +126,11 @@ dependencies {
     // In-App Update
     implementation("com.google.android.play:app-update:2.1.0")
     implementation("com.google.android.play:app-update-ktx:2.1.0")
+
+    // Gson
+    implementation("com.google.code.gson:gson:2.9.0")
+
+    implementation("me.saket.telephoto:zoomable:0.6.2")
+    implementation("me.saket.telephoto:zoomable-image-coil:0.6.2")
+
 }
