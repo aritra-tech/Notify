@@ -10,6 +10,7 @@ core-ktx = "1.10.1"
 coreSplashscreen = "1.0.1"
 datastorePreferences = "1.0.0"
 espresso-core = "3.5.1"
+google-gson = "2.9.0"
 gradle = "3.4.0"
 hiltAndroid = "2.44"
 hiltNavigationCompose = "1.0.0"
@@ -29,6 +30,8 @@ android-application = "8.0.2"
 kotlin-android = "1.7.20"
 dagger-hilt-android = "2.44"
 devtools-ksp = "1.8.10-1.0.9"
+zoomable = "0.6.2"
+zoomableImageCoil = "0.6.2"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -67,9 +70,12 @@ app-update = { module = "com.google.android.play:app-update", version.ref = "app
 app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "appUpdate" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
+gson = { module = "com.google.code.gson:gson", version.ref = "google-gson" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltAndroid" }
 junit = { module = "junit:junit", version.ref = "junit" }
+zoomable = { module = "me.saket.telephoto:zoomable", version.ref = "zoomable" }
+zoomable-image-coil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "zoomableImageCoil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-application" }

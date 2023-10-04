@@ -3,22 +3,24 @@ package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.Manifest
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,6 +30,7 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,10 +49,12 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -64,8 +69,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BottomSheetOptions
 import com.aritra.notify.components.actions.SpeechRecognizerContract
@@ -76,6 +79,7 @@ import com.aritra.notify.utils.Const
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -94,13 +98,13 @@ fun AddEditScreen(
     val note = if (isNew) {
         null
     } else {
-        Note(noteId, "", "", Date(), null)
+        Note(noteId, "", "", Date(), emptyList())
     }
 
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
-    var photoUri: Uri? by remember { mutableStateOf(null) }
+    var photoUri by remember { mutableStateOf(emptyList<Uri?>()) }
 
     var characterCount by remember { mutableIntStateOf(title.length + description.length) }
     val cancelDialogState = remember { mutableStateOf(false) }
@@ -120,8 +124,8 @@ fun AddEditScreen(
     val formattedCharacterCount = "${(title.length) + (description.length)} characters"
 
     val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            photoUri = uri
+        rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
+            photoUri = uris
         }
 
     val permissionState = rememberPermissionState(
@@ -151,7 +155,7 @@ fun AddEditScreen(
     if (!isNew) {
         title = addEditViewModel.noteModel.observeAsState().value?.title ?: ""
         description = addEditViewModel.noteModel.observeAsState().value?.note ?: ""
-        photoUri = addEditViewModel.noteModel.observeAsState().value?.image
+        photoUri = addEditViewModel.noteModel.observeAsState().value?.image ?: emptyList()
         dateTime = addEditViewModel.noteModel.observeAsState().value?.dateTime
 
         LaunchedEffect(Unit) {
@@ -289,41 +293,56 @@ fun AddEditScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 if (isNew) {
-                    photoUri?.let {
-                        Log.d("URI", "Photo uri $photoUri")
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
+                    if (photoUri.isNotEmpty()) {
+                        LazyRow(
+                            modifier = Modifier.height(240.dp),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            IconButton(
-                                onClick = {
-                                    photoUri = null
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Close,
-                                    contentDescription = stringResource(R.string.clear_image)
-                                )
+                            items(photoUri.size) {
+                                Box(
+                                    Modifier
+                                        .fillMaxHeight()
+                                        .width((LocalConfiguration.current.screenWidthDp * 0.8).dp)
+                                ) {
+                                    ZoomableAsyncImage(
+                                        modifier = Modifier.fillMaxSize(),
+                                        model = photoUri[it],
+                                        contentDescription = stringResource(R.string.image),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                    FilledTonalIconButton(
+                                        modifier = Modifier.align(Alignment.TopEnd),
+                                        onClick = {
+                                            photoUri =
+                                                photoUri.filterIndexed { index, _ -> index != it }
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Close,
+                                            contentDescription = stringResource(R.string.clear_image)
+                                        )
+                                    }
+                                }
                             }
                         }
-
-                        AsyncImage(
-                            model = photoUri,
-                            contentDescription = stringResource(R.string.image),
-                            modifier = Modifier.fillMaxWidth(),
-                            contentScale = ContentScale.Crop
-                        )
                     }
                 } else {
-                    photoUri?.let {
-                        Image(
-                            painter = rememberAsyncImagePainter(photoUri),
-                            contentDescription = stringResource(R.string.image),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .size(500.dp),
-                            contentScale = ContentScale.Fit
-                        )
+                    Row(
+                        modifier = Modifier
+                            .height(240.dp)
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        photoUri.forEach {uri ->
+                            ZoomableAsyncImage(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .width((LocalConfiguration.current.screenWidthDp * 0.8).dp),
+                                model = uri ?: "",
+                                contentDescription = stringResource(R.string.image),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
                 }
 

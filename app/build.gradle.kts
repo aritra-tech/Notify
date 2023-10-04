@@ -123,4 +123,10 @@ dependencies {
     // In-App Update
     implementation(libs.app.update)
     implementation(libs.app.update.ktx)
+
+    // Gson
+    implementation(libs.gson)
+
+    implementation(libs.zoomable)
+    implementation(libs.zoomable.image.coil)
 }
