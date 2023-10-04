@@ -35,7 +35,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun NotifyApp(navController: NavHostController = rememberNavController()) {
-
     val bottomNavItem = getBottomNavItems()
     val screensWithHiddenNavBar = listOf(
         "${NotifyScreens.AddEditNotes.name}/{noteId}"
@@ -73,19 +72,20 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             }
         ) {
             composable(
-                route = NotifyScreens.Notes.name,
+                route = NotifyScreens.Notes.name
             ) {
                 NoteScreen(
-                    onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name+"/0") },
+                    onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name + "/0") },
                     navigateToUpdateNoteScreen = { noteId ->
                         navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
-                    }, listState
+                    },
+                    listState
                 )
             }
 
             composable(
                 route = "${NotifyScreens.AddEditNotes.name}/{noteId}",
-                arguments = listOf(navArgument("noteId") { type = IntType }),
+                arguments = listOf(navArgument("noteId") { type = IntType })
             ) { backStack ->
                 val noteId = backStack.arguments?.getInt("noteId") ?: 0
                 AddEditScreen(
@@ -95,7 +95,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             }
 
             composable(
-                route = NotifyScreens.Settings.name,
+                route = NotifyScreens.Settings.name
             ) {
                 SettingsScreen()
             }
@@ -109,10 +109,9 @@ fun BottomNavigationBar(
     bottomNavItem: List<BottomNavItem>,
     screensWithHiddenNavBar: List<String>,
     navController: NavHostController,
-    lazyListState: LazyListState
+    lazyListState: LazyListState,
 ) {
     val scope = rememberCoroutineScope()
-
 
     if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
         NavigationBar(modifier = Modifier.height(75.dp)) {
@@ -123,23 +122,26 @@ fun BottomNavigationBar(
                         Icon(
                             painter = painterResource(id = item.icon),
                             contentDescription = item.name,
-                            tint = if (backStackEntry.value?.destination?.route == item.route)
+                            tint = if (backStackEntry.value?.destination?.route == item.route) {
                                 MaterialTheme.colorScheme.onSurface
-                            else
+                            } else {
                                 MaterialTheme.colorScheme.secondary
+                            }
                         )
                     },
                     label = {
                         Text(
                             text = item.name,
-                            color = if (backStackEntry.value?.destination?.route == item.route)
+                            color = if (backStackEntry.value?.destination?.route == item.route) {
                                 MaterialTheme.colorScheme.onSurface
-                            else
-                                MaterialTheme.colorScheme.secondary,
-                            fontWeight = if (backStackEntry.value?.destination?.route == item.route)
+                            } else {
+                                MaterialTheme.colorScheme.secondary
+                            },
+                            fontWeight = if (backStackEntry.value?.destination?.route == item.route) {
                                 FontWeight.Bold
-                            else
-                                FontWeight.Normal,
+                            } else {
+                                FontWeight.Normal
+                            }
                         )
                     },
                     selected = backStackEntry.value?.destination?.route == item.route,
@@ -171,6 +173,6 @@ fun getBottomNavItems(): List<BottomNavItem> {
             name = "Settings",
             route = NotifyScreens.Settings.name,
             icon = R.drawable.settings_outline
-        ),
+        )
     )
 }

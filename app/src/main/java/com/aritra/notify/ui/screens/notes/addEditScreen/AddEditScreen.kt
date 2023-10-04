@@ -1,6 +1,5 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
-
 import android.Manifest
 import android.net.Uri
 import android.widget.Toast
@@ -89,7 +88,7 @@ import java.util.Locale
 @Composable
 fun AddEditScreen(
     noteId: Int = 0,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val addEditViewModel = hiltViewModel<AddEditViewModel>()
     val context = LocalContext.current
@@ -132,8 +131,7 @@ fun AddEditScreen(
         permission = Manifest.permission.RECORD_AUDIO
     )
 
-
-    //add note
+    // add note
     if (isNew) {
         SideEffect {
             permissionState.launchPermissionRequest()
@@ -150,8 +148,7 @@ fun AddEditScreen(
         }
     )
 
-
-//edit note
+// edit note
     if (!isNew) {
         title = addEditViewModel.noteModel.observeAsState().value?.title ?: ""
         description = addEditViewModel.noteModel.observeAsState().value?.note ?: ""
@@ -162,7 +159,6 @@ fun AddEditScreen(
             addEditViewModel.getNoteById(noteId)
         }
     }
-
 
     val saveEditNote: () -> Unit = if (isNew) {
         remember {
@@ -192,11 +188,9 @@ fun AddEditScreen(
                     } else {
                         navigateBack()
                     }
-
                 }
             }
         }
-
     }
 
     Scaffold(
@@ -279,8 +273,6 @@ fun AddEditScreen(
                         }
                     )
                 }
-            } else {
-
             }
         }
     ) {
@@ -346,7 +338,6 @@ fun AddEditScreen(
                     }
                 }
 
-
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = title,
@@ -369,7 +360,7 @@ fun AddEditScreen(
                     },
                     textStyle = TextStyle(
                         fontSize = 24.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                        fontFamily = FontFamily(Font(R.font.poppins_medium))
                     ),
                     maxLines = Int.MAX_VALUE,
                     colors = TextFieldDefaults.colors(
@@ -378,7 +369,7 @@ fun AddEditScreen(
                         disabledContainerColor = MaterialTheme.colorScheme.surface,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         capitalization = KeyboardCapitalization.Sentences,
@@ -387,16 +378,14 @@ fun AddEditScreen(
                     ),
                     keyboardActions = KeyboardActions(onNext = {
                         focus.moveFocus(FocusDirection.Down)
-                    }),
+                    })
                 )
 
                 TextField(
                     value = if (isNew) {
                         "$currentDate, $currentTime   |  $characterCount characters"
-
                     } else {
                         "$formattedDateTime | $formattedCharacterCount"
-
                     },
                     onValueChange = { },
                     modifier = Modifier.fillMaxWidth(),
@@ -411,10 +400,10 @@ fun AddEditScreen(
                         disabledContainerColor = MaterialTheme.colorScheme.surface,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
+                        keyboardType = KeyboardType.Text
                     )
                 )
 
@@ -427,7 +416,6 @@ fun AddEditScreen(
                             characterCount = title.length + description.length
                         } else {
                             addEditViewModel.updateDescription(newDescription)
-
                         }
                     },
                     placeholder = {
@@ -441,7 +429,7 @@ fun AddEditScreen(
                     },
                     textStyle = TextStyle(
                         fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_light)),
+                        fontFamily = FontFamily(Font(R.font.poppins_light))
                     ),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -449,15 +437,15 @@ fun AddEditScreen(
                         disabledContainerColor = MaterialTheme.colorScheme.surface,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         capitalization = KeyboardCapitalization.Sentences,
-                        keyboardType = KeyboardType.Text,
+                        keyboardType = KeyboardType.Text
                     ),
-                    maxLines = Int.MAX_VALUE,
+                    maxLines = Int.MAX_VALUE
 
-                    )
+                )
             }
         }
     }

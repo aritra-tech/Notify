@@ -31,8 +31,6 @@ val OutlineLight = Color(0xFF73777f)
 val SurfaceVariantLight = Color(0xFFdfe2eb)
 val OnSurfaceVariantLight = Color(0xFF43474e)
 
-
-
 // Dark
 val PrimaryDark = Color(0xFF2c9fff)
 val OnPrimaryDark = Color(0xFF003258)

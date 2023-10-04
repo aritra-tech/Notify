@@ -32,7 +32,7 @@ fun SettingsComponent(
     modifier: Modifier = Modifier,
     settingHeaderText: String,
     painterResourceID: Int,
-    clickable: () -> Unit
+    clickable: () -> Unit,
 ) {
     Spacer(modifier = modifier.height(6.dp))
     Card(
@@ -43,18 +43,18 @@ fun SettingsComponent(
             .background(MaterialTheme.colorScheme.onSecondary)
             .clickable {
                 clickable()
-            },
+            }
     ) {
         Row(
             modifier = modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = painterResource(painterResourceID),
                 contentDescription = stringResource(R.string.icon),
-                modifier = modifier.size(25.dp),
+                modifier = modifier.size(25.dp)
             )
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -66,9 +66,7 @@ fun SettingsComponent(
                     fontSize = 18.sp,
                     fontFamily = FontFamily(Font(R.font.poppins_semibold))
                 )
-
             }
-
         }
     }
 }

@@ -38,7 +38,7 @@ import java.util.Locale
 @Composable
 fun NotesCard(
     noteModel: Note,
-    navigateToUpdateNoteScreen: (noteId: Int) -> Unit
+    navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
 ) {
     val painter = rememberSaveable { mutableStateOf(noteModel.image) }
     val context = LocalContext.current
@@ -48,9 +48,9 @@ fun NotesCard(
         modifier = Modifier
             .padding(10.dp)
             .fillMaxHeight()
-            .clip(RoundedCornerShape(15.dp)) //make click effect rounded
+            .clip(RoundedCornerShape(15.dp)) // make click effect rounded
             .clickable { navigateToUpdateNoteScreen(noteModel.id) },
-        shape = RoundedCornerShape(15.dp),
+        shape = RoundedCornerShape(15.dp)
     ) {
         Column(
             modifier = Modifier

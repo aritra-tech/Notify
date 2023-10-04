@@ -21,14 +21,11 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditViewModel @Inject constructor(
     application: Application,
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
 ) : AndroidViewModel(application) {
 
     private val _noteModel = MutableLiveData(Note(0, "", "", Date(), emptyList()))
     val noteModel: LiveData<Note> get() = _noteModel
-
-
-
 
     fun insertNote(note: Note, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -73,8 +70,7 @@ class AddEditViewModel @Inject constructor(
         }
     }*/
 
-    fun updateNotes(onSuccess: (updated:Boolean) -> Unit) = viewModelScope.launch(Dispatchers.IO) {
-
+    fun updateNotes(onSuccess: (updated: Boolean) -> Unit) = viewModelScope.launch(Dispatchers.IO) {
         val newNote = noteModel.value ?: return@launch
         // retrieve the note from the database to check if the image has been modified
         val oldNote = noteRepository.getNoteByIdFromRoom(newNote.id).first()
@@ -114,7 +110,6 @@ class AddEditViewModel @Inject constructor(
             onSuccess(true)
         }
     }
-
 
     fun updateTitle(title: String) {
         _noteModel.postValue(noteModel.value?.copy(title = title))

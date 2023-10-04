@@ -1,7 +1,6 @@
 package com.aritra.notify.components.actions
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -14,7 +13,7 @@ import com.aritra.notify.R
 @Composable
 fun LayoutToggleButton(
     isGridView: Boolean,
-    onToggleClick: () -> Unit
+    onToggleClick: () -> Unit,
 ) {
     val customGridViewImage = painterResource(R.drawable.grid_icon)
     val customAgendaViewImage = painterResource(R.drawable.list_icon)

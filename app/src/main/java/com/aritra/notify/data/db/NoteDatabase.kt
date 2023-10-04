@@ -13,6 +13,7 @@ abstract class NoteDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
 
     companion object {
+        @Suppress("ktlint:standard:property-naming")
         private var INSTANCE: NoteDatabase? = null
         fun getInstance(context: Context): NoteDatabase {
             synchronized(this) {

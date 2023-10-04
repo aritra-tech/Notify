@@ -35,11 +35,16 @@ class SettingsViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
     private val backupRepository = BackupRepository(
-        provider = NoteDatabase.getInstance(application), // Pass the appropriate NoteDatabase instance
-        context = application, // Pass the application context
-        mutex = Mutex(), // Create a new Mutex instance
-        scope = viewModelScope, // Pass the viewModelScope
-        dispatcher = Dispatchers.IO, // Pass the appropriate coroutine dispatcher
+        // Pass the appropriate NoteDatabase instance
+        provider = NoteDatabase.getInstance(application),
+        // Pass the application context
+        context = application,
+        // Create a new Mutex instance
+        mutex = Mutex(),
+        // Pass the viewModelScope
+        scope = viewModelScope,
+        // Pass the appropriate coroutine dispatcher
+        dispatcher = Dispatchers.IO
     )
     var notes by mutableStateOf(emptyList<Note>())
 
@@ -78,7 +83,7 @@ class SettingsViewModel @Inject constructor(
 
                 override fun onErrorOccurred() {
                 }
-            },
+            }
         )
     }
 
