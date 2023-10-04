@@ -23,7 +23,7 @@ class EditScreenViewModel @Inject constructor(
     private val editScreenRepository: NoteRepository
 ) : AndroidViewModel(application) {
 
-    var noteModel = MutableLiveData(Note(0, "", "", Date(), null))
+    var noteModel = MutableLiveData(Note(0, "", "", Date(), emptyList()))
     fun getNoteById(noteId: Int) = viewModelScope.launch(Dispatchers.IO) {
         editScreenRepository.getNoteByIdFromRoom(noteId).collect { response ->
             noteModel.postValue(response)
@@ -38,21 +38,23 @@ class EditScreenViewModel @Inject constructor(
         if (oldNote.title == newNote.title && oldNote.note == newNote.note && oldNote.image == newNote.image) return@launch
         // if the image has been modified, delete the old image
         if (oldNote.image != newNote.image) {
-            oldNote.image?.toFile(getApplication())?.delete()
+            oldNote.image.forEach {imageUri ->
+                imageUri?.toFile(getApplication())?.delete()
+            }
         }
         editScreenRepository.updateNoteInRoom(
             newNote.copy(
                 // if the image has not been modified, use the old image uri
                 image = if (oldNote.image == newNote.image) {
                     oldNote.image
-                } else if (newNote.image != null) {
+                } else if (newNote.image.filterNotNull().isNotEmpty()) {
                     // if the image has been modified, save the new image uri
                     SaveSelectedImageUseCase(
                         getApplication(),
-                        newNote.image!!,
+                        newNote.image.filterNotNull(),
                         newNote.id
                     )
-                } else null
+                } else emptyList()
             )
         )
 
@@ -69,7 +71,7 @@ class EditScreenViewModel @Inject constructor(
         noteModel.postValue(noteModel.value?.copy(note = description))
     }
 
-    fun updateImage(image: Uri?) {
-        noteModel.postValue(noteModel.value?.copy(image = image))
+    fun updateImage(imageList: List<Uri?>) {
+        noteModel.postValue(noteModel.value?.copy(image = imageList))
     }
 }

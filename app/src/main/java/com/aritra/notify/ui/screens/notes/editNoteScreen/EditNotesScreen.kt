@@ -1,13 +1,17 @@
 package com.aritra.notify.ui.screens.notes.editNoteScreen
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -38,11 +43,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberAsyncImagePainter
 import com.aritra.notify.R
 import com.aritra.notify.components.topbar.AddEditTopBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.utils.Const
+import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -52,12 +57,12 @@ fun EditNotesScreen(
     noteId: Int,
     navigateBack: () -> Unit
 ) {
-    val note = Note(noteId, "", "", Date(), null)
+    val note = Note(noteId, "", "", Date(), emptyList())
     val context = LocalContext.current
     val editViewModel = hiltViewModel<EditScreenViewModel>()
     val title = editViewModel.noteModel.observeAsState().value?.title ?: ""
     val description = editViewModel.noteModel.observeAsState().value?.note ?: ""
-    val imagePath = editViewModel.noteModel.observeAsState().value?.image
+    val imagePathList = editViewModel.noteModel.observeAsState().value?.image ?: emptyList()
     val dateTime = editViewModel.noteModel.observeAsState().value?.dateTime
     val focus = LocalFocusManager.current
     val formattedDateTime =
@@ -99,16 +104,25 @@ fun EditNotesScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                imagePath?.let {
-                    Image(
-                        painter = rememberAsyncImagePainter(imagePath),
-                        contentDescription = stringResource(R.string.image),
+                if (imagePathList.isNotEmpty()) {
+                    LazyRow(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .size(500.dp),
-                        contentScale = ContentScale.Fit
-                    )
+                            .height(240.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(imagePathList) { image ->
+                            ZoomableAsyncImage(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .width((LocalConfiguration.current.screenWidthDp * 0.8).dp),
+                                model = image,
+                                contentDescription = stringResource(R.string.image),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
                 }
+
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth(),
