@@ -20,5 +20,5 @@ data class Note(
     var title: String,
     var note: String,
     var dateTime: Date?,
-    var image: List<Uri?>
+    var image: List<Uri?>,
 ) : Parcelable

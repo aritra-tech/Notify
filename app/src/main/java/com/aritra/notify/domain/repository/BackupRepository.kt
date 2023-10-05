@@ -63,7 +63,7 @@ class BackupRepository(
                                 note.id.toString(),
                                 note.title,
                                 note.note,
-                                DateTypeConverter.toString(note.dateTime).orEmpty(),
+                                DateTypeConverter.toString(note.dateTime).orEmpty()
                             ).plus(images)
                         )
                     }
@@ -158,7 +158,9 @@ class BackupRepository(
                                     "${context.packageName}.provider",
                                     imageStore
                                 )
-                            } else null
+                            } else {
+                                null
+                            }
                         }
                         val note = Note(
                             id = id,

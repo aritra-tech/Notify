@@ -86,7 +86,7 @@ class AddEditViewModel @Inject constructor(
 //        if (oldNote.title == newNote.title && oldNote.note == newNote.note && oldNote.image == newNote.image) return@launch
         // if the image has been modified, delete the old image
         if (oldNote.image != newNote.image) {
-            oldNote.image.forEach {imageUri ->
+            oldNote.image.forEach { imageUri ->
                 imageUri?.toFile(getApplication())?.delete()
             }
         }
@@ -102,7 +102,9 @@ class AddEditViewModel @Inject constructor(
                         newNote.image.filterNotNull(),
                         newNote.id
                     )
-                } else emptyList()
+                } else {
+                    emptyList()
+                }
             )
         )
 

@@ -323,9 +323,9 @@ fun AddEditScreen(
                         modifier = Modifier
                             .height(240.dp)
                             .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        photoUri.forEach {uri ->
+                        photoUri.forEach { uri ->
                             ZoomableAsyncImage(
                                 modifier = Modifier
                                     .fillMaxHeight()

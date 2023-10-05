@@ -12,15 +12,13 @@ object ListConverter {
 
     @TypeConverter
     fun fromListToString(value: List<Uri?>): String {
-
         return Gson().toJson(value.map { it?.toString() ?: "" })
     }
 
     @TypeConverter
     fun fromStringToList(value: String): List<Uri?> {
-
         return try {
-            val stringList = Gson().fromJson<List<String>>(value) //using extension function
+            val stringList = Gson().fromJson<List<String>>(value) // using extension function
             stringList.map { Uri.parse(it) }
         } catch (e: Exception) {
             listOf()

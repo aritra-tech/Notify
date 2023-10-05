@@ -94,7 +94,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.extensions)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.runtime.livedata)
-    annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
 
     // Lifecycle
