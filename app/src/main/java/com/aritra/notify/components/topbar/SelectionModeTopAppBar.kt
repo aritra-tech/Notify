@@ -13,38 +13,33 @@ import androidx.compose.runtime.Composable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectionModeTopAppBar(selectedItems: List<Int>, onDeleteClick:()->Unit, resetSelectionMode: () -> Unit) {
-
-
-
-    TopAppBar(  navigationIcon = {
+fun SelectionModeTopAppBar(selectedItems: List<Int>, onDeleteClick: () -> Unit, resetSelectionMode: () -> Unit) {
+    TopAppBar(navigationIcon = {
         IconButton(
-            onClick = resetSelectionMode,
+            onClick = resetSelectionMode
         ) {
             Icon(
                 imageVector = Icons.Rounded.Close,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground,
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
-    },title = {
+    }, title = {
         Text(
             text = "${selectedItems.size} selected",
             style = MaterialTheme.typography.titleMedium.copy(
-                color = MaterialTheme.colorScheme.onBackground,
-            ),
+                color = MaterialTheme.colorScheme.onBackground
+            )
         )
-
     }, actions = {
-        IconButton(onDeleteClick){
+        IconButton(onDeleteClick) {
             Icon(
                 imageVector = Icons.Filled.Delete,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground,
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
     })
-
 
     /*Row(modifier = Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
         Icon(
@@ -76,7 +71,6 @@ fun SelectionModeTopAppBar(selectedItems: List<Int>, onDeleteClick:()->Unit, res
         )
     }*/
 }
-
 
 /*
 @Preview(showBackground = true)

@@ -2,7 +2,6 @@
 
 package com.aritra.notify.ui.screens.notes.homeScreen
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,7 +45,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -71,15 +69,12 @@ fun NoteScreen(
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
     lazyListState: LazyListState,
 ) {
-
-
     val viewModel = hiltViewModel<NoteScreenViewModel>()
 
     val addEditViewModel = hiltViewModel<AddEditViewModel>()
     val listOfAllNotes by viewModel.listOfNotes.observeAsState(listOf())
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var isGridView by rememberSaveable { mutableStateOf(false) }
-    val context = LocalContext.current
 
     var isInSelectionMode by remember {
         mutableStateOf(false)
@@ -104,13 +99,12 @@ fun NoteScreen(
 
     LaunchedEffect(
         key1 = isInSelectionMode,
-        key2 = selectedNoteIds.size,
+        key2 = selectedNoteIds.size
     ) {
         if (isInSelectionMode && selectedNoteIds.isEmpty()) {
             isInSelectionMode = false
         }
     }
-
 
     Scaffold(
         snackbarHost = {
@@ -150,7 +144,6 @@ fun NoteScreen(
 
                             when (snackBarResult) {
                                 SnackbarResult.ActionPerformed -> {
-
                                     addEditViewModel.insertListOfNote(deletedNotes) {}
                                 }
 
@@ -160,7 +153,7 @@ fun NoteScreen(
                         }
                     },
 
-                    resetSelectionMode = resetSelectionMode,
+                    resetSelectionMode = resetSelectionMode
                 )
             } else {
                 SearchBar(
@@ -192,27 +185,25 @@ fun NoteScreen(
                     }
                 ) {}
             }
-        }, content = {
-
+        },
+        content = {
             Surface(
                 modifier = Modifier.padding(it)
             ) {
-
                 Column(modifier = Modifier.fillMaxSize()) {
-
-
                     if (listOfAllNotes.isNotEmpty()) {
-
                         if (isGridView) {
                             LazyVerticalStaggeredGrid(
                                 columns = StaggeredGridCells.Fixed(2),
                                 modifier = Modifier
                                     .fillMaxSize()
-                                .padding(0.dp, 5.dp, 0.dp, 0.dp),
+                                    .padding(0.dp, 5.dp, 0.dp, 0.dp)
                             ) {
-                            itemsIndexed(listOfAllNotes.filter { note ->
-                                    note.title.contains(searchQuery, true)
-                                }) { _, notesModel ->
+                                itemsIndexed(
+                                    listOfAllNotes.filter { note ->
+                                        note.title.contains(searchQuery, true)
+                                    }
+                                ) { _, notesModel ->
                                     val isSelected = selectedNoteIds.contains(notesModel.id)
 
                                     GridNoteCard(
@@ -224,7 +215,6 @@ fun NoteScreen(
                                                     selectedNoteIds.remove(notesModel.id)
                                                 } else {
                                                     selectedNoteIds.add(notesModel.id)
-
                                                 }
                                             } else {
                                                 navigateToUpdateNoteScreen(notesModel.id)
@@ -236,12 +226,10 @@ fun NoteScreen(
                                                 selectedNoteIds.remove(notesModel.id)
                                             } else {
                                                 selectedNoteIds.add(notesModel.id)
-
                                             }
                                         } else {
                                             isInSelectionMode = true
                                             selectedNoteIds.add(notesModel.id)
-
                                         }
                                     }
                                 }
@@ -250,48 +238,45 @@ fun NoteScreen(
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                .padding(0.dp, 5.dp, 0.dp, 0.dp), state = lazyListState
+                                    .padding(0.dp, 5.dp, 0.dp, 0.dp),
+                                state = lazyListState
                             ) {
-
-                            items(listOfAllNotes.filter { note ->
-                                    note.title.contains(searchQuery, true)
-                                }) { notesModel ->
+                                items(
+                                    listOfAllNotes.filter { note ->
+                                        note.title.contains(searchQuery, true)
+                                    }
+                                ) { notesModel ->
 
                                     val isSelected = selectedNoteIds.contains(notesModel.id)
 
                                     Box {
                                         NotesCard(
-                                            noteModel = notesModel, isSelected, {
+                                            noteModel = notesModel,
+                                            isSelected,
+                                            {
                                                 if (isInSelectionMode) {
                                                     if (isSelected) {
                                                         selectedNoteIds.remove(notesModel.id)
                                                     } else {
                                                         selectedNoteIds.add(notesModel.id)
-
                                                     }
                                                 } else {
                                                     navigateToUpdateNoteScreen(notesModel.id)
                                                 }
                                             }
                                         ) {
-
                                             if (isInSelectionMode) {
                                                 if (isSelected) {
                                                     selectedNoteIds.remove(notesModel.id)
                                                 } else {
                                                     selectedNoteIds.add(notesModel.id)
-
                                                 }
                                             } else {
                                                 isInSelectionMode = true
                                                 selectedNoteIds.add(notesModel.id)
-
                                             }
                                         }
-
                                     }
-
-
                                 }
                             }
                         }

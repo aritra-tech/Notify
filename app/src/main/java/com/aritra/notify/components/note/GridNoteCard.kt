@@ -50,7 +50,7 @@ fun GridNoteCard(
     notesModel: Note,
     isSelected: Boolean,
     onClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
 ) {
     val painter = rememberSaveable { mutableStateOf(notesModel.image) }
     val context = LocalContext.current
@@ -75,10 +75,9 @@ fun GridNoteCard(
                 Color.White
             }
         ),
-        shape = RoundedCornerShape(15.dp),
+        shape = RoundedCornerShape(15.dp)
 
-        ) {
-
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()

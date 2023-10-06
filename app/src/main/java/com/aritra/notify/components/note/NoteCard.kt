@@ -49,7 +49,7 @@ fun NotesCard(
     noteModel: Note,
     isSelected: Boolean,
     onClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
 ) {
     val painter = rememberSaveable { mutableStateOf(noteModel.image) }
     val context = LocalContext.current
@@ -60,7 +60,7 @@ fun NotesCard(
             .padding(10.dp)
             .fillMaxHeight()
             .clip(RoundedCornerShape(15.dp))
-            .combinedClickable(onClick =  onClick , onLongClick = onLongClick),
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick),
         colors = CardDefaults.cardColors(
             if (isSelected) {
                 Color(0xFFE0E0E0)
@@ -68,7 +68,7 @@ fun NotesCard(
                 Color.White
             }
         ),
-        shape = RoundedCornerShape(15.dp),
+        shape = RoundedCornerShape(15.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             if (isSelected) {
@@ -86,61 +86,58 @@ fun NotesCard(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-            if (painter.value.isNotEmpty()) {
-                Row(
-                    modifier = Modifier
-                        .height(80.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    painter.value.forEach {
-                        AsyncImage(
-                            model = ImageRequest.Builder(context)
-                                .data(it ?: "")
-                                .build(),
-                            contentDescription = "Image",
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                if (painter.value.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .height(80.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        painter.value.forEach {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(it ?: "")
+                                    .build(),
+                                contentDescription = "Image",
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
-                Spacer(modifier = Modifier.height(10.dp))
-            }
-            Text(
-                text = noteModel.title,
-                fontSize = 22.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_medium)),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = noteModel.note,
-                fontSize = 18.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_light)),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            val formattedDateTime =
-                noteModel.dateTime?.let {
-                    SimpleDateFormat(
-                        Const.DATE_TIME_FORMAT,
-                        Locale.getDefault()
-                    ).format(it)
-                }
-            formattedDateTime?.let {
                 Text(
-                    text = formattedDateTime,
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(R.font.poppins_light)),
-                    color = Color.Gray
+                    text = noteModel.title,
+                    fontSize = 22.sp,
+                    fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = noteModel.note,
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.poppins_light)),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                val formattedDateTime =
+                    noteModel.dateTime?.let {
+                        SimpleDateFormat(
+                            Const.DATE_TIME_FORMAT,
+                            Locale.getDefault()
+                        ).format(it)
+                    }
+                formattedDateTime?.let {
+                    Text(
+                        text = formattedDateTime,
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_light)),
+                        color = Color.Gray
+                    )
+                }
             }
         }
     }
-
-    }
-
 }
-

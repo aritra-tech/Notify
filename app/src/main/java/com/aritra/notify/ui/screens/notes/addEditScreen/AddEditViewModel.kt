@@ -1,7 +1,6 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.app.Application
-import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -26,7 +25,6 @@ class AddEditViewModel @Inject constructor(
 
     private val _noteModel = MutableLiveData(Note(0, "", "", Date(), emptyList()))
     val noteModel: LiveData<Note> get() = _noteModel
-
 
     fun insertNote(note: Note, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -74,7 +72,6 @@ class AddEditViewModel @Inject constructor(
                     )
                 }
             }
-
 
             withContext(Dispatchers.Main) {
                 onSuccess()
@@ -150,7 +147,7 @@ class AddEditViewModel @Inject constructor(
         _noteModel.postValue(noteModel.value?.copy(note = description))
     }
 
-    fun updateImage(imageList: List<Uri?>) {
+ /*   fun updateImage(imageList: List<Uri?>) {
         _noteModel.postValue(noteModel.value?.copy(image = imageList))
-    }
+    }*/
 }
