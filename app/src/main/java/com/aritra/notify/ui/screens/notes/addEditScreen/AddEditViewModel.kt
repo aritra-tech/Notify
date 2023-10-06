@@ -1,7 +1,6 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.app.Application
-import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -45,6 +44,33 @@ class AddEditViewModel @Inject constructor(
                         )
                     )
                 )
+            }
+
+            withContext(Dispatchers.Main) {
+                onSuccess()
+            }
+        }
+    }
+
+    fun insertListOfNote(notes: List<Note>, onSuccess: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            noteRepository.insertListOfNotesToRoom(notes)
+
+            notes.forEach { note ->
+                val imageUris = note.image.filterNotNull()
+                if (imageUris.isNotEmpty()) {
+                    // update the note with the new image uri
+                    noteRepository.updateNoteInRoom(
+                        note.copy(
+                            id = note.id,
+                            image = SaveSelectedImageUseCase(
+                                context = getApplication(),
+                                uris = imageUris,
+                                noteId = note.id
+                            )
+                        )
+                    )
+                }
             }
 
             withContext(Dispatchers.Main) {
@@ -121,7 +147,7 @@ class AddEditViewModel @Inject constructor(
         _noteModel.postValue(noteModel.value?.copy(note = description))
     }
 
-    fun updateImage(imageList: List<Uri?>) {
+ /*   fun updateImage(imageList: List<Uri?>) {
         _noteModel.postValue(noteModel.value?.copy(image = imageList))
-    }
+    }*/
 }

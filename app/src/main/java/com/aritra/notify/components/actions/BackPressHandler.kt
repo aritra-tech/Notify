@@ -13,7 +13,7 @@ import com.aritra.notify.utils.toast
 import kotlinx.coroutines.delay
 
 @Composable
-fun BackPressHandler() {
+fun BackPressHandler(isInSelectionMode: Boolean, resetSelectionMode: () -> Unit) {
     var exit by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -25,7 +25,9 @@ fun BackPressHandler() {
     }
 
     BackHandler(enabled = true) {
-        if (exit) {
+        if (isInSelectionMode) {
+            resetSelectionMode()
+        } else if (exit) {
             context.closeApp()
         } else {
             exit = true

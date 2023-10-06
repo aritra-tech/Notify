@@ -23,4 +23,10 @@ class NoteScreenViewModel @Inject constructor(
             homeRepository.deleteNoteFromRoom(note)
         }
     }
+
+    fun deleteListOfNote(noteList: List<Note>) {
+        viewModelScope.launch {
+            homeRepository.deleteNotesFromRoom(noteList)
+        }
+    }
 }
