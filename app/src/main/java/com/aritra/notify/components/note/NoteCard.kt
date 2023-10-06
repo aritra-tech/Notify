@@ -1,13 +1,16 @@
 package com.aritra.notify.components.note
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedCard
@@ -54,14 +57,26 @@ fun NotesCard(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(painter.value)
-                    .build(),
-                contentDescription = "Image",
-                modifier = Modifier.fillMaxSize()
-            )
-            Spacer(modifier = Modifier.height(10.dp))
+            if (painter.value.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .height(80.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    painter.value.forEach {
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(it ?: "")
+                                .build(),
+                            contentDescription = "Image",
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+            }
             Text(
                 text = noteModel.title,
                 fontSize = 22.sp,
