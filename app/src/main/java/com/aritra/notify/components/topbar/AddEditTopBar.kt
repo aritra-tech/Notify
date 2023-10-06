@@ -97,14 +97,16 @@ fun AddEditTopBar(
                 IconButton(onClick = { deleteDialogVisible.value = true }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_delete),
-                        contentDescription = "Delete",
+                        contentDescription = "Delete"
                     )
                 }
 
                 if (deleteDialogVisible.value) {
                     TextDialog(
                         title = stringResource(R.string.warning),
-                        description = stringResource(R.string.are_you_sure_want_to_delete_these_items_it_cannot_be_recovered),
+                        description = stringResource(
+                            R.string.are_you_sure_want_to_delete_these_items_it_cannot_be_recovered
+                        ),
                         isOpened = deleteDialogVisible.value,
                         onDismissCallback = { deleteDialogVisible.value = false },
                         onConfirmCallback = {

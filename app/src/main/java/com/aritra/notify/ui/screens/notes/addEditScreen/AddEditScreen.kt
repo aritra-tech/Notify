@@ -1,25 +1,25 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
-
 import android.Manifest
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -28,8 +28,10 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -46,7 +48,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -64,8 +68,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BottomSheetOptions
 import com.aritra.notify.components.actions.SpeechRecognizerContract
@@ -76,6 +78,7 @@ import com.aritra.notify.utils.Const
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -85,7 +88,7 @@ import java.util.Locale
 @Composable
 fun AddEditScreen(
     noteId: Int = 0,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val addEditViewModel = hiltViewModel<AddEditViewModel>()
     val context = LocalContext.current
@@ -94,13 +97,13 @@ fun AddEditScreen(
     val note = if (isNew) {
         null
     } else {
-        Note(noteId, "", "", Date(), null)
+        Note(noteId, "", "", Date(), emptyList())
     }
 
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
-    var photoUri: Uri? by remember { mutableStateOf(null) }
+    var photoUri by remember { mutableStateOf(emptyList<Uri?>()) }
 
     var characterCount by remember { mutableIntStateOf(title.length + description.length) }
     val cancelDialogState = remember { mutableStateOf(false) }
@@ -115,50 +118,42 @@ fun AddEditScreen(
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
-    val formattedDateTime =
-        SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
+    val formattedDateTime = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
     val formattedCharacterCount = "${(title.length) + (description.length)} characters"
 
-    val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            photoUri = uri
-        }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
+        photoUri = uris
+    }
 
     val permissionState = rememberPermissionState(
         permission = Manifest.permission.RECORD_AUDIO
     )
 
-
-    //add note
+    // add note
     if (isNew) {
         SideEffect {
             permissionState.launchPermissionRequest()
         }
     }
-    val speechRecognizerLauncher = rememberLauncherForActivityResult(
-        contract = SpeechRecognizerContract(),
-        onResult = {
-            it?.let {
-                for (st in it) {
-                    description += " $st"
-                }
+    val speechRecognizerLauncher = rememberLauncherForActivityResult(contract = SpeechRecognizerContract(), onResult = {
+        it?.let {
+            for (st in it) {
+                description += " $st"
             }
         }
-    )
+    })
 
-
-//edit note
+// edit note
     if (!isNew) {
         title = addEditViewModel.noteModel.observeAsState().value?.title ?: ""
         description = addEditViewModel.noteModel.observeAsState().value?.note ?: ""
-        photoUri = addEditViewModel.noteModel.observeAsState().value?.image
+        photoUri = addEditViewModel.noteModel.observeAsState().value?.image ?: emptyList()
         dateTime = addEditViewModel.noteModel.observeAsState().value?.dateTime
 
         LaunchedEffect(Unit) {
             addEditViewModel.getNoteById(noteId)
         }
     }
-
 
     val saveEditNote: () -> Unit = if (isNew) {
         remember {
@@ -188,98 +183,89 @@ fun AddEditScreen(
                     } else {
                         navigateBack()
                     }
-
                 }
             }
         }
-
     }
 
-    Scaffold(
-        topBar = {
-            AddEditTopBar(
-                title = title,
-                description = description,
-                onBackPress = if (isNew) {
-                    { cancelDialogState.value = true }
-                } else {
-                    navigateBack
-                },
-                saveNote = if (isNew) {
-                    saveEditNote
-                } else {
-                    {}
-                },
-                updateNote = if (isNew) {
-                    {}
-                } else {
-                    saveEditNote
-                },
-                note = note
-            )
-        },
-        bottomBar = {
-            if (isNew) {
-                Column(
-                    Modifier
-                        .navigationBarsPadding()
-                        .imePadding()
-                ) {
-                    BottomAppBar(
-                        content = {
-                            IconButton(onClick = { showSheet = true }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.add_box_icon),
-                                    contentDescription = stringResource(R.string.add_box)
+    Scaffold(topBar = {
+        AddEditTopBar(
+            title = title,
+            description = description,
+            onBackPress = if (isNew) {
+                { cancelDialogState.value = true }
+            } else {
+                navigateBack
+            },
+            saveNote = if (isNew) {
+                saveEditNote
+            } else {
+                {}
+            },
+            updateNote = if (isNew) {
+                {}
+            } else {
+                saveEditNote
+            },
+            note = note
+        )
+    }, bottomBar = {
+        if (isNew) {
+            Column(
+                Modifier
+                    .navigationBarsPadding()
+                    .imePadding()
+            ) {
+                BottomAppBar(content = {
+                    IconButton(onClick = { showSheet = true }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.add_box_icon),
+                            contentDescription = stringResource(R.string.add_box)
+                        )
+                    }
+                    if (showSheet) {
+                        ModalBottomSheet(
+                            onDismissRequest = { showSheet = false },
+                            sheetState = bottomSheetState,
+                            dragHandle = { BottomSheetDefaults.DragHandle() }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .navigationBarsPadding()
+                                    .padding(16.dp)
+                            ) {
+                                BottomSheetOptions(
+                                    text = stringResource(R.string.add_image),
+                                    icon = painterResource(id = R.drawable.gallery_icon),
+                                    onClick = {
+                                        launcher.launch(
+                                            PickVisualMediaRequest(
+                                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                            )
+                                        )
+                                        showSheet = false
+                                    }
+                                )
+                                BottomSheetOptions(
+                                    text = stringResource(R.string.speech_to_text),
+                                    icon = painterResource(id = R.drawable.mic_icon),
+                                    onClick = {
+                                        if (permissionState.status.isGranted) {
+                                            speechRecognizerLauncher.launch(Unit)
+                                        } else {
+                                            permissionState.launchPermissionRequest()
+                                        }
+                                        showSheet = false
+                                    }
                                 )
                             }
-                            if (showSheet) {
-                                ModalBottomSheet(
-                                    onDismissRequest = { showSheet = false },
-                                    sheetState = bottomSheetState,
-                                    dragHandle = { BottomSheetDefaults.DragHandle() }
-                                ) {
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .navigationBarsPadding()
-                                            .padding(16.dp)
-                                    ) {
-                                        BottomSheetOptions(
-                                            text = stringResource(R.string.add_image),
-                                            icon = painterResource(id = R.drawable.gallery_icon),
-                                            onClick = {
-                                                launcher.launch(
-                                                    PickVisualMediaRequest(
-                                                        mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                                    )
-                                                )
-                                                showSheet = false
-                                            }
-                                        )
-                                        BottomSheetOptions(
-                                            text = stringResource(R.string.speech_to_text),
-                                            icon = painterResource(id = R.drawable.mic_icon),
-                                            onClick = {
-                                                if (permissionState.status.isGranted) {
-                                                    speechRecognizerLauncher.launch(Unit)
-                                                } else {
-                                                    permissionState.launchPermissionRequest()
-                                                }
-                                                showSheet = false
-                                            }
-                                        )
-                                    }
-                                }
-                            }
                         }
-                    )
-                }
-            } else {
-
+                    }
+                })
             }
         }
-    ) {
+    }) {
         Box(
             modifier = Modifier.padding(it)
         ) {
@@ -289,57 +275,71 @@ fun AddEditScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 if (isNew) {
-                    photoUri?.let {
-                        Log.d("URI", "Photo uri $photoUri")
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    photoUri = null
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Close,
-                                    contentDescription = stringResource(R.string.clear_image)
-                                )
+                    if (photoUri.isNotEmpty()) {
+                        LazyRow {
+                            items(photoUri.size) {
+                                Box(
+                                    Modifier
+                                        .height(180.dp)
+                                        .width(180.dp)
+                                        .padding(4.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                ) {
+                                    ZoomableAsyncImage(
+                                        modifier = Modifier.fillMaxSize(),
+                                        model = photoUri[it],
+                                        contentDescription = stringResource(R.string.image),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                    FilledTonalIconButton(
+                                        modifier = Modifier.align(Alignment.TopEnd),
+                                        onClick = {
+                                            photoUri = photoUri.filterIndexed { index, _ -> index != it }
+                                        },
+                                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
+                                                alpha = 0.6f
+                                            )
+                                        )
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Close,
+                                            contentDescription = stringResource(R.string.clear_image)
+                                        )
+                                    }
+                                }
                             }
                         }
-
-                        AsyncImage(
-                            model = photoUri,
-                            contentDescription = stringResource(R.string.image),
-                            modifier = Modifier.fillMaxWidth(),
-                            contentScale = ContentScale.Crop
-                        )
                     }
                 } else {
-                    photoUri?.let {
-                        Image(
-                            painter = rememberAsyncImagePainter(photoUri),
-                            contentDescription = stringResource(R.string.image),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .size(500.dp),
-                            contentScale = ContentScale.Fit
-                        )
+                    Row(
+                        modifier = Modifier
+                            .horizontalScroll(rememberScrollState())
+                    ) {
+                        photoUri.forEach { uri ->
+                            ZoomableAsyncImage(
+                                modifier = Modifier
+                                    .height(180.dp)
+                                    .width(180.dp)
+                                    .padding(4.dp)
+                                    .clip(RoundedCornerShape(8.dp)),
+                                model = uri ?: "",
+                                contentDescription = stringResource(R.string.image),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
                 }
 
-
                 TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = title,
-                    onValueChange = { newTitle ->
+                    modifier = Modifier.fillMaxWidth(), value = title, onValueChange = { newTitle ->
                         if (isNew) {
                             title = newTitle
                             characterCount = title.length + description.length
                         } else {
                             addEditViewModel.updateTitle(newTitle)
                         }
-                    },
-                    placeholder = {
+                    }, placeholder = {
                         Text(
                             stringResource(R.string.title),
                             fontSize = 24.sp,
@@ -350,7 +350,7 @@ fun AddEditScreen(
                     },
                     textStyle = TextStyle(
                         fontSize = 24.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                        fontFamily = FontFamily(Font(R.font.poppins_medium))
                     ),
                     maxLines = Int.MAX_VALUE,
                     colors = TextFieldDefaults.colors(
@@ -359,7 +359,7 @@ fun AddEditScreen(
                         disabledContainerColor = MaterialTheme.colorScheme.surface,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         capitalization = KeyboardCapitalization.Sentences,
@@ -368,16 +368,14 @@ fun AddEditScreen(
                     ),
                     keyboardActions = KeyboardActions(onNext = {
                         focus.moveFocus(FocusDirection.Down)
-                    }),
+                    })
                 )
 
                 TextField(
                     value = if (isNew) {
                         "$currentDate, $currentTime   |  $characterCount characters"
-
                     } else {
                         "$formattedDateTime | $formattedCharacterCount"
-
                     },
                     onValueChange = { },
                     modifier = Modifier.fillMaxWidth(),
@@ -392,10 +390,10 @@ fun AddEditScreen(
                         disabledContainerColor = MaterialTheme.colorScheme.surface,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
+                        keyboardType = KeyboardType.Text
                     )
                 )
 
@@ -408,7 +406,6 @@ fun AddEditScreen(
                             characterCount = title.length + description.length
                         } else {
                             addEditViewModel.updateDescription(newDescription)
-
                         }
                     },
                     placeholder = {
@@ -422,7 +419,7 @@ fun AddEditScreen(
                     },
                     textStyle = TextStyle(
                         fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_light)),
+                        fontFamily = FontFamily(Font(R.font.poppins_light))
                     ),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -430,15 +427,15 @@ fun AddEditScreen(
                         disabledContainerColor = MaterialTheme.colorScheme.surface,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         capitalization = KeyboardCapitalization.Sentences,
-                        keyboardType = KeyboardType.Text,
+                        keyboardType = KeyboardType.Text
                     ),
-                    maxLines = Int.MAX_VALUE,
+                    maxLines = Int.MAX_VALUE
 
-                    )
+                )
             }
         }
     }

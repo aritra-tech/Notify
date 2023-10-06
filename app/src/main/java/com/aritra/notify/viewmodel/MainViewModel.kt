@@ -65,7 +65,7 @@ class MainViewModel @Inject constructor(
                 override fun onErrorOccurred() {
                     finishActivity()
                 }
-            },
+            }
         )
     }
 

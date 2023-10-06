@@ -15,7 +15,6 @@ import java.io.File
 import java.io.FileOutputStream
 
 fun shareNoteAsText(context: Context, title: String, description: String) {
-
     val shareMsg = "Title: $title\nNote: $description"
 
     val sharingIntent = Intent(Intent.ACTION_SEND)

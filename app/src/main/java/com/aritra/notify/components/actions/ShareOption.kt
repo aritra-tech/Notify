@@ -12,7 +12,7 @@ import com.aritra.notify.R
 @Composable
 fun ShareOption(
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Text(
         text = text,

@@ -48,8 +48,8 @@ class BackupRepository(
                     // write the notes to the csv file
                     provider.noteDao().getAllNotes().first().forEach { note ->
                         // write the image to the backup directory if it exists
-                        val image = note.image?.let { image ->
-                            val imageName = "image_${note.id}.webp"
+                        val images = note.image.filterNotNull().mapIndexed { index, image ->
+                            val imageName = "image_${note.id}_($index).webp"
                             val imageFile = File(backupDir, imageName)
                             context.contentResolver.openInputStream(image)?.use { inputStream ->
                                 imageFile.outputStream().use { outputStream ->
@@ -63,9 +63,8 @@ class BackupRepository(
                                 note.id.toString(),
                                 note.title,
                                 note.note,
-                                DateTypeConverter.toString(note.dateTime).orEmpty(),
-                                image.orEmpty()
-                            )
+                                DateTypeConverter.toString(note.dateTime).orEmpty()
+                            ).plus(images)
                         )
                     }
                     // close the csv writer
@@ -136,30 +135,39 @@ class BackupRepository(
                         val title = columns[1]
                         val text = columns[2]
                         val dateTime = DateTypeConverter.toDate(columns[3])
-                        val imageName = columns[4]
-                        val image = if (imageName.isNotEmpty()) {
-                            val imageStore = SaveSelectedImageUseCase.image(context, id)
-                            // copy the image from the restore directory to the cache directory
-                            context.contentResolver.openInputStream(
-                                Uri.fromFile(File(restoreDir, imageName))
-                            )?.use { inputStream ->
-                                imageStore.outputStream().use { outputStream ->
-                                    inputStream.copyTo(outputStream)
+                        val imageNameList = columns.slice(IntRange(4, columns.size - 1))
+                        val images = imageNameList.map { imageName ->
+                            if (imageName.isNotEmpty()) {
+                                val index =
+                                    imageName.substringBeforeLast(".webp")
+                                        .substringAfterLast('_')
+                                        .trim('(', ')')
+                                        .toInt()
+                                val imageStore = SaveSelectedImageUseCase.image(context, id, index)
+                                // copy the image from the restore directory to the cache directory
+                                context.contentResolver.openInputStream(
+                                    Uri.fromFile(File(restoreDir, imageName))
+                                )?.use { inputStream ->
+                                    imageStore.outputStream().use { outputStream ->
+                                        inputStream.copyTo(outputStream)
+                                    }
                                 }
+                                // get the uri for the image in the cache directory
+                                FileProvider.getUriForFile(
+                                    context,
+                                    "${context.packageName}.provider",
+                                    imageStore
+                                )
+                            } else {
+                                null
                             }
-                            // get the uri for the image in the cache directory
-                            FileProvider.getUriForFile(
-                                context,
-                                "${context.packageName}.provider",
-                                imageStore
-                            )
-                        } else null
+                        }
                         val note = Note(
                             id = id,
                             title = title,
                             note = text,
                             dateTime = dateTime,
-                            image = image
+                            image = images
                         )
                         Log.d(BackupRepository::class.simpleName, "import: $note")
                         provider.noteDao().insertNote(

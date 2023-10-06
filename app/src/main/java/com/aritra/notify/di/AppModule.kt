@@ -19,7 +19,7 @@ class AppModule {
     }
 
     @Provides
-    fun provideDataStoreUtil(@ApplicationContext context: Context):DataStoreUtil = DataStoreUtil(context)
+    fun provideDataStoreUtil(@ApplicationContext context: Context): DataStoreUtil = DataStoreUtil(context)
 
     @Provides
     fun provideRepository(application: Application): NoteRepository {

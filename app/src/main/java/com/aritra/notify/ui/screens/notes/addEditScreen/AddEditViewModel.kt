@@ -21,10 +21,10 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditViewModel @Inject constructor(
     application: Application,
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
 ) : AndroidViewModel(application) {
 
-    private val _noteModel = MutableLiveData(Note(0, "", "", Date(), null))
+    private val _noteModel = MutableLiveData(Note(0, "", "", Date(), emptyList()))
     val noteModel: LiveData<Note> get() = _noteModel
 
 
@@ -32,14 +32,16 @@ class AddEditViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val id: Int = noteRepository.insertNoteToRoom(note).toInt()
 
-            if (note.image != null) {
+            val imageUris = note.image.filterNotNull()
+
+            if (imageUris.isNotEmpty()) {
                 // update the note with the new image uri
                 noteRepository.updateNoteInRoom(
                     note.copy(
                         id = id,
                         image = SaveSelectedImageUseCase(
                             context = getApplication(),
-                            uri = note.image!!,
+                            uris = imageUris,
                             noteId = id
                         )
                     )
@@ -54,18 +56,19 @@ class AddEditViewModel @Inject constructor(
 
     fun insertListOfNote(notes: List<Note>, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
+            noteRepository.insertListOfNotesToRoom(notes)
 
             notes.forEach { note ->
-                if (note.image != null) {
+                val imageUris = note.image.filterNotNull()
+                if (imageUris.isNotEmpty()) {
                     // update the note with the new image uri
                     noteRepository.updateNoteInRoom(
                         note.copy(
                             id = note.id,
                             image = SaveSelectedImageUseCase(
                                 context = getApplication(),
-                                uri = note.image!!,
+                                uris = imageUris,
                                 noteId = note.id
-
                             )
                         )
                     )
@@ -97,7 +100,6 @@ class AddEditViewModel @Inject constructor(
     }*/
 
     fun updateNotes(onSuccess: (updated: Boolean) -> Unit) = viewModelScope.launch(Dispatchers.IO) {
-
         val newNote = noteModel.value ?: return@launch
         // retrieve the note from the database to check if the image has been modified
         val oldNote = noteRepository.getNoteByIdFromRoom(newNote.id).first()
@@ -113,21 +115,25 @@ class AddEditViewModel @Inject constructor(
 //        if (oldNote.title == newNote.title && oldNote.note == newNote.note && oldNote.image == newNote.image) return@launch
         // if the image has been modified, delete the old image
         if (oldNote.image != newNote.image) {
-            oldNote.image?.toFile(getApplication())?.delete()
+            oldNote.image.forEach { imageUri ->
+                imageUri?.toFile(getApplication())?.delete()
+            }
         }
         noteRepository.updateNoteInRoom(
             newNote.copy(
                 // if the image has not been modified, use the old image uri
                 image = if (oldNote.image == newNote.image) {
                     oldNote.image
-                } else if (newNote.image != null) {
+                } else if (newNote.image.filterNotNull().isNotEmpty()) {
                     // if the image has been modified, save the new image uri
                     SaveSelectedImageUseCase(
                         getApplication(),
-                        newNote.image!!,
+                        newNote.image.filterNotNull(),
                         newNote.id
                     )
-                } else null
+                } else {
+                    emptyList()
+                }
             )
         )
 
@@ -135,7 +141,6 @@ class AddEditViewModel @Inject constructor(
             onSuccess(true)
         }
     }
-
 
     fun updateTitle(title: String) {
         _noteModel.postValue(noteModel.value?.copy(title = title))
@@ -145,7 +150,7 @@ class AddEditViewModel @Inject constructor(
         _noteModel.postValue(noteModel.value?.copy(note = description))
     }
 
-    fun updateImage(image: Uri?) {
-        _noteModel.postValue(noteModel.value?.copy(image = image))
+    fun updateImage(imageList: List<Uri?>) {
+        _noteModel.postValue(noteModel.value?.copy(image = imageList))
     }
 }

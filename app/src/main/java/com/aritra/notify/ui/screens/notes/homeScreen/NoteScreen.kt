@@ -23,8 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.DismissDirection.*
-import androidx.compose.material3.DismissValue.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -71,7 +69,7 @@ import kotlinx.coroutines.launch
 fun NoteScreen(
     onFabClicked: () -> Unit,
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
-    lazyListState: LazyListState
+    lazyListState: LazyListState,
 ) {
 
 
@@ -153,10 +151,7 @@ fun NoteScreen(
                             when (snackBarResult) {
                                 SnackbarResult.ActionPerformed -> {
 
-                                    addEditViewModel.insertListOfNote(deletedNotes) {
-                                        Toast.makeText(context, "Items undo", Toast.LENGTH_SHORT)
-                                            .show()
-                                    }
+                                    addEditViewModel.insertListOfNote(deletedNotes) {}
                                 }
 
                                 SnackbarResult.Dismissed -> {
@@ -213,9 +208,9 @@ fun NoteScreen(
                                 columns = StaggeredGridCells.Fixed(2),
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(0.dp, 5.dp, 0.dp, 0.dp),
+                                .padding(0.dp, 5.dp, 0.dp, 0.dp),
                             ) {
-                                itemsIndexed(listOfAllNotes.filter { note ->
+                            itemsIndexed(listOfAllNotes.filter { note ->
                                     note.title.contains(searchQuery, true)
                                 }) { _, notesModel ->
                                     val isSelected = selectedNoteIds.contains(notesModel.id)
@@ -252,14 +247,13 @@ fun NoteScreen(
                                 }
                             }
                         } else {
-
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(0.dp, 5.dp, 0.dp, 0.dp), state = lazyListState
+                                .padding(0.dp, 5.dp, 0.dp, 0.dp), state = lazyListState
                             ) {
 
-                                items(listOfAllNotes.filter { note ->
+                            items(listOfAllNotes.filter { note ->
                                     note.title.contains(searchQuery, true)
                                 }) { notesModel ->
 
@@ -316,7 +310,8 @@ fun NoteScreen(
 @Composable
 fun NoList(contentDescription: String, message: String) {
     Column(
-        Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
+        Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(

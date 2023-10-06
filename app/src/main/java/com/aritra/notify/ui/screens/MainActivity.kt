@@ -34,6 +34,7 @@ class MainActivity : FragmentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var appUpdateManager: AppUpdateManager
     private val updateType = AppUpdateType.IMMEDIATE
+
     @Inject
     lateinit var appBioMetricManager: AppBioMetricManager
 
@@ -60,7 +61,11 @@ class MainActivity : FragmentActivity() {
 
     private val installStateUpdatedListener = InstallStateUpdatedListener { state ->
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
-            Toast.makeText(applicationContext, "Download Successful. Restarting app in 5 seconds.",Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                applicationContext,
+                "Download Successful. Restarting app in 5 seconds.",
+                Toast.LENGTH_SHORT
+            ).show()
             lifecycleScope.launch {
                 delay(5000)
                 appUpdateManager.completeUpdate()
@@ -71,7 +76,7 @@ class MainActivity : FragmentActivity() {
     private fun checkForAppUpdates() {
         appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
             val isUpdateAvailable = info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-            val isUpdateAllowed = when(updateType) {
+            val isUpdateAllowed = when (updateType) {
                 AppUpdateType.FLEXIBLE -> info.isFlexibleUpdateAllowed
                 AppUpdateType.IMMEDIATE -> info.isImmediateUpdateAllowed
                 else -> false
@@ -107,7 +112,7 @@ class MainActivity : FragmentActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 123) {
             if (resultCode != RESULT_OK) {
-                Toast.makeText(applicationContext,"Something went wrong updating Notify..",Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Something went wrong updating Notify..", Toast.LENGTH_SHORT).show()
             }
         }
     }
