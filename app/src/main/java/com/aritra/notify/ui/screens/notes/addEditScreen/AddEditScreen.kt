@@ -158,12 +158,19 @@ fun AddEditScreen(
     val saveEditNote: () -> Unit = if (isNew) {
         remember {
             {
-                addEditViewModel.insertNote(note = Note(
-                    id = 0, title = title, note = description, dateTime = dateTime, image = photoUri
-                ), onSuccess = {
-                    navigateBack()
-                    Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
-                })
+                addEditViewModel.insertNote(
+                    note = Note(
+                        id = 0,
+                        title = title,
+                        note = description,
+                        dateTime = dateTime,
+                        image = photoUri
+                    ),
+                    onSuccess = {
+                        navigateBack()
+                        Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
+                    }
+                )
             }
         }
     } else {
@@ -182,19 +189,26 @@ fun AddEditScreen(
     }
 
     Scaffold(topBar = {
-        AddEditTopBar(title = title, description = description, onBackPress = if (isNew) {
-            { cancelDialogState.value = true }
-        } else {
-            navigateBack
-        }, saveNote = if (isNew) {
-            saveEditNote
-        } else {
-            {}
-        }, updateNote = if (isNew) {
-            {}
-        } else {
-            saveEditNote
-        }, note = note)
+        AddEditTopBar(
+            title = title,
+            description = description,
+            onBackPress = if (isNew) {
+                { cancelDialogState.value = true }
+            } else {
+                navigateBack
+            },
+            saveNote = if (isNew) {
+                saveEditNote
+            } else {
+                {}
+            },
+            updateNote = if (isNew) {
+                {}
+            } else {
+                saveEditNote
+            },
+            note = note
+        )
     }, bottomBar = {
         if (isNew) {
             Column(
@@ -210,16 +224,19 @@ fun AddEditScreen(
                         )
                     }
                     if (showSheet) {
-                        ModalBottomSheet(onDismissRequest = { showSheet = false },
+                        ModalBottomSheet(
+                            onDismissRequest = { showSheet = false },
                             sheetState = bottomSheetState,
-                            dragHandle = { BottomSheetDefaults.DragHandle() }) {
+                            dragHandle = { BottomSheetDefaults.DragHandle() }
+                        ) {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .navigationBarsPadding()
                                     .padding(16.dp)
                             ) {
-                                BottomSheetOptions(text = stringResource(R.string.add_image),
+                                BottomSheetOptions(
+                                    text = stringResource(R.string.add_image),
                                     icon = painterResource(id = R.drawable.gallery_icon),
                                     onClick = {
                                         launcher.launch(
@@ -228,8 +245,10 @@ fun AddEditScreen(
                                             )
                                         )
                                         showSheet = false
-                                    })
-                                BottomSheetOptions(text = stringResource(R.string.speech_to_text),
+                                    }
+                                )
+                                BottomSheetOptions(
+                                    text = stringResource(R.string.speech_to_text),
                                     icon = painterResource(id = R.drawable.mic_icon),
                                     onClick = {
                                         if (permissionState.status.isGranted) {
@@ -238,7 +257,8 @@ fun AddEditScreen(
                                             permissionState.launchPermissionRequest()
                                         }
                                         showSheet = false
-                                    })
+                                    }
+                                )
                             }
                         }
                     }
@@ -265,36 +285,36 @@ fun AddEditScreen(
                                         .padding(4.dp)
                                         .clip(RoundedCornerShape(8.dp))
                                 ) {
-                                ZoomableAsyncImage(
-                                    modifier = Modifier.fillMaxSize(),
-                                    model = photoUri[it],
-                                    contentDescription = stringResource(R.string.image),
-                                    contentScale = ContentScale.Crop
-                                )
-                                FilledTonalIconButton(
-                                    modifier = Modifier.align(Alignment.TopEnd),
-                                    onClick = {
-                                        photoUri = photoUri.filterIndexed { index, _ -> index != it }
-                                    },
-                                    colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
-                                            alpha = 0.6f
+                                    ZoomableAsyncImage(
+                                        modifier = Modifier.fillMaxSize(),
+                                        model = photoUri[it],
+                                        contentDescription = stringResource(R.string.image),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                    FilledTonalIconButton(
+                                        modifier = Modifier.align(Alignment.TopEnd),
+                                        onClick = {
+                                            photoUri = photoUri.filterIndexed { index, _ -> index != it }
+                                        },
+                                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
+                                                alpha = 0.6f
+                                            )
                                         )
-                                    )
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Close,
-                                        contentDescription = stringResource(R.string.clear_image)
-                                    )
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Close,
+                                            contentDescription = stringResource(R.string.clear_image)
+                                        )
+                                    }
                                 }
-                            }
                             }
                         }
                     }
                 } else {
                     Row(
                         modifier = Modifier
-                            .horizontalScroll(rememberScrollState()),
+                            .horizontalScroll(rememberScrollState())
                     ) {
                         photoUri.forEach { uri ->
                             ZoomableAsyncImage(
@@ -311,37 +331,44 @@ fun AddEditScreen(
                     }
                 }
 
-                TextField(modifier = Modifier.fillMaxWidth(), value = title, onValueChange = { newTitle ->
-                    if (isNew) {
-                        title = newTitle
-                        characterCount = title.length + description.length
-                    } else {
-                        addEditViewModel.updateTitle(newTitle)
-                    }
-                }, placeholder = {
-                    Text(
-                        stringResource(R.string.title),
+                TextField(
+                    modifier = Modifier.fillMaxWidth(), value = title, onValueChange = { newTitle ->
+                        if (isNew) {
+                            title = newTitle
+                            characterCount = title.length + description.length
+                        } else {
+                            addEditViewModel.updateTitle(newTitle)
+                        }
+                    }, placeholder = {
+                        Text(
+                            stringResource(R.string.title),
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.W700,
+                            color = Color.Gray,
+                            fontFamily = FontFamily(Font(R.font.poppins_medium))
+                        )
+                    },
+                    textStyle = TextStyle(
                         fontSize = 24.sp,
-                        fontWeight = FontWeight.W700,
-                        color = Color.Gray,
                         fontFamily = FontFamily(Font(R.font.poppins_medium))
-                    )
-                }, textStyle = TextStyle(
-                    fontSize = 24.sp, fontFamily = FontFamily(Font(R.font.poppins_medium))
-                ), maxLines = Int.MAX_VALUE, colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                    disabledContainerColor = MaterialTheme.colorScheme.surface,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                ), keyboardOptions = KeyboardOptions.Default.copy(
-                    capitalization = KeyboardCapitalization.Sentences,
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ), keyboardActions = KeyboardActions(onNext = {
-                    focus.moveFocus(FocusDirection.Down)
-                })
+                    ),
+                    maxLines = Int.MAX_VALUE,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(onNext = {
+                        focus.moveFocus(FocusDirection.Down)
+                    })
                 )
 
                 TextField(
@@ -349,59 +376,78 @@ fun AddEditScreen(
                         "$currentDate, $currentTime   |  $characterCount characters"
                     } else {
                         "$formattedDateTime | $formattedCharacterCount"
-                    }, onValueChange = { }, modifier = Modifier.fillMaxWidth(), readOnly = true, textStyle = TextStyle(
-                        fontSize = 15.sp, fontFamily = FontFamily(Font(R.font.poppins_light))
-                    ), colors = TextFieldDefaults.colors(
+                    },
+                    onValueChange = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true,
+                    textStyle = TextStyle(
+                        fontSize = 15.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_light))
+                    ),
+                    colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                         disabledContainerColor = MaterialTheme.colorScheme.surface,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent
-                    ), keyboardOptions = KeyboardOptions.Default.copy(
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text
                     )
                 )
 
-                TextField(modifier = Modifier.fillMaxSize(), value = description, onValueChange = { newDescription ->
-                    if (isNew) {
-                        description = newDescription
-                        characterCount = title.length + description.length
-                    } else {
-                        addEditViewModel.updateDescription(newDescription)
-                    }
-                }, placeholder = {
-                    Text(
-                        stringResource(R.string.notes),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.W500,
-                        color = Color.Gray,
+                TextField(
+                    modifier = Modifier.fillMaxSize(),
+                    value = description,
+                    onValueChange = { newDescription ->
+                        if (isNew) {
+                            description = newDescription
+                            characterCount = title.length + description.length
+                        } else {
+                            addEditViewModel.updateDescription(newDescription)
+                        }
+                    },
+                    placeholder = {
+                        Text(
+                            stringResource(R.string.notes),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.W500,
+                            color = Color.Gray,
+                            fontFamily = FontFamily(Font(R.font.poppins_light))
+                        )
+                    },
+                    textStyle = TextStyle(
+                        fontSize = 18.sp,
                         fontFamily = FontFamily(Font(R.font.poppins_light))
-                    )
-                }, textStyle = TextStyle(
-                    fontSize = 18.sp, fontFamily = FontFamily(Font(R.font.poppins_light))
-                ), colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                    disabledContainerColor = MaterialTheme.colorScheme.surface,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                ), keyboardOptions = KeyboardOptions.Default.copy(
-                    capitalization = KeyboardCapitalization.Sentences, keyboardType = KeyboardType.Text
-                ), maxLines = Int.MAX_VALUE
+                    ),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        keyboardType = KeyboardType.Text
+                    ),
+                    maxLines = Int.MAX_VALUE
 
                 )
             }
         }
     }
 
-    TextDialog(title = stringResource(R.string.are_you_sure),
+    TextDialog(
+        title = stringResource(R.string.are_you_sure),
         description = stringResource(R.string.the_text_change_will_not_be_saved),
         isOpened = cancelDialogState.value,
         onDismissCallback = { cancelDialogState.value = false },
         onConfirmCallback = {
             navigateBack()
             cancelDialogState.value = false
-        })
+        }
+    )
 }
