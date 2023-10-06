@@ -14,9 +14,10 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun BackPressHandler() {
+fun BackPressHandler(isInSelectionMode: Boolean, resetSelectionMode: () -> Unit) {
     var exit by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
 
     LaunchedEffect(key1 = exit) {
         if (exit) {
@@ -25,13 +26,17 @@ fun BackPressHandler() {
         }
     }
 
+
     BackHandler(enabled = true) {
-        if (exit) {
+        if (isInSelectionMode) {
+            resetSelectionMode()
+        } else if (exit) {
             context.closeApp()
         } else {
             exit = true
             context.toast("Press again to exit")
         }
-    }
 
+
+    }
 }

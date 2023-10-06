@@ -2,6 +2,7 @@ package com.aritra.notify.ui.screens.notes.homeScreen
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.aritra.notify.domain.models.Note
@@ -18,9 +19,18 @@ class NoteScreenViewModel @Inject constructor(
 
     var listOfNotes = homeRepository.getAllNotesFromRoom().asLiveData()
 
+    private val _selectedNoteIds = MutableLiveData<Set<Int>>(emptySet())
+    val selectedNoteIds get() = _selectedNoteIds
+
     fun deleteNote(note: Note) {
-        viewModelScope.launch {
+         viewModelScope.launch {
             homeRepository.deleteNoteFromRoom(note)
+        }
+    }
+
+    fun deleteListOfNote(noteList: List<Note>) {
+        viewModelScope.launch {
+            homeRepository.deleteNotesFromRoom(noteList)
         }
     }
 

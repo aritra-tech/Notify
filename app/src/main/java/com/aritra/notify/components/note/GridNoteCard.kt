@@ -1,15 +1,22 @@
 package com.aritra.notify.components.note
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,10 +42,13 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GridNoteCard(
     notesModel: Note,
-    navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
 ) {
     val painter = rememberSaveable { mutableStateOf(notesModel.image) }
     val context = LocalContext.current
@@ -54,56 +64,80 @@ fun GridNoteCard(
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth()
-            .clip(RoundedCornerShape(15.dp)) //make click effect rounded
-            .clickable { navigateToUpdateNoteScreen(notesModel.id) },
-        shape = RoundedCornerShape(15.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(painter.value)
-                    .build(),
-                contentDescription = "Image",
-                modifier = Modifier.fillMaxWidth()
-
-            )
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier.weight(2f),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        modifier = Modifier.padding(top = 10.dp),
-                        text = notesModel.title,
-                        fontSize = 20.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_semibold)),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+            .clip(RoundedCornerShape(15.dp))
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick),
+        colors = CardDefaults.cardColors(
+            if (isSelected) {
+                Color(0xFFE0E0E0)
+            } else {
+                Color.White
             }
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = notesModel.note,
-                fontSize = 18.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_light)),
-                maxLines = 4,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = date,
-                fontSize = 14.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_medium)),
-                color = Color.Gray
-            )
+        ),
+        shape = RoundedCornerShape(15.dp),
+
+        ) {
+
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)) {
+            if (isSelected) {
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.TopEnd)
+
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(painter.value)
+                        .build(),
+                    contentDescription = "Image",
+                    modifier = Modifier.fillMaxWidth()
+
+                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.weight(2f),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(top = 10.dp),
+                            text = notesModel.title,
+                            fontSize = 20.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_semibold)),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = notesModel.note,
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.poppins_light)),
+                    maxLines = 4,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = date,
+                    fontSize = 14.sp,
+                    fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                    color = Color.Gray
+                )
+            }
         }
     }
 }

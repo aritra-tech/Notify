@@ -2,9 +2,11 @@
 
 package com.aritra.notify.ui.screens.notes.homeScreen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,16 +30,25 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -50,6 +61,10 @@ import com.aritra.notify.components.actions.BackPressHandler
 import com.aritra.notify.components.actions.LayoutToggleButton
 import com.aritra.notify.components.note.GridNoteCard
 import com.aritra.notify.components.note.NotesCard
+import com.aritra.notify.components.topbar.SelectionModeTopAppBar
+import com.aritra.notify.domain.models.Note
+import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,15 +74,50 @@ fun NoteScreen(
     lazyListState: LazyListState
 ) {
 
-    BackPressHandler()
 
     val viewModel = hiltViewModel<NoteScreenViewModel>()
+
+    val addEditViewModel = hiltViewModel<AddEditViewModel>()
     val listOfAllNotes by viewModel.listOfNotes.observeAsState(listOf())
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var isGridView by rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    var isInSelectionMode by remember {
+        mutableStateOf(false)
+    }
+    val selectedNoteIds = remember {
+        mutableStateListOf<Int>()
+    }
+
+    val deletedNotes = remember {
+        mutableStateListOf<Note>()
+    }
+
+    val scope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    val resetSelectionMode = {
+        isInSelectionMode = false
+        selectedNoteIds.clear()
+    }
+
+    BackPressHandler(isInSelectionMode, resetSelectionMode)
+
+    LaunchedEffect(
+        key1 = isInSelectionMode,
+        key2 = selectedNoteIds.size,
+    ) {
+        if (isInSelectionMode && selectedNoteIds.isEmpty()) {
+            isInSelectionMode = false
+        }
+    }
 
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onFabClicked() }
@@ -78,16 +128,48 @@ fun NoteScreen(
                 )
             }
         },
-    ) {
-        Surface(
-            modifier = Modifier.padding(it)
-        ) {
 
-            Column(modifier = Modifier.fillMaxSize()) {
+        topBar = {
+            if (isInSelectionMode) {
+                SelectionModeTopAppBar(
+                    selectedItems = selectedNoteIds,
+                    onDeleteClick = {
+                        val selectedNotes =
+                            listOfAllNotes.filter { note -> note.id in selectedNoteIds }
 
+                        viewModel.deleteListOfNote(selectedNotes)
+
+                        deletedNotes.addAll(selectedNotes)
+                        resetSelectionMode()
+
+                        scope.launch {
+                            val snackBarResult = snackBarHostState.showSnackbar(
+                                message = "Notes deleted",
+                                actionLabel = "Undo",
+                                duration = SnackbarDuration.Short,
+                                withDismissAction = false
+                            )
+
+                            when (snackBarResult) {
+                                SnackbarResult.ActionPerformed -> {
+
+                                    addEditViewModel.insertListOfNote(deletedNotes) {
+                                        Toast.makeText(context, "Items undo", Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+                                }
+
+                                SnackbarResult.Dismissed -> {
+                                }
+                            }
+                        }
+                    },
+
+                    resetSelectionMode = resetSelectionMode,
+                )
+            } else {
                 SearchBar(
                     modifier = Modifier
-                        .align(Alignment.Start)
                         .fillMaxWidth()
                         .padding(10.dp),
                     query = searchQuery,
@@ -113,53 +195,122 @@ fun NoteScreen(
                             )
                         }
                     }
-                ) {
-                }
-                if (listOfAllNotes.isNotEmpty()) {
+                ) {}
+            }
+        }, content = {
 
-                    if (isGridView) {
-                        LazyVerticalStaggeredGrid(
-                            columns = StaggeredGridCells.Fixed(2),
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(0.dp, 5.dp, 0.dp, 0.dp),
-                        ) {
-                            itemsIndexed(listOfAllNotes.filter { note ->
-                                note.title.contains(searchQuery, true)
-                            }) { _, notesModel ->
-                                GridNoteCard(
-                                    notesModel,
-                                    navigateToUpdateNoteScreen,
-                                )
+            Surface(
+                modifier = Modifier.padding(it)
+            ) {
+
+                Column(modifier = Modifier.fillMaxSize()) {
+
+
+                    if (listOfAllNotes.isNotEmpty()) {
+
+                        if (isGridView) {
+                            LazyVerticalStaggeredGrid(
+                                columns = StaggeredGridCells.Fixed(2),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(0.dp, 5.dp, 0.dp, 0.dp),
+                            ) {
+                                itemsIndexed(listOfAllNotes.filter { note ->
+                                    note.title.contains(searchQuery, true)
+                                }) { _, notesModel ->
+                                    val isSelected = selectedNoteIds.contains(notesModel.id)
+
+                                    GridNoteCard(
+                                        notesModel,
+                                        isSelected,
+                                        {
+                                            if (isInSelectionMode) {
+                                                if (isSelected) {
+                                                    selectedNoteIds.remove(notesModel.id)
+                                                } else {
+                                                    selectedNoteIds.add(notesModel.id)
+
+                                                }
+                                            } else {
+                                                navigateToUpdateNoteScreen(notesModel.id)
+                                            }
+                                        }
+                                    ) {
+                                        if (isInSelectionMode) {
+                                            if (isSelected) {
+                                                selectedNoteIds.remove(notesModel.id)
+                                            } else {
+                                                selectedNoteIds.add(notesModel.id)
+
+                                            }
+                                        } else {
+                                            isInSelectionMode = true
+                                            selectedNoteIds.add(notesModel.id)
+
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(0.dp, 5.dp, 0.dp, 0.dp), state = lazyListState
+                            ) {
+
+                                items(listOfAllNotes.filter { note ->
+                                    note.title.contains(searchQuery, true)
+                                }) { notesModel ->
+
+                                    val isSelected = selectedNoteIds.contains(notesModel.id)
+
+                                    Box {
+                                        NotesCard(
+                                            noteModel = notesModel, isSelected, {
+                                                if (isInSelectionMode) {
+                                                    if (isSelected) {
+                                                        selectedNoteIds.remove(notesModel.id)
+                                                    } else {
+                                                        selectedNoteIds.add(notesModel.id)
+
+                                                    }
+                                                } else {
+                                                    navigateToUpdateNoteScreen(notesModel.id)
+                                                }
+                                            }
+                                        ) {
+
+                                            if (isInSelectionMode) {
+                                                if (isSelected) {
+                                                    selectedNoteIds.remove(notesModel.id)
+                                                } else {
+                                                    selectedNoteIds.add(notesModel.id)
+
+                                                }
+                                            } else {
+                                                isInSelectionMode = true
+                                                selectedNoteIds.add(notesModel.id)
+
+                                            }
+                                        }
+
+                                    }
+
+
+                                }
                             }
                         }
                     } else {
-
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(0.dp, 5.dp, 0.dp, 0.dp), state = lazyListState
-                        ) {
-
-                            items(listOfAllNotes.filter { note ->
-                                note.title.contains(searchQuery, true)
-                            }) { notesModel ->
-                                NotesCard(
-                                    noteModel = notesModel,
-                                    navigateToUpdateNoteScreen = navigateToUpdateNoteScreen
-                                )
-                            }
-                        }
+                        NoList(
+                            contentDescription = stringResource(R.string.no_notes_added),
+                            message = stringResource(R.string.click_on_the_compose_button_to_add)
+                        )
                     }
-                } else {
-                    NoList(
-                        contentDescription = stringResource(R.string.no_notes_added),
-                        message = stringResource(R.string.click_on_the_compose_button_to_add)
-                    )
                 }
             }
         }
-    }
+    )
 }
 
 @Composable
