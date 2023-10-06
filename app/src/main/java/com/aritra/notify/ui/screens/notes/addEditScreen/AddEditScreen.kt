@@ -95,10 +95,12 @@ import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.topbar.AddEditTopBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.utils.Const
+import com.aritra.notify.utils.RichTextStyleRow
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
+import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
 import com.mohamedrejeb.richeditor.ui.BasicRichTextEditor
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import java.io.ByteArrayOutputStream
@@ -471,8 +473,7 @@ fun AddEditScreen(
                     state = basicRichTextState,
                 )
 
-                BasicRichTextEditor(
-
+                RichTextEditor(
                     state = basicRichTextState,
                     modifier = Modifier
                         .fillMaxSize(),
@@ -486,25 +487,22 @@ fun AddEditScreen(
                     ),
 
                     maxLines = Int.MAX_VALUE,
-                    decorationBox = { innerTextField ->
-                    }
+                    placeholder = {
+                        Text(
+                            stringResource(R.string.notes),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.W500,
+                            color = Color.Gray,
+                            fontFamily = FontFamily(Font(R.font.poppins_light))
+                        )
+                    },
                 )
-
-
-
-
-                TextField(
-                    modifier = Modifier.fillMaxSize(),
-                    value = description,
-                    onValueChange = { newDescription ->
-                        if (isNew) {
-                            description = newDescription
-                            characterCount = title.length + description.length
-                        } else {
-                            addEditViewModel.updateDescription(newDescription)
-                        }
-                    }
-                )
+                description = basicRichTextState.annotatedString.text
+                if (isNew) {
+                    characterCount = title.length + description.length
+                } else {
+                    addEditViewModel.updateDescription(description)
+                }
             }
         }
     }
