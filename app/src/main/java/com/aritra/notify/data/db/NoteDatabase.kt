@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.aritra.notify.data.dao.NoteDao
 import com.aritra.notify.domain.models.Note
 
-@Database(entities = [Note::class], version = 2)
+@Database(entities = [Note::class], version = 3)
 abstract class NoteDatabase : RoomDatabase() {
 
     abstract fun noteDao(): NoteDao
