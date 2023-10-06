@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -70,9 +71,9 @@ fun GridNoteCard(
             .combinedClickable(onClick = onClick, onLongClick = onLongClick),
         colors = CardDefaults.cardColors(
             if (isSelected) {
-                Color(0xFFE0E0E0)
+                MaterialTheme.colorScheme.surfaceVariant
             } else {
-                Color.White
+                MaterialTheme.colorScheme.surface
             }
         ),
         shape = RoundedCornerShape(15.dp)
@@ -87,7 +88,7 @@ fun GridNoteCard(
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = null,
-                    tint = Color.Black,
+                    tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .size(24.dp)
                         .align(Alignment.TopEnd)
