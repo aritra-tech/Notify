@@ -266,7 +266,7 @@ fun AddEditScreen(
                 })
             }
         }
-    }) {contentPadding ->
+    }) { contentPadding ->
 
         val scrollState = rememberScrollState()
         var descriptionScrollOffset by remember { mutableIntStateOf(0) }

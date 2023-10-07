@@ -97,11 +97,11 @@ fun DescriptionTextField(
         },
         textStyle = TextStyle(
             fontSize = 18.sp,
-            fontFamily = FontFamily(Font(R.font.poppins_light)),
+            fontFamily = FontFamily(Font(R.font.poppins_light))
         ),
         keyboardOptions = KeyboardOptions.Default.copy(
             capitalization = KeyboardCapitalization.Sentences,
-            keyboardType = KeyboardType.Text,
+            keyboardType = KeyboardType.Text
         ),
         decorationBox = @Composable { innerTextField ->
             TextFieldDefaults.DecorationBox(
@@ -126,7 +126,7 @@ fun DescriptionTextField(
                     disabledContainerColor = MaterialTheme.colorScheme.surface,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
                 )
             )
         }
