@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -12,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,20 +28,20 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aritra.notify.R
-import com.aritra.notify.ui.screens.notes.addNoteScreen.AddNotesScreen
-import com.aritra.notify.ui.screens.notes.editNoteScreen.EditNotesScreen
+import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditScreen
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
+import kotlinx.coroutines.launch
 
 @Composable
 fun NotifyApp(navController: NavHostController = rememberNavController()) {
-
     val bottomNavItem = getBottomNavItems()
     val screensWithHiddenNavBar = listOf(
-        NotifyScreens.AddNotes.name,
-        "${NotifyScreens.UpdateNotes.name}/{noteId}"
+        "${NotifyScreens.AddEditNotes.name}/{noteId}"
     )
     val backStackEntry = navController.currentBackStackEntryAsState()
+
+    val listState: LazyListState = rememberLazyListState()
 
     Scaffold(
         bottomBar = {
@@ -46,7 +49,8 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                 backStackEntry,
                 bottomNavItem,
                 screensWithHiddenNavBar,
-                navController
+                navController,
+                listState
             )
         }
     ) {
@@ -68,32 +72,30 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             }
         ) {
             composable(
-                route = NotifyScreens.Notes.name,
+                route = NotifyScreens.Notes.name
             ) {
                 NoteScreen(
-                    onFabClicked = { navController.navigate(NotifyScreens.AddNotes.name) },
+                    onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name + "/0") },
                     navigateToUpdateNoteScreen = { noteId ->
-                        navController.navigate("${NotifyScreens.UpdateNotes.name}/$noteId")
-                    }
+                        navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
+                    },
+                    listState
                 )
             }
+
             composable(
-                route = "${NotifyScreens.UpdateNotes.name}/{noteId}",
-                arguments = listOf(navArgument("noteId") { type = IntType }),
+                route = "${NotifyScreens.AddEditNotes.name}/{noteId}",
+                arguments = listOf(navArgument("noteId") { type = IntType })
             ) { backStack ->
                 val noteId = backStack.arguments?.getInt("noteId") ?: 0
-                EditNotesScreen(
+                AddEditScreen(
                     noteId = noteId,
                     navigateBack = { navController.popBackStack() }
                 )
             }
+
             composable(
-                route = NotifyScreens.AddNotes.name,
-            ) {
-                AddNotesScreen(navigateBack = { navController.popBackStack() })
-            }
-            composable(
-                route = NotifyScreens.Settings.name,
+                route = NotifyScreens.Settings.name
             ) {
                 SettingsScreen()
             }
@@ -104,10 +106,13 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
 @Composable
 fun BottomNavigationBar(
     backStackEntry: State<NavBackStackEntry?>,
-    bottomNavItem : List<BottomNavItem>,
+    bottomNavItem: List<BottomNavItem>,
     screensWithHiddenNavBar: List<String>,
-    navController: NavHostController
+    navController: NavHostController,
+    lazyListState: LazyListState,
 ) {
+    val scope = rememberCoroutineScope()
+
     if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
         NavigationBar(modifier = Modifier.height(75.dp)) {
             bottomNavItem.forEach { item ->
@@ -117,27 +122,35 @@ fun BottomNavigationBar(
                         Icon(
                             painter = painterResource(id = item.icon),
                             contentDescription = item.name,
-                            tint = if (backStackEntry.value?.destination?.route == item.route)
+                            tint = if (backStackEntry.value?.destination?.route == item.route) {
                                 MaterialTheme.colorScheme.onSurface
-                            else
+                            } else {
                                 MaterialTheme.colorScheme.secondary
+                            }
                         )
                     },
                     label = {
                         Text(
                             text = item.name,
-                            color = if (backStackEntry.value?.destination?.route == item.route)
+                            color = if (backStackEntry.value?.destination?.route == item.route) {
                                 MaterialTheme.colorScheme.onSurface
-                            else
-                                MaterialTheme.colorScheme.secondary,
-                            fontWeight = if (backStackEntry.value?.destination?.route == item.route)
+                            } else {
+                                MaterialTheme.colorScheme.secondary
+                            },
+                            fontWeight = if (backStackEntry.value?.destination?.route == item.route) {
                                 FontWeight.Bold
-                            else
-                                FontWeight.Normal,
+                            } else {
+                                FontWeight.Normal
+                            }
                         )
                     },
                     selected = backStackEntry.value?.destination?.route == item.route,
                     onClick = {
+                        if (item.name == getBottomNavItems().first().name) {
+                            scope.launch {
+                                lazyListState.animateScrollToItem(0)
+                            }
+                        }
                         navController.navigate(item.route) {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
@@ -160,6 +173,6 @@ fun getBottomNavItems(): List<BottomNavItem> {
             name = "Settings",
             route = NotifyScreens.Settings.name,
             icon = R.drawable.settings_outline
-        ),
+        )
     )
 }

@@ -13,8 +13,8 @@ import androidx.core.content.FileProvider
 import com.aritra.notify.R
 import java.io.File
 import java.io.FileOutputStream
-fun shareNoteAsText(context: Context, title: String, description: String) {
 
+fun shareNoteAsText(context: Context, title: String, description: String) {
     val shareMsg = "Title: $title\nNote: $description"
 
     val sharingIntent = Intent(Intent.ACTION_SEND)
@@ -27,9 +27,9 @@ fun shareNoteAsText(context: Context, title: String, description: String) {
 
     context.startActivity(Intent.createChooser(sharingIntent, "Share via"))
 }
+
 fun shareAsImage(view: View, bitmapSize: Pair<Int, Int>) {
-    val bitmap = createBitmapFromView(view, bitmapSize.first, bitmapSize.second)
-    if (bitmap != null) {
+    createBitmapFromView(view, bitmapSize.first, bitmapSize.second).withNotNull { bitmap ->
         val uri = saveBitmapToCache(view.context, bitmap)
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             type = "image/*"
@@ -39,7 +39,7 @@ fun shareAsImage(view: View, bitmapSize: Pair<Int, Int>) {
     }
 }
 
-private fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap? {
+private fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
     return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).also { bitmap ->
         Canvas(bitmap).apply {
             view.draw(this)
@@ -54,14 +54,21 @@ private fun saveBitmapToCache(context: Context, bitmap: Bitmap): Uri {
     val outputStream = FileOutputStream(file)
     bitmap.compress(Bitmap.CompressFormat.PNG, 50, outputStream)
     outputStream.close()
-    return FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", file)
+    return FileProvider.getUriForFile(
+        context,
+        context.applicationContext.packageName + ".provider",
+        file
+    )
 }
+
 fun shareAsPdf(view: View, pdfFileName: String) {
-    val bitmap = createBitmapFromView(view, view.width, view.height)
-    bitmap?.let {
-        val pdfFile = saveBitmapAsPdf(view.context, bitmap, pdfFileName)
-        pdfFile?.let {
-            val uri = FileProvider.getUriForFile(view.context, "${view.context.packageName}.provider", pdfFile)
+    createBitmapFromView(view, view.width, view.height).withNotNull { bitmap ->
+        saveBitmapAsPdf(view.context, bitmap, pdfFileName).let { pdfFile ->
+            val uri = FileProvider.getUriForFile(
+                view.context,
+                "${view.context.packageName}.provider",
+                pdfFile
+            )
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "application/pdf"
                 putExtra(Intent.EXTRA_STREAM, uri)
@@ -70,7 +77,8 @@ fun shareAsPdf(view: View, pdfFileName: String) {
         }
     }
 }
-private fun saveBitmapAsPdf(context: Context, bitmap: Bitmap, pdfFileName: String): File? {
+
+private fun saveBitmapAsPdf(context: Context, bitmap: Bitmap, pdfFileName: String): File {
     val pdfDir = File(context.cacheDir, "pdfs").apply { mkdirs() }
     val pdfFile = File(pdfDir, "$pdfFileName.pdf")
 

@@ -15,22 +15,19 @@ object SaveSelectedImageUseCase {
     /**
      * Returns the image file in the cache directory
      */
-    fun image(context: Context, id: Int) = File(
+    fun image(context: Context, id: Int, index: Int) = File(
         File(context.externalCacheDir, DIRECTORY).apply {
             if (!exists()) {
                 mkdirs()
             }
         },
-        "image_${id}.webp"
+        "image_${id}_($index).webp"
     )
 
-    /**
-     * Saves the selected image to the cache directory and returns the uri of the saved image
-     */
-    operator fun invoke(context: Context, uri: Uri, noteId: Int): Uri? = try {
+    private fun imageFileUri(context: Context, uri: Uri, noteId: Int, index: Int): Uri? = try {
         // copy the image to cache directory because opening the
         // image uri after app restart doesn't work for external storage uri on android 11 and above
-        val image = image(context, noteId)
+        val image = image(context, noteId, index)
         val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             ImageDecoder.decodeBitmap(
                 ImageDecoder.createSource(
@@ -58,5 +55,16 @@ object SaveSelectedImageUseCase {
         )
     } catch (_: Exception) {
         null
+    }
+
+    /**
+     * Saves the selected image to the cache directory and returns the uri of the saved image
+     */
+    operator fun invoke(context: Context, uris: List<Uri>, noteId: Int): List<Uri?> {
+        val imageFileUris = mutableListOf<Uri?>()
+        uris.forEachIndexed { index, uri ->
+            imageFileUris.add(imageFileUri(context, uri, noteId, index))
+        }
+        return imageFileUris.toList()
     }
 }

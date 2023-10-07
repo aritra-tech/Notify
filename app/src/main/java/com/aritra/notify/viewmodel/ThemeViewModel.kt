@@ -30,7 +30,6 @@ class ThemeViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewMod
                 _themeState.value = it
             }
         }
-
     }
 
     fun toggleTheme() {
@@ -40,5 +39,4 @@ class ThemeViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewMod
             }
         }
     }
-
 }
