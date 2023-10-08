@@ -22,6 +22,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -85,6 +86,8 @@ fun DescriptionTextField(
         }
     }
 
+    val interactionSource = remember { MutableInteractionSource() }
+
     BasicTextField(
         modifier = modifier.fillMaxSize(),
         value = descriptionFieldValue,
@@ -96,6 +99,7 @@ fun DescriptionTextField(
             descriptionLayoutResult = it
         },
         textStyle = TextStyle(
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 18.sp,
             fontFamily = FontFamily(Font(R.font.poppins_light))
         ),
@@ -103,6 +107,8 @@ fun DescriptionTextField(
             capitalization = KeyboardCapitalization.Sentences,
             keyboardType = KeyboardType.Text
         ),
+        interactionSource = interactionSource,
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
         decorationBox = @Composable { innerTextField ->
             TextFieldDefaults.DecorationBox(
                 value = descriptionFieldValue.text,
@@ -119,7 +125,7 @@ fun DescriptionTextField(
                 },
                 singleLine = false,
                 enabled = true,
-                interactionSource = remember { MutableInteractionSource() },
+                interactionSource = interactionSource,
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.surface,
                     unfocusedContainerColor = MaterialTheme.colorScheme.surface,
