@@ -2,10 +2,18 @@
 
 package com.aritra.notify.ui.screens.notes.homeScreen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,9 +55,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BackPressHandler
+import com.aritra.notify.components.actions.FilterNotesButton
 import com.aritra.notify.components.actions.LayoutToggleButton
 import com.aritra.notify.components.note.GridNoteCard
 import com.aritra.notify.components.note.NotesCard
+import com.aritra.notify.components.note.NotesFilterSection
+import com.aritra.notify.ui.screens.notes.homeScreen.utils.NotesFilter
+import com.aritra.notify.ui.screens.notes.homeScreen.utils.NotesFilter.*
+import com.aritra.notify.ui.screens.notes.homeScreen.utils.OrderType.*
+import com.aritra.notify.ui.screens.notes.homeScreen.utils.filterNotes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,6 +78,8 @@ fun NoteScreen(
     val listOfAllNotes by viewModel.listOfNotes.observeAsState(listOf())
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var isGridView by rememberSaveable { mutableStateOf(false) }
+    var isFilterOpen by rememberSaveable { mutableStateOf(false) }
+    var currentNotesFilter by remember { mutableStateOf<NotesFilter>(Date(orderType = Descending)) }
 
     Scaffold(
         floatingActionButton = {
@@ -97,21 +114,44 @@ fun NoteScreen(
                     placeholder = { Text(stringResource(R.string.search_your_notes)) },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                     trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            Icon(
-                                modifier = Modifier.clickable { searchQuery = "" },
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Close"
-                            )
-                        } else {
-                            LayoutToggleButton(
-                                isGridView = isGridView,
-                                onToggleClick = { isGridView = !isGridView }
-                            )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            FilterNotesButton(onFilterClick = { isFilterOpen = !isFilterOpen })
+                            if (searchQuery.isNotEmpty()) {
+                                Icon(
+                                    modifier = Modifier.clickable { searchQuery = "" },
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Close"
+                                )
+                            } else {
+                                LayoutToggleButton(
+                                    isGridView = isGridView,
+                                    onToggleClick = { isGridView = !isGridView }
+                                )
+                            }
                         }
                     }
                 ) {
                 }
+                // Filter Section
+                AnimatedVisibility(
+                    visible = isFilterOpen,
+                    enter = slideInVertically(initialOffsetY = { -it / 3 }) + fadeIn(),
+                    exit = slideOutVertically(targetOffsetY = { -it / 3 }) + fadeOut(
+                        animationSpec = tween(
+                            durationMillis = 100,
+                            easing = FastOutLinearInEasing
+                        )
+                    )
+                ) {
+                    NotesFilterSection(
+                        modifier = Modifier.padding(top = 16.dp),
+                        notesFilter = currentNotesFilter,
+                        onFilterChange = { notesFilter ->
+                            currentNotesFilter = notesFilter
+                        }
+                    )
+                }
+
                 if (listOfAllNotes.isNotEmpty()) {
 
                     if (isGridView) {
@@ -121,9 +161,12 @@ fun NoteScreen(
                                 .fillMaxSize()
                                 .padding(0.dp, 5.dp, 0.dp, 0.dp),
                         ) {
-                            itemsIndexed(listOfAllNotes.filter { note ->
-                                note.title.contains(searchQuery, true)
-                            }) { _, notesModel ->
+                            itemsIndexed(listOfAllNotes
+                                .filter { note ->
+                                    note.title.contains(searchQuery, true)
+                                }
+                                .filterNotes(currentNotesFilter)
+                            ) { _, notesModel ->
                                 GridNoteCard(
                                     notesModel,
                                     navigateToUpdateNoteScreen,
@@ -138,10 +181,16 @@ fun NoteScreen(
                                 .padding(0.dp, 5.dp, 0.dp, 0.dp),
                         ) {
 
-                            items(listOfAllNotes.filter { note ->
-                                note.title.contains(searchQuery, true)
-                            }) { notesModel ->
-                                NotesCard(noteModel = notesModel, navigateToUpdateNoteScreen = navigateToUpdateNoteScreen)
+                            items(listOfAllNotes
+                                .filter { note ->
+                                    note.title.contains(searchQuery, true)
+                                }
+                                .filterNotes(currentNotesFilter)
+                            ) { notesModel ->
+                                NotesCard(
+                                    noteModel = notesModel,
+                                    navigateToUpdateNoteScreen = navigateToUpdateNoteScreen
+                                )
                             }
                         }
                     }
