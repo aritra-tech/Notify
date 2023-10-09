@@ -94,8 +94,11 @@ fun NotifyTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.background.toArgb()
-            if (themeState.isSecureEnv) window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-            else window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+            if (themeState.isSecureEnv) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+            } else {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+            }
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !themeState.isDarkMode
         }
     }
