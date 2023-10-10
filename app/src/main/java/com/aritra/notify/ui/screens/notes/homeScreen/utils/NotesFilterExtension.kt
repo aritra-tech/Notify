@@ -2,7 +2,6 @@ package com.aritra.notify.ui.screens.notes.homeScreen.utils
 
 import com.aritra.notify.domain.models.Note
 
-
 fun List<Note>.filterNotes(notesFilter: NotesFilter): List<Note> {
     return when (notesFilter.orderType) {
         is OrderType.Ascending -> {

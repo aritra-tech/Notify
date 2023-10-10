@@ -71,8 +71,7 @@ import com.aritra.notify.components.topbar.SelectionModeTopAppBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
 import com.aritra.notify.ui.screens.notes.homeScreen.utils.NotesFilter
-import com.aritra.notify.ui.screens.notes.homeScreen.utils.NotesFilter.*
-import com.aritra.notify.ui.screens.notes.homeScreen.utils.OrderType.*
+import com.aritra.notify.ui.screens.notes.homeScreen.utils.OrderType
 import com.aritra.notify.ui.screens.notes.homeScreen.utils.filterNotes
 import kotlinx.coroutines.launch
 
@@ -90,7 +89,11 @@ fun NoteScreen(
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var isGridView by rememberSaveable { mutableStateOf(false) }
     var isFilterOpen by rememberSaveable { mutableStateOf(false) }
-    var currentNotesFilter by remember { mutableStateOf<NotesFilter>(Date(orderType = Descending)) }
+    var currentNotesFilter by remember {
+        mutableStateOf<NotesFilter>(
+            NotesFilter.Date(orderType = OrderType.Descending)
+        )
+    }
 
     var isInSelectionMode by remember {
         mutableStateOf(false)

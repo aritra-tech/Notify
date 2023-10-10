@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun FilterNotesButton(
-    onFilterClick: () -> Unit
+    onFilterClick: () -> Unit,
 ) {
     IconButton(onClick = onFilterClick) {
         Icon(

@@ -20,7 +20,7 @@ import com.aritra.notify.ui.screens.notes.homeScreen.utils.OrderType.Descending
 fun NotesFilterDropdown(
     modifier: Modifier,
     notesFilter: NotesFilter = NotesFilter.Date(orderType = Descending),
-    onFilterChange: (NotesFilter) -> Unit
+    onFilterChange: (NotesFilter) -> Unit,
 ) {
     Column(modifier = modifier) {
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -67,7 +67,7 @@ fun NotesFilterDropdown(
 fun SelectableRadioButton(
     title: String,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
