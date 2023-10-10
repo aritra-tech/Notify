@@ -91,10 +91,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BottomSheetOptions
-import com.aritra.notify.components.actions.ClickedPhotosBottomSheet
 import com.aritra.notify.components.actions.SpeechRecognizerContract
 import com.aritra.notify.components.camPreview.CameraPreview
 import com.aritra.notify.components.dialog.TextDialog
@@ -104,7 +102,6 @@ import com.aritra.notify.utils.Const
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import kotlinx.coroutines.launch
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -146,7 +143,7 @@ fun AddEditScreen(
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
-    val coroutineScope = rememberCoroutineScope()
+
     val scaffoldState = rememberBottomSheetScaffoldState()
     var openCameraBottomSheet by remember {
         mutableStateOf(false)
@@ -162,7 +159,7 @@ fun AddEditScreen(
             setEnabledUseCases(CameraController.IMAGE_CAPTURE)
         }
     }
-    val bitmap_List by addEditViewModel.bitmapList.collectAsStateWithLifecycle()
+
     val permissionState = rememberPermissionState(
         permission = Manifest.permission.RECORD_AUDIO
     )
@@ -511,9 +508,7 @@ fun AddEditScreen(
     )
 
     if (openCameraBottomSheet) {
-        BottomSheetScaffold(scaffoldState = scaffoldState, sheetPeekHeight = 0.dp, sheetContent = {
-            ClickedPhotosBottomSheet(bitmaps = bitmap_List, modifier = Modifier.fillMaxWidth())
-        }) {
+        BottomSheetScaffold(scaffoldState = scaffoldState, sheetPeekHeight = 0.dp, sheetContent = {}) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -543,7 +538,7 @@ fun AddEditScreen(
                         Icon(imageVector = Icons.Filled.Cameraswitch, contentDescription = "camera Switch")
                     }
                     IconButton(onClick = {
-                        takePhoto(controller, addEditViewModel::onPhotoTaken, context)
+                        takePhoto(controller, context)
                     }) {
                         Icon(imageVector = Icons.Filled.PhotoCamera, contentDescription = "Click To Capture")
                     }
@@ -554,7 +549,7 @@ fun AddEditScreen(
     }
 
 }
-fun takePhoto(controller: LifecycleCameraController, onPhotoTaken: (Bitmap) -> Unit, context: Context) {
+fun takePhoto(controller: LifecycleCameraController,  context: Context) {
     controller.takePicture(ContextCompat.getMainExecutor(context), object : OnImageCapturedCallback() {
         override fun onCaptureSuccess(image: ImageProxy) {
             super.onCaptureSuccess(image)
@@ -566,7 +561,6 @@ fun takePhoto(controller: LifecycleCameraController, onPhotoTaken: (Bitmap) -> U
             }
             val bitmap = Bitmap.createBitmap(image.toBitmap(), 0, 0, image.width, image.height, matrix, true)
             bitmap.toUri(context = context)
-            onPhotoTaken(bitmap)
             Toast.makeText(context, "Attach Captured Photo from 'Add Image' option.", Toast.LENGTH_SHORT).show()
         }
 

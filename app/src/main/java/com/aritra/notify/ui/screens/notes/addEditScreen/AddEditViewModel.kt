@@ -30,13 +30,6 @@ class AddEditViewModel @Inject constructor(
     private val _noteModel = MutableLiveData(Note(0, "", "", Date(), emptyList()))
     val noteModel: LiveData<Note> get() = _noteModel
 
-    private val _bitmap = MutableStateFlow<List<Bitmap>>(emptyList())
-    val bitmapList = _bitmap.asStateFlow()
-
-    fun onPhotoTaken(bitmap: Bitmap) {
-        _bitmap.value += bitmap
-    }
-
     fun insertNote(note: Note, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val id: Int = noteRepository.insertNoteToRoom(note).toInt()
