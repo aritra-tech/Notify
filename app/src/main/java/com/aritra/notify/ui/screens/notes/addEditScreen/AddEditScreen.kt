@@ -71,6 +71,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -316,175 +317,165 @@ fun AddEditScreen(
                 })
             }
         }
-    }) {
+    }) { contentPadding ->
+
+        val scrollState = rememberScrollState()
+        var descriptionScrollOffset by remember { mutableIntStateOf(0) }
+        var contentSize by remember { mutableIntStateOf(0) }
+
         Box(
-            modifier = Modifier.padding(it)
+            modifier = Modifier
+                .padding(contentPadding)
+                .onGloballyPositioned {
+                    contentSize = it.size.height
+                }
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(scrollState)
             ) {
-                if (isNew) {
-                    if (photoUri.isNotEmpty()) {
-                        LazyRow {
-                            items(photoUri.size) {
-                                Box(
-                                    Modifier
-                                        .height(180.dp)
-                                        .width(180.dp)
-                                        .padding(4.dp)
-                                        .clip(RoundedCornerShape(8.dp))
-                                ) {
-                                    ZoomableAsyncImage(
-                                        modifier = Modifier.fillMaxSize(),
-                                        model = photoUri[it],
-                                        contentDescription = stringResource(R.string.image),
-                                        contentScale = ContentScale.Crop
-                                    )
-                                    FilledTonalIconButton(
-                                        modifier = Modifier.align(Alignment.TopEnd),
-                                        onClick = {
-                                            photoUri = photoUri.filterIndexed { index, _ -> index != it }
-                                        },
-                                        colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
-                                                alpha = 0.6f
-                                            )
-                                        )
+                Column(
+                    modifier = Modifier.onGloballyPositioned { layoutCoordinates ->
+                        descriptionScrollOffset = layoutCoordinates.size.height
+                    }
+                ) {
+                    if (isNew) {
+                        if (photoUri.isNotEmpty()) {
+                            LazyRow {
+                                items(photoUri.size) {
+                                    Box(
+                                        Modifier
+                                            .height(180.dp)
+                                            .width(180.dp)
+                                            .padding(4.dp)
+                                            .clip(RoundedCornerShape(8.dp))
                                     ) {
-                                        Icon(
-                                            imageVector = Icons.Outlined.Close,
-                                            contentDescription = stringResource(R.string.clear_image)
+                                        ZoomableAsyncImage(
+                                            modifier = Modifier.fillMaxSize(),
+                                            model = photoUri[it],
+                                            contentDescription = stringResource(R.string.image),
+                                            contentScale = ContentScale.Crop
                                         )
+                                        FilledTonalIconButton(
+                                            modifier = Modifier.align(Alignment.TopEnd),
+                                            onClick = {
+                                                photoUri = photoUri.filterIndexed { index, _ -> index != it }
+                                            },
+                                            colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
+                                                    alpha = 0.6f
+                                                )
+                                            )
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.Close,
+                                                contentDescription = stringResource(R.string.clear_image)
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                } else {
-                    Row(
-                        modifier = Modifier
-                            .horizontalScroll(rememberScrollState())
-                    ) {
-                        photoUri.forEach { uri ->
-                            ZoomableAsyncImage(
-                                modifier = Modifier
-                                    .height(180.dp)
-                                    .width(180.dp)
-                                    .padding(4.dp)
-                                    .clip(RoundedCornerShape(8.dp)),
-                                model = uri ?: "",
-                                contentDescription = stringResource(R.string.image),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                    }
-                }
-                TextField(
-                    modifier = Modifier.fillMaxWidth(), value = title, onValueChange = { newTitle ->
-                        if (isNew) {
-                            title = newTitle
-                            characterCount = title.length + description.length
-                        } else {
-                            addEditViewModel.updateTitle(newTitle)
-                        }
-                    }, placeholder = {
-                        Text(
-                            stringResource(R.string.title),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.W700,
-                            color = Color.Gray,
-                            fontFamily = FontFamily(Font(R.font.poppins_medium))
-                        )
-                    },
-                    textStyle = TextStyle(
-                        fontSize = 24.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_medium))
-                    ),
-                    maxLines = Int.MAX_VALUE,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        disabledContainerColor = MaterialTheme.colorScheme.surface,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        capitalization = KeyboardCapitalization.Sentences,
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focus.moveFocus(FocusDirection.Down)
-                    })
-                )
-
-                TextField(
-                    value = if (isNew) {
-                        "$currentDate, $currentTime   |  $characterCount characters"
                     } else {
-                        "$formattedDateTime | $formattedCharacterCount"
-                    },
-                    onValueChange = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    readOnly = true,
-                    textStyle = TextStyle(
-                        fontSize = 15.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_light))
-                    ),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        disabledContainerColor = MaterialTheme.colorScheme.surface,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text
+                        Row(
+                            modifier = Modifier
+                                .horizontalScroll(rememberScrollState())
+                        ) {
+                            photoUri.forEach { uri ->
+                                ZoomableAsyncImage(
+                                    modifier = Modifier
+                                        .height(180.dp)
+                                        .width(180.dp)
+                                        .padding(4.dp)
+                                        .clip(RoundedCornerShape(8.dp)),
+                                    model = uri ?: "",
+                                    contentDescription = stringResource(R.string.image),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                        }
+                    }
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(), value = title, onValueChange = { newTitle ->
+                            if (isNew) {
+                                title = newTitle
+                                characterCount = title.length + description.length
+                            } else {
+                                addEditViewModel.updateTitle(newTitle)
+                            }
+                        }, placeholder = {
+                            Text(
+                                stringResource(R.string.title),
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.W700,
+                                color = Color.Gray,
+                                fontFamily = FontFamily(Font(R.font.poppins_medium))
+                            )
+                        },
+                        textStyle = TextStyle(
+                            fontSize = 24.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_medium))
+                        ),
+                        maxLines = Int.MAX_VALUE,
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            disabledContainerColor = MaterialTheme.colorScheme.surface,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            capitalization = KeyboardCapitalization.Sentences,
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(onNext = {
+                            focus.moveFocus(FocusDirection.Down)
+                        })
                     )
-                )
 
-                TextField(
-                    modifier = Modifier.fillMaxSize(),
-                    value = description,
-                    onValueChange = { newDescription ->
+                    TextField(
+                        value = if (isNew) {
+                            "$currentDate, $currentTime   |  $characterCount characters"
+                        } else {
+                            "$formattedDateTime | $formattedCharacterCount"
+                        },
+                        onValueChange = { },
+                        modifier = Modifier.fillMaxWidth(),
+                        readOnly = true,
+                        textStyle = TextStyle(
+                            fontSize = 15.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_light))
+                        ),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            disabledContainerColor = MaterialTheme.colorScheme.surface,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Text
+                        )
+                    )
+                }
+
+                DescriptionTextField(
+                    scrollOffset = descriptionScrollOffset,
+                    contentSize = contentSize,
+                    description = description,
+                    parentScrollState = scrollState,
+                    onDescriptionChange = { newDescription ->
                         if (isNew) {
                             description = newDescription
                             characterCount = title.length + description.length
                         } else {
                             addEditViewModel.updateDescription(newDescription)
                         }
-                    },
-                    placeholder = {
-                        Text(
-                            stringResource(R.string.notes),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.W500,
-                            color = Color.Gray,
-                            fontFamily = FontFamily(Font(R.font.poppins_light))
-                        )
-                    },
-                    textStyle = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_light))
-                    ),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        disabledContainerColor = MaterialTheme.colorScheme.surface,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        capitalization = KeyboardCapitalization.Sentences,
-                        keyboardType = KeyboardType.Text
-                    ),
-                    maxLines = Int.MAX_VALUE
-
+                    }
                 )
             }
         }

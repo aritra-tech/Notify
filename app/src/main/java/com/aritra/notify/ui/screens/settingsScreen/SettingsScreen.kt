@@ -94,6 +94,15 @@ fun SettingsScreen() {
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     SettingsSwitchCard(
+                        text = stringResource(id = R.string.secure_screen),
+                        icon = painterResource(id = R.drawable.phonelink_lock),
+                        isChecked = themeState.isSecureEnv,
+                        onCheckedChange = {
+                            themeViewModel.toggleSecureEnv()
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    SettingsSwitchCard(
                         text = stringResource(id = R.string.biometric),
                         icon = painterResource(id = R.drawable.ic_fingerprint),
                         isChecked = biometricAuthState,
