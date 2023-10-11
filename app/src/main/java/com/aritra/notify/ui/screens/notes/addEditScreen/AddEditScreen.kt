@@ -101,7 +101,6 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
-import com.mohamedrejeb.richeditor.ui.BasicRichTextEditor
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -470,7 +469,7 @@ fun AddEditScreen(
 
                 RichTextStyleRow(
                     modifier = Modifier.fillMaxWidth(),
-                    state = basicRichTextState,
+                    state = basicRichTextState
                 )
 
                 RichTextEditor(
@@ -479,11 +478,11 @@ fun AddEditScreen(
                         .fillMaxSize(),
                     textStyle = TextStyle(
                         fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_light)),
+                        fontFamily = FontFamily(Font(R.font.poppins_light))
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         capitalization = KeyboardCapitalization.Sentences,
-                        keyboardType = KeyboardType.Text,
+                        keyboardType = KeyboardType.Text
                     ),
 
                     maxLines = Int.MAX_VALUE,
@@ -495,7 +494,7 @@ fun AddEditScreen(
                             color = Color.Gray,
                             fontFamily = FontFamily(Font(R.font.poppins_light))
                         )
-                    },
+                    }
                 )
                 description = basicRichTextState.annotatedString.text
                 if (isNew) {
