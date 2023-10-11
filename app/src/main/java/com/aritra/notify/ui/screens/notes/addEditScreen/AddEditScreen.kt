@@ -1,12 +1,23 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.Manifest
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.net.Uri
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture.OnImageCapturedCallback
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
+import androidx.camera.view.CameraController
+import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +26,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,9 +36,13 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cameraswitch
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -38,6 +54,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -68,10 +85,12 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BottomSheetOptions
 import com.aritra.notify.components.actions.SpeechRecognizerContract
+import com.aritra.notify.components.camPreview.CameraPreview
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.topbar.AddEditTopBar
 import com.aritra.notify.domain.models.Note
@@ -80,6 +99,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -119,21 +139,40 @@ fun AddEditScreen(
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
+
+    val scaffoldState = rememberBottomSheetScaffoldState()
+    var openCameraBottomSheet by remember {
+        mutableStateOf(false)
+    }
     val formattedDateTime = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
     val formattedCharacterCount = "${(title.length) + (description.length)} characters"
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
         photoUri = uris
     }
+    val controller = remember {
+        LifecycleCameraController(context).apply {
+            setEnabledUseCases(CameraController.IMAGE_CAPTURE)
+        }
+    }
 
     val permissionState = rememberPermissionState(
         permission = Manifest.permission.RECORD_AUDIO
     )
+    val camPermissionState = rememberPermissionState(
+        permission = Manifest.permission.CAMERA
+    )
+
 
     // add note
     if (isNew) {
         SideEffect {
             permissionState.launchPermissionRequest()
+        }
+        if ((permissionState.status.isGranted || !permissionState.status.isGranted) && !camPermissionState.status.isGranted) {
+            SideEffect {
+                camPermissionState.launchPermissionRequest()
+            }
         }
     }
     val speechRecognizerLauncher = rememberLauncherForActivityResult(contract = SpeechRecognizerContract(), onResult = {
@@ -236,6 +275,18 @@ fun AddEditScreen(
                                     .navigationBarsPadding()
                                     .padding(16.dp)
                             ) {
+                                BottomSheetOptions(
+                                    text = stringResource(R.string.take_image),
+                                    icon = painterResource(id = R.drawable.camera_icon),
+                                    onClick = {
+                                        if (camPermissionState.status.isGranted) {
+                                            openCameraBottomSheet = true
+                                        } else {
+                                            camPermissionState.launchPermissionRequest()
+                                        }
+                                        showSheet = false
+                                    }
+                                )
                                 BottomSheetOptions(
                                     text = stringResource(R.string.add_image),
                                     icon = painterResource(id = R.drawable.gallery_icon),
@@ -345,7 +396,6 @@ fun AddEditScreen(
                             }
                         }
                     }
-
                     TextField(
                         modifier = Modifier.fillMaxWidth(), value = title, onValueChange = { newTitle ->
                             if (isNew) {
@@ -430,7 +480,6 @@ fun AddEditScreen(
             }
         }
     }
-
     TextDialog(
         title = stringResource(R.string.are_you_sure),
         description = stringResource(R.string.the_text_change_will_not_be_saved),
@@ -441,4 +490,84 @@ fun AddEditScreen(
             cancelDialogState.value = false
         }
     )
+
+    if (openCameraBottomSheet) {
+        BottomSheetScaffold(scaffoldState = scaffoldState, sheetPeekHeight = 0.dp, sheetContent = {}) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+            ) {
+                CameraPreview(controller = controller, modifier = Modifier.fillMaxSize())
+
+                IconButton(onClick = {
+                    openCameraBottomSheet = false
+                }, modifier = Modifier.offset(16.dp, 16.dp)) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "navigate back")
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp), horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    IconButton(onClick = {
+                        controller.cameraSelector =
+                            if (controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
+                                CameraSelector.DEFAULT_FRONT_CAMERA
+                            } else {
+                                CameraSelector.DEFAULT_BACK_CAMERA
+                            }
+                    }) {
+                        Icon(imageVector = Icons.Filled.Cameraswitch, contentDescription = "camera Switch")
+                    }
+                    IconButton(onClick = {
+                        takePhoto(controller, context, onPhotoCaptured = { receviedUri ->
+                            receviedUri?.let {
+                                photoUri += it
+                            }
+                        })
+                    }) {
+                        Icon(imageVector = Icons.Filled.PhotoCamera, contentDescription = "Click To Capture")
+                    }
+                }
+            }
+        }
+    }
 }
+
+fun takePhoto(controller: LifecycleCameraController, context: Context, onPhotoCaptured: (Uri?) -> Unit) {
+    controller.takePicture(ContextCompat.getMainExecutor(context), object : OnImageCapturedCallback() {
+        override fun onCaptureSuccess(image: ImageProxy) {
+            super.onCaptureSuccess(image)
+            val matrix = Matrix().apply {
+                postRotate(image.imageInfo.rotationDegrees.toFloat())
+                if (controller.cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
+                    postScale(-1f, 1f)
+                }
+            }
+            val bitmap = Bitmap.createBitmap(image.toBitmap(), 0, 0, image.width, image.height, matrix, true)
+            Toast.makeText(context, "Photo Attached Successfully", Toast.LENGTH_SHORT).show()
+            onPhotoCaptured(bitmap.toUri(context = context))
+        }
+
+        override fun onError(exception: ImageCaptureException) {
+            super.onError(exception)
+            Toast.makeText(context, "Something Went Wrong ! Try Again", Toast.LENGTH_SHORT).show()
+        }
+    })
+}
+
+fun Bitmap.toUri(context: Context, format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG): Uri? {
+    val bytes = ByteArrayOutputStream()
+    compress(format, 100, bytes)
+    val path = MediaStore.Images.Media.insertImage(
+        context.contentResolver,
+        this,
+        "${System.currentTimeMillis()}",
+        null
+    )
+    return Uri.parse(path)
+}
+
+

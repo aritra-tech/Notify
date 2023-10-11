@@ -1,6 +1,7 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.app.Application
+import android.graphics.Bitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,6 +12,9 @@ import com.aritra.notify.domain.usecase.SaveSelectedImageUseCase
 import com.aritra.notify.utils.toFile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -147,7 +151,7 @@ class AddEditViewModel @Inject constructor(
         _noteModel.postValue(noteModel.value?.copy(note = description))
     }
 
- /*   fun updateImage(imageList: List<Uri?>) {
-        _noteModel.postValue(noteModel.value?.copy(image = imageList))
-    }*/
+    /*   fun updateImage(imageList: List<Uri?>) {
+           _noteModel.postValue(noteModel.value?.copy(image = imageList))
+       }*/
 }

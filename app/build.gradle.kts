@@ -97,6 +97,7 @@ dependencies {
 
     // Lifecycle
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -127,6 +128,14 @@ dependencies {
 
     implementation(libs.zoomable)
     implementation(libs.zoomable.image.coil)
+
+    // CameraX
+    implementation(libs.camera.core)
+    implementation(libs.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.camera.extensions)
+    implementation(libs.camera.video)
+    implementation(libs.camera.view)
 }
 
 ktlint {

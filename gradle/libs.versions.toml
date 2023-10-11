@@ -33,6 +33,7 @@ devtools-ksp = "1.9.0-1.0.12"
 zoomable = "0.6.2"
 zoomableImageCoil = "0.6.2"
 ktlint = "11.6.0"
+camerax_version = "1.4.0-alpha01"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -58,6 +59,7 @@ androidx-lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensi
 androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleVersion" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleVersion" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleVersion" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleVersion" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
@@ -77,6 +79,14 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 junit = { module = "junit:junit", version.ref = "junit" }
 zoomable = { module = "me.saket.telephoto:zoomable", version.ref = "zoomable" }
 zoomable-image-coil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "zoomableImageCoil" }
+camera-core = { module = "androidx.camera:camera-core", version.ref = "camerax_version" }
+camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax_version" }
+camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax_version" }
+camera-video = { module = "androidx.camera:camera-video", version.ref = "camerax_version" }
+camera-mlkit-vision = { module = "androidx.camera:camera-mlkit-vision", version.ref = "camerax_version" }
+camera-view = { module = "androidx.camera:camera-view", version.ref = "camerax_version" }
+camera-extensions = { module = "androidx.camera:camera-extensions", version.ref = "camerax_version" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-application" }
