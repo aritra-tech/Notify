@@ -37,11 +37,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Camera
-import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Cameraswitch
 import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetDefaults
@@ -67,7 +64,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,7 +82,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.data.SourceContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -386,7 +381,6 @@ fun AddEditScreen(
                         }
                     }
                 }
-
                 TextField(
                     modifier = Modifier.fillMaxWidth(), value = title, onValueChange = { newTitle ->
                         if (isNew) {
@@ -495,7 +489,6 @@ fun AddEditScreen(
             }
         }
     }
-
     TextDialog(
         title = stringResource(R.string.are_you_sure),
         description = stringResource(R.string.the_text_change_will_not_be_saved),
@@ -538,18 +531,21 @@ fun AddEditScreen(
                         Icon(imageVector = Icons.Filled.Cameraswitch, contentDescription = "camera Switch")
                     }
                     IconButton(onClick = {
-                        takePhoto(controller, context)
+                        takePhoto(controller, context, onPhotoCaptured = { receviedUri ->
+                            receviedUri?.let {
+                                photoUri += it
+                            }
+                        })
                     }) {
                         Icon(imageVector = Icons.Filled.PhotoCamera, contentDescription = "Click To Capture")
                     }
                 }
-
             }
         }
     }
-
 }
-fun takePhoto(controller: LifecycleCameraController,  context: Context) {
+
+fun takePhoto(controller: LifecycleCameraController, context: Context, onPhotoCaptured: (Uri?) -> Unit) {
     controller.takePicture(ContextCompat.getMainExecutor(context), object : OnImageCapturedCallback() {
         override fun onCaptureSuccess(image: ImageProxy) {
             super.onCaptureSuccess(image)
@@ -560,8 +556,8 @@ fun takePhoto(controller: LifecycleCameraController,  context: Context) {
                 }
             }
             val bitmap = Bitmap.createBitmap(image.toBitmap(), 0, 0, image.width, image.height, matrix, true)
-            bitmap.toUri(context = context)
-            Toast.makeText(context, "Attach Captured Photo from 'Add Image' option.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Photo Attached Successfully", Toast.LENGTH_SHORT).show()
+            onPhotoCaptured(bitmap.toUri(context = context))
         }
 
         override fun onError(exception: ImageCaptureException) {
@@ -571,15 +567,16 @@ fun takePhoto(controller: LifecycleCameraController,  context: Context) {
     })
 }
 
-fun Bitmap.toUri(context: Context, format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG) {
+fun Bitmap.toUri(context: Context, format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG): Uri? {
     val bytes = ByteArrayOutputStream()
     compress(format, 100, bytes)
-    MediaStore.Images.Media.insertImage(
+    val path = MediaStore.Images.Media.insertImage(
         context.contentResolver,
         this,
         "${System.currentTimeMillis()}",
         null
     )
+    return Uri.parse(path)
 }
 
 

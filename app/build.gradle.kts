@@ -137,9 +137,6 @@ dependencies {
     implementation(libs.camera.extensions)
     implementation(libs.camera.video)
     implementation(libs.camera.view)
-
-
-
 }
 
 ktlint {

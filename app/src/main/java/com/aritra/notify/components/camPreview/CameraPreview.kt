@@ -1,5 +1,4 @@
 package com.aritra.notify.components.camPreview
-
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.runtime.Composable
