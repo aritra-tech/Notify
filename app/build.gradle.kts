@@ -138,7 +138,7 @@ dependencies {
     implementation(libs.camera.view)
 
     // Rich Edit Text
-    implementation("com.mohamedrejeb.richeditor:richeditor-compose:1.0.0-beta03")
+    implementation(libs.rich.editor.compose)
 }
 
 ktlint {
