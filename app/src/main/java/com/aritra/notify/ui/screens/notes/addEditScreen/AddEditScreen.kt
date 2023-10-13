@@ -163,13 +163,14 @@ fun AddEditScreen(
         permission = Manifest.permission.CAMERA
     )
 
-
     // add note
     if (isNew) {
         SideEffect {
             permissionState.launchPermissionRequest()
         }
-        if ((permissionState.status.isGranted || !permissionState.status.isGranted) && !camPermissionState.status.isGranted) {
+        if ((permissionState.status.isGranted || !permissionState.status.isGranted) &&
+            !camPermissionState.status.isGranted)
+        {
             SideEffect {
                 camPermissionState.launchPermissionRequest()
             }
@@ -509,7 +510,8 @@ fun AddEditScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
-                        .padding(16.dp), horizontalArrangement = Arrangement.SpaceAround
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     IconButton(onClick = {
                         controller.cameraSelector =
@@ -536,8 +538,13 @@ fun AddEditScreen(
     }
 }
 
-fun takePhoto(controller: LifecycleCameraController, context: Context, onPhotoCaptured: (Uri?) -> Unit) {
-    controller.takePicture(ContextCompat.getMainExecutor(context), object : OnImageCapturedCallback() {
+fun takePhoto(
+    controller: LifecycleCameraController,
+    context: Context,
+    onPhotoCaptured: (Uri?) -> Unit,
+) {
+    controller.takePicture(ContextCompat.getMainExecutor(context),
+        object : OnImageCapturedCallback() {
         override fun onCaptureSuccess(image: ImageProxy) {
             super.onCaptureSuccess(image)
             val matrix = Matrix().apply {
@@ -555,7 +562,8 @@ fun takePhoto(controller: LifecycleCameraController, context: Context, onPhotoCa
             super.onError(exception)
             Toast.makeText(context, "Something Went Wrong ! Try Again", Toast.LENGTH_SHORT).show()
         }
-    })
+    }
+    )
 }
 
 fun Bitmap.toUri(context: Context, format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG): Uri? {
@@ -569,5 +577,4 @@ fun Bitmap.toUri(context: Context, format: Bitmap.CompressFormat = Bitmap.Compre
     )
     return Uri.parse(path)
 }
-
 
