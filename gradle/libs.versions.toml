@@ -15,6 +15,7 @@ gradle = "8.1.2"
 hiltAndroid = "2.48.1"
 hiltNavigationCompose = "1.0.0"
 junit = "4.13.2"
+leakcanaryAndroid = "2.12"
 lifecycle-runtime-ktx = "2.6.2"
 lifecycleExtensions = "2.2.0"
 lifecycleVersion = "2.6.2"
@@ -77,6 +78,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "google-gson" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltAndroid" }
 junit = { module = "junit:junit", version.ref = "junit" }
+leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 zoomable = { module = "me.saket.telephoto:zoomable", version.ref = "zoomable" }
 zoomable-image-coil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "zoomableImageCoil" }
 camera-core = { module = "androidx.camera:camera-core", version.ref = "camerax_version" }
