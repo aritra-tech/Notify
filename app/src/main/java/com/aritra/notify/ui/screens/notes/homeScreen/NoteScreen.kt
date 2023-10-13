@@ -70,9 +70,9 @@ import com.aritra.notify.components.note.NotesFilterDropdown
 import com.aritra.notify.components.topbar.SelectionModeTopAppBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
-import com.aritra.notify.ui.screens.notes.homeScreen.utils.NotesFilter
-import com.aritra.notify.ui.screens.notes.homeScreen.utils.OrderType
-import com.aritra.notify.ui.screens.notes.homeScreen.utils.filterNotes
+import com.aritra.notify.utils.NotesFilter
+import com.aritra.notify.utils.OrderType
+import com.aritra.notify.utils.filterNotes
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

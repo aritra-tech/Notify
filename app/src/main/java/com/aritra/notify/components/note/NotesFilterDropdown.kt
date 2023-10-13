@@ -12,9 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.aritra.notify.ui.screens.notes.homeScreen.utils.NotesFilter
-import com.aritra.notify.ui.screens.notes.homeScreen.utils.OrderType.Ascending
-import com.aritra.notify.ui.screens.notes.homeScreen.utils.OrderType.Descending
+import com.aritra.notify.utils.NotesFilter
+import com.aritra.notify.utils.OrderType.Ascending
+import com.aritra.notify.utils.OrderType.Descending
 
 @Composable
 fun NotesFilterDropdown(

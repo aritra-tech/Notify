@@ -1,4 +1,4 @@
-package com.aritra.notify.ui.screens.notes.homeScreen.utils
+package com.aritra.notify.utils
 
 import com.aritra.notify.domain.models.Note
 

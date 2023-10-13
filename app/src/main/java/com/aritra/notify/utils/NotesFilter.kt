@@ -1,4 +1,4 @@
-package com.aritra.notify.ui.screens.notes.homeScreen.utils
+package com.aritra.notify.utils
 
 sealed class OrderType {
     object Ascending : OrderType()
