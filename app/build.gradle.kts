@@ -80,7 +80,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     // Accompanist
-    implementation(libs.accompanist.systemuicontroller)
     implementation(libs.accompanist.permissions)
 
     // Material 3
