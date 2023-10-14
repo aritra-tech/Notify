@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
@@ -359,7 +360,7 @@ fun AddEditScreen(
                                             contentScale = ContentScale.Crop
                                         )
                                         FilledTonalIconButton(
-                                            modifier = Modifier.align(Alignment.TopEnd),
+                                            modifier = Modifier.align(Alignment.TopEnd).size(25.dp),
                                             onClick = {
                                                 photoUri = photoUri.filterIndexed { index, _ -> index != it }
                                             },
