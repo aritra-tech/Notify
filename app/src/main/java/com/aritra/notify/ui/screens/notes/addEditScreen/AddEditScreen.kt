@@ -1,6 +1,7 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
@@ -568,14 +569,18 @@ fun takePhoto(
 }
 
 fun Bitmap.toUri(context: Context, format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG): Uri? {
-    val bytes = ByteArrayOutputStream()
-    compress(format, 100, bytes)
-    val path = MediaStore.Images.Media.insertImage(
-        context.contentResolver,
-        this,
-        "${System.currentTimeMillis()}",
-        null
-    )
-    return Uri.parse(path)
+    val values = ContentValues()
+    values.put(MediaStore.Images.Media.MIME_TYPE, "image/${format.name.lowercase(Locale.ROOT)}")
+    val uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+
+    uri?.let { imageUri ->
+        context.contentResolver.openOutputStream(imageUri)?.use { outputStream ->
+            if (compress(format, 100, outputStream)) {
+                return imageUri
+            }
+        }
+    }
+
+    return null
 }
 
