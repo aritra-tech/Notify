@@ -42,6 +42,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -106,6 +107,13 @@ fun AddEditScreen(
     var photoUri by remember { mutableStateOf(emptyList<Uri?>()) }
 
     var characterCount by remember { mutableIntStateOf(title.length + description.length) }
+
+
+    val titleWordCount = remember { derivedStateOf { countWords(title) } }
+    val desWordCount = remember { derivedStateOf { countWords(description) } }
+    var totalWordCount by remember {
+        mutableIntStateOf(titleWordCount.value + desWordCount.value)
+    }
     val cancelDialogState = remember { mutableStateOf(false) }
     var showSheet by remember { mutableStateOf(false) }
     val dateFormat = SimpleDateFormat(Const.DATE_FORMAT, Locale.getDefault())
@@ -120,6 +128,7 @@ fun AddEditScreen(
     )
     val formattedDateTime = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
     val formattedCharacterCount = "${(title.length) + (description.length)} characters"
+    val formattedWordCount = "${countWords(title) + countWords(description)} words"
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
         photoUri = uris
@@ -336,6 +345,8 @@ fun AddEditScreen(
                         if (isNew) {
                             title = newTitle
                             characterCount = title.length + description.length
+                            totalWordCount = titleWordCount.value + desWordCount.value
+
                         } else {
                             addEditViewModel.updateTitle(newTitle)
                         }
@@ -373,9 +384,9 @@ fun AddEditScreen(
 
                 TextField(
                     value = if (isNew) {
-                        "$currentDate, $currentTime   |  $characterCount characters"
+                        "$currentDate, $currentTime   |  $characterCount characters   |  $totalWordCount words"
                     } else {
-                        "$formattedDateTime | $formattedCharacterCount"
+                        "$formattedDateTime | $formattedCharacterCount | $formattedWordCount"
                     },
                     onValueChange = { },
                     modifier = Modifier.fillMaxWidth(),
@@ -404,6 +415,7 @@ fun AddEditScreen(
                         if (isNew) {
                             description = newDescription
                             characterCount = title.length + description.length
+                            totalWordCount = titleWordCount.value + desWordCount.value
                         } else {
                             addEditViewModel.updateDescription(newDescription)
                         }
@@ -450,4 +462,9 @@ fun AddEditScreen(
             cancelDialogState.value = false
         }
     )
+}
+
+fun countWords(text: String): Int {
+    val words = text.split(Regex("\\s+"))
+    return words.count { it.isNotEmpty() }
 }
