@@ -262,6 +262,7 @@ fun AddEditScreen(
                 BottomAppBar(content = {
                     IconButton(onClick = { showSheet = true }) {
                         Icon(
+                            modifier = Modifier.size(25.dp),
                             painter = painterResource(id = R.drawable.add_box_icon),
                             contentDescription = stringResource(R.string.add_box)
                         )
