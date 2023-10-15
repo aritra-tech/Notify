@@ -114,6 +114,11 @@ fun AddEditScreen(
     var totalWordCount by remember {
         mutableIntStateOf(titleWordCount.value + desWordCount.value)
     }
+    val wordsPerMinute = 238
+    var avgReadingTime by remember {
+        mutableStateOf(calculateTime(totalWordCount,wordsPerMinute))
+    }
+
     val cancelDialogState = remember { mutableStateOf(false) }
     var showSheet by remember { mutableStateOf(false) }
     val dateFormat = SimpleDateFormat(Const.DATE_FORMAT, Locale.getDefault())
@@ -129,6 +134,7 @@ fun AddEditScreen(
     val formattedDateTime = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
     val formattedCharacterCount = "${(title.length) + (description.length)} characters"
     val formattedWordCount = "${countWords(title) + countWords(description)} words"
+    val formattedReadTime = "${calculateTime((countWords(title) + countWords(description)),wordsPerMinute)} sec (reading time)"
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
         photoUri = uris
@@ -346,6 +352,7 @@ fun AddEditScreen(
                             title = newTitle
                             characterCount = title.length + description.length
                             totalWordCount = titleWordCount.value + desWordCount.value
+                            avgReadingTime = calculateTime((titleWordCount.value + desWordCount.value),wordsPerMinute)
 
                         } else {
                             addEditViewModel.updateTitle(newTitle)
@@ -384,9 +391,34 @@ fun AddEditScreen(
 
                 TextField(
                     value = if (isNew) {
-                        "$currentDate, $currentTime   |  $characterCount characters   |  $totalWordCount words"
+                        "$currentDate, $currentTime  |  $avgReadingTime sec (reading time)"
                     } else {
-                        "$formattedDateTime | $formattedCharacterCount | $formattedWordCount"
+                        "$formattedDateTime | $formattedReadTime"
+                    },
+                    onValueChange = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true,
+                    textStyle = TextStyle(
+                        fontSize = 15.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_light))
+                    ),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text
+                    )
+                )
+                TextField(
+                    value = if (isNew) {
+                        "$characterCount characters   |  $totalWordCount words"
+                    } else {
+                       "$formattedCharacterCount | $formattedWordCount"
                     },
                     onValueChange = { },
                     modifier = Modifier.fillMaxWidth(),
@@ -416,6 +448,7 @@ fun AddEditScreen(
                             description = newDescription
                             characterCount = title.length + description.length
                             totalWordCount = titleWordCount.value + desWordCount.value
+                            avgReadingTime = calculateTime((titleWordCount.value + desWordCount.value),wordsPerMinute)
                         } else {
                             addEditViewModel.updateDescription(newDescription)
                         }
@@ -462,6 +495,11 @@ fun AddEditScreen(
             cancelDialogState.value = false
         }
     )
+}
+
+fun calculateTime(totalWordCount: Int, wordsPerMinute: Int): Int {
+    val minutes = totalWordCount / wordsPerMinute.toDouble()
+    return kotlin.math.ceil(minutes * 60).toInt() // Convert to seconds
 }
 
 fun countWords(text: String): Int {
