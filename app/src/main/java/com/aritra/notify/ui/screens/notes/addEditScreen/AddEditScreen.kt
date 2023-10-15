@@ -101,7 +101,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
-import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -170,9 +169,7 @@ fun AddEditScreen(
         SideEffect {
             permissionState.launchPermissionRequest()
         }
-        if ((permissionState.status.isGranted || !permissionState.status.isGranted) &&
-            !camPermissionState.status.isGranted)
-        {
+        if ((permissionState.status.isGranted || !permissionState.status.isGranted) && !camPermissionState.status.isGranted) {
             SideEffect {
                 camPermissionState.launchPermissionRequest()
             }
@@ -541,11 +538,7 @@ fun AddEditScreen(
     }
 }
 
-fun takePhoto(
-    controller: LifecycleCameraController,
-    context: Context,
-    onPhotoCaptured: (Uri?) -> Unit,
-) {
+fun takePhoto(controller: LifecycleCameraController, context: Context, onPhotoCaptured: (Uri?) -> Unit, ) {
     controller.takePicture(ContextCompat.getMainExecutor(context),
         object : OnImageCapturedCallback() {
         override fun onCaptureSuccess(image: ImageProxy) {
@@ -565,8 +558,7 @@ fun takePhoto(
             super.onError(exception)
             Toast.makeText(context, "Something Went Wrong ! Try Again", Toast.LENGTH_SHORT).show()
         }
-    }
-    )
+    })
 }
 
 fun Bitmap.toUri(context: Context, format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG): Uri? {
@@ -584,4 +576,3 @@ fun Bitmap.toUri(context: Context, format: Bitmap.CompressFormat = Bitmap.Compre
 
     return null
 }
-
