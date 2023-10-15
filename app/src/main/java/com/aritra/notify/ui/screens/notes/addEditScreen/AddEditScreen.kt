@@ -500,7 +500,7 @@ fun AddEditScreen(
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text
-                    )
+                    ))
                 }
 
                 DescriptionTextField(
