@@ -61,6 +61,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -106,6 +107,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlin.math.ceil
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -142,12 +144,27 @@ fun AddEditScreen(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
 
+
+    val wordsPerMinute = 238 // words per minute
+    val wordCount = remember { derivedStateOf { countWords(description) } }
+    var totalWords by remember {
+        mutableIntStateOf(wordCount.value)
+    }
+    val readTimeProcess = remember { derivedStateOf { calculateReadTime(totalWords, wordsPerMinute) } }
+    var readTime by remember {
+        mutableStateOf(readTimeProcess.value)
+    }
+
+
     val scaffoldState = rememberBottomSheetScaffoldState()
     var openCameraBottomSheet by remember {
         mutableStateOf(false)
     }
+
     val formattedDateTime = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
     val formattedCharacterCount = "${(title.length) + (description.length)} characters"
+    val formattedWordCount = "${countWords(description)} words"
+    val formattedReadTime = "${calculateReadTime(countWords(description), wordsPerMinute)} sec read"
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
         photoUri = uris
@@ -170,9 +187,13 @@ fun AddEditScreen(
         SideEffect {
             permissionState.launchPermissionRequest()
         }
+
         if ((permissionState.status.isGranted || !permissionState.status.isGranted) &&
             !camPermissionState.status.isGranted)
         {
+
+        if ((permissionState.status.isGranted || !permissionState.status.isGranted) && !camPermissionState.status.isGranted) {
+
             SideEffect {
                 camPermissionState.launchPermissionRequest()
             }
@@ -441,6 +462,7 @@ fun AddEditScreen(
                         })
                     )
 
+
                     TextField(
                         value = if (isNew) {
                             "$currentDate, $currentTime   |  $characterCount characters"
@@ -466,6 +488,57 @@ fun AddEditScreen(
                             keyboardType = KeyboardType.Text
                         )
                     )
+
+                TextField(
+                    value = if (isNew) {
+                        "$currentDate, $currentTime   |  $readTime sec read"
+                    } else {
+                        "$formattedDateTime   |  $formattedReadTime"
+                    },
+                    onValueChange = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true,
+                    textStyle = TextStyle(
+                        fontSize = 15.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_light))
+                    ),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text
+                    )
+                )
+                TextField(
+                    value = if (isNew) {
+                        "$characterCount characters|  $totalWords words"
+                    } else {
+                        "$formattedCharacterCount | $formattedWordCount"
+                    },
+                    onValueChange = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true,
+                    textStyle = TextStyle(
+                        fontSize = 15.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_light))
+                    ),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text
+                    ))
+
                 }
 
                 DescriptionTextField(
@@ -477,6 +550,8 @@ fun AddEditScreen(
                         if (isNew) {
                             description = newDescription
                             characterCount = title.length + description.length
+                            totalWords = wordCount.value
+                            readTime = readTimeProcess.value
                         } else {
                             addEditViewModel.updateDescription(newDescription)
                         }
@@ -542,11 +617,15 @@ fun AddEditScreen(
     }
 }
 
+
 fun takePhoto(
     controller: LifecycleCameraController,
     context: Context,
     onPhotoCaptured: (Uri?) -> Unit,
 ) {
+
+fun takePhoto(controller: LifecycleCameraController, context: Context, onPhotoCaptured: (Uri?) -> Unit, ) {
+
     controller.takePicture(ContextCompat.getMainExecutor(context),
         object : OnImageCapturedCallback() {
         override fun onCaptureSuccess(image: ImageProxy) {
@@ -566,8 +645,12 @@ fun takePhoto(
             super.onError(exception)
             Toast.makeText(context, "Something Went Wrong ! Try Again", Toast.LENGTH_SHORT).show()
         }
+
     }
     )
+
+    })
+
 }
 
 fun Bitmap.toUri(context: Context, format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG): Uri? {
@@ -584,5 +667,17 @@ fun Bitmap.toUri(context: Context, format: Bitmap.CompressFormat = Bitmap.Compre
     }
 
     return null
+}
+
+
+fun countWords(text: String): Int {
+    val words = text.split(Regex("\\s+"))
+    return words.count { it.isNotEmpty() }
+}
+
+private fun calculateReadTime(words: Int, wordsPerMinute: Int): Int {
+    val minutes = words / wordsPerMinute.toDouble()
+    return ceil(minutes * 60).toInt() // Convert to seconds
+
 }
 

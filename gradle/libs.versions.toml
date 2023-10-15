@@ -1,40 +1,43 @@
 [versions]
 accompanistPermissions = "0.28.0"
 accompanistSystemuicontroller = "0.32.0"
-activity-compose = "1.7.2"
+activity-compose = "1.8.0"
 androidx-junit = "1.1.5"
 appUpdate = "2.1.0"
 biometric = "1.2.0-alpha05"
 coilCompose = "2.4.0"
-core-ktx = "1.10.1"
+core-ktx = "1.12.0"
 coreSplashscreen = "1.0.1"
 datastorePreferences = "1.0.0"
 espresso-core = "3.5.1"
-google-gson = "2.9.0"
-gradle = "3.4.0"
-hiltAndroid = "2.44"
+google-gson = "2.10.1"
+gradle = "8.1.2"
+hiltAndroid = "2.48.1"
 hiltNavigationCompose = "1.0.0"
 junit = "4.13.2"
-lifecycle-runtime-ktx = "2.6.1"
+leakcanaryAndroid = "2.12"
+lifecycle-runtime-ktx = "2.6.2"
 lifecycleExtensions = "2.2.0"
 lifecycleVersion = "2.6.2"
 material3 = "1.1.2"
-materialIconsExtended = "1.5.2"
-navVersion = "2.7.3"
+materialIconsExtended = "1.5.3"
+navVersion = "2.7.4"
 roomVersion = "2.5.2"
-runtimeLivedata = "1.4.3"
+runtimeLivedata = "1.5.3"
 bom = "2023.10.00"
-kotlinBom = "1.8.0"
+kotlinBom = "1.9.0"
 material3windowsize = "1.1.2"
-android-application = "8.0.2"
-kotlin-android = "1.7.20"
-dagger-hilt-android = "2.44"
-devtools-ksp = "1.8.10-1.0.9"
+android-application = "8.1.2"
+kotlin-android = "1.9.0"
+dagger-hilt-android = "2.48.1"
+devtools-ksp = "1.9.0-1.0.12"
 zoomable = "0.6.2"
 zoomableImageCoil = "0.6.2"
 ktlint = "11.6.0"
 camerax_version = "1.4.0-alpha01"
+
 leakcanaryAndroid = "2.12"
+
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
@@ -59,6 +62,7 @@ androidx-lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensi
 androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleVersion" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleVersion" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleVersion" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleVersion" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
@@ -76,6 +80,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "google-gson" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltAndroid" }
 junit = { module = "junit:junit", version.ref = "junit" }
+leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 zoomable = { module = "me.saket.telephoto:zoomable", version.ref = "zoomable" }
 zoomable-image-coil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "zoomableImageCoil" }
 camera-core = { module = "androidx.camera:camera-core", version.ref = "camerax_version" }
@@ -85,7 +90,9 @@ camera-video = { module = "androidx.camera:camera-video", version.ref = "camerax
 camera-mlkit-vision = { module = "androidx.camera:camera-mlkit-vision", version.ref = "camerax_version" }
 camera-view = { module = "androidx.camera:camera-view", version.ref = "camerax_version" }
 camera-extensions = { module = "androidx.camera:camera-extensions", version.ref = "camerax_version" }
+
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-application" }
