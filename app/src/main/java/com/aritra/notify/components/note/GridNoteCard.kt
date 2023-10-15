@@ -104,7 +104,7 @@ fun GridNoteCard(
                     Row(
                         modifier = Modifier
                             .height(80.dp)
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(10.dp))
                             .horizontalScroll(rememberScrollState()),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
