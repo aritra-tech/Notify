@@ -189,427 +189,430 @@ fun AddEditScreen(
         }
 
         if ((permissionState.status.isGranted || !permissionState.status.isGranted) &&
-            !camPermissionState.status.isGranted)
-        {
+            !camPermissionState.status.isGranted
+        ) {
 
-        if ((permissionState.status.isGranted || !permissionState.status.isGranted) && !camPermissionState.status.isGranted) {
+            if ((permissionState.status.isGranted || !permissionState.status.isGranted) && !camPermissionState.status.isGranted) {
 
-            SideEffect {
-                camPermissionState.launchPermissionRequest()
+                SideEffect {
+                    camPermissionState.launchPermissionRequest()
+                }
             }
         }
-    }
-    val speechRecognizerLauncher = rememberLauncherForActivityResult(contract = SpeechRecognizerContract(), onResult = {
-        it?.let {
-            for (st in it) {
-                description += " $st"
-            }
-        }
-    })
+        val speechRecognizerLauncher =
+            rememberLauncherForActivityResult(contract = SpeechRecognizerContract(), onResult = {
+                it?.let {
+                    for (st in it) {
+                        description += " $st"
+                    }
+                }
+            })
 
 // edit note
-    if (!isNew) {
-        title = addEditViewModel.noteModel.observeAsState().value?.title ?: ""
-        description = addEditViewModel.noteModel.observeAsState().value?.note ?: ""
-        photoUri = addEditViewModel.noteModel.observeAsState().value?.image ?: emptyList()
-        dateTime = addEditViewModel.noteModel.observeAsState().value?.dateTime
+        if (!isNew) {
+            title = addEditViewModel.noteModel.observeAsState().value?.title ?: ""
+            description = addEditViewModel.noteModel.observeAsState().value?.note ?: ""
+            photoUri = addEditViewModel.noteModel.observeAsState().value?.image ?: emptyList()
+            dateTime = addEditViewModel.noteModel.observeAsState().value?.dateTime
 
-        note = note?.copy(title = title,note = description, dateTime = dateTime, image = photoUri)
-        LaunchedEffect(Unit) {
-            addEditViewModel.getNoteById(noteId)
-        }
-    }
-
-    val saveEditNote: () -> Unit = if (isNew) {
-        remember {
-            {
-                addEditViewModel.insertNote(
-                    note = Note(
-                        id = 0,
-                        title = title,
-                        note = description,
-                        dateTime = dateTime,
-                        image = photoUri
-                    ),
-                    onSuccess = {
-                        navigateBack()
-                        Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
-                    }
-                )
+            note = note?.copy(title = title, note = description, dateTime = dateTime, image = photoUri)
+            LaunchedEffect(Unit) {
+                addEditViewModel.getNoteById(noteId)
             }
         }
-    } else {
-        remember {
-            {
-                addEditViewModel.updateNotes { updated ->
-                    if (updated) {
-                        navigateBack()
-                        Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
-                    } else {
-                        navigateBack()
-                    }
+
+        val saveEditNote: () -> Unit = if (isNew) {
+            remember {
+                {
+                    addEditViewModel.insertNote(
+                        note = Note(
+                            id = 0,
+                            title = title,
+                            note = description,
+                            dateTime = dateTime,
+                            image = photoUri
+                        ),
+                        onSuccess = {
+                            navigateBack()
+                            Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
+                        }
+                    )
                 }
             }
-        }
-    }
-
-    Scaffold(topBar = {
-        AddEditTopBar(
-            title = title,
-            description = description,
-            onBackPress = if (isNew) {
-                { cancelDialogState.value = true }
-            } else {
-                navigateBack
-            },
-            saveNote = if (isNew) {
-                saveEditNote
-            } else {
-                {}
-            },
-            updateNote = if (isNew) {
-                {}
-            } else {
-                saveEditNote
-            },
-            note = note
-        )
-    }, bottomBar = {
-        if (isNew) {
-            Column(
-                Modifier
-                    .navigationBarsPadding()
-                    .imePadding()
-            ) {
-                BottomAppBar(content = {
-                    IconButton(onClick = { showSheet = true }) {
-                        Icon(
-                            modifier = Modifier.size(25.dp),
-                            painter = painterResource(id = R.drawable.add_box_icon),
-                            contentDescription = stringResource(R.string.add_box)
-                        )
-                    }
-                    if (showSheet) {
-                        ModalBottomSheet(
-                            onDismissRequest = { showSheet = false },
-                            sheetState = bottomSheetState,
-                            dragHandle = { BottomSheetDefaults.DragHandle() }
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .navigationBarsPadding()
-                                    .padding(16.dp)
-                            ) {
-                                BottomSheetOptions(
-                                    text = stringResource(R.string.take_image),
-                                    icon = painterResource(id = R.drawable.camera_icon),
-                                    onClick = {
-                                        if (camPermissionState.status.isGranted) {
-                                            openCameraBottomSheet = true
-                                        } else {
-                                            camPermissionState.launchPermissionRequest()
-                                        }
-                                        showSheet = false
-                                    }
-                                )
-                                BottomSheetOptions(
-                                    text = stringResource(R.string.add_image),
-                                    icon = painterResource(id = R.drawable.gallery_icon),
-                                    onClick = {
-                                        launcher.launch(
-                                            PickVisualMediaRequest(
-                                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                            )
-                                        )
-                                        showSheet = false
-                                    }
-                                )
-                                BottomSheetOptions(
-                                    text = stringResource(R.string.speech_to_text),
-                                    icon = painterResource(id = R.drawable.mic_icon),
-                                    onClick = {
-                                        if (permissionState.status.isGranted) {
-                                            speechRecognizerLauncher.launch(Unit)
-                                        } else {
-                                            permissionState.launchPermissionRequest()
-                                        }
-                                        showSheet = false
-                                    }
-                                )
-                            }
+        } else {
+            remember {
+                {
+                    addEditViewModel.updateNotes { updated ->
+                        if (updated) {
+                            navigateBack()
+                            Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
+                        } else {
+                            navigateBack()
                         }
                     }
-                })
+                }
             }
         }
-    }) { contentPadding ->
 
-        val scrollState = rememberScrollState()
-        var descriptionScrollOffset by remember { mutableIntStateOf(0) }
-        var contentSize by remember { mutableIntStateOf(0) }
-
-        Box(
-            modifier = Modifier
-                .padding(contentPadding)
-                .onGloballyPositioned {
-                    contentSize = it.size.height
-                }
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-            ) {
+        Scaffold(topBar = {
+            AddEditTopBar(
+                title = title,
+                description = description,
+                onBackPress = if (isNew) {
+                    { cancelDialogState.value = true }
+                } else {
+                    navigateBack
+                },
+                saveNote = if (isNew) {
+                    saveEditNote
+                } else {
+                    {}
+                },
+                updateNote = if (isNew) {
+                    {}
+                } else {
+                    saveEditNote
+                },
+                note = note
+            )
+        }, bottomBar = {
+            if (isNew) {
                 Column(
-                    modifier = Modifier.onGloballyPositioned { layoutCoordinates ->
-                        descriptionScrollOffset = layoutCoordinates.size.height
-                    }
+                    Modifier
+                        .navigationBarsPadding()
+                        .imePadding()
                 ) {
-                    if (isNew) {
-                        if (photoUri.isNotEmpty()) {
-                            LazyRow {
-                                items(photoUri.size) {
-                                    Box(
-                                        Modifier
-                                            .height(180.dp)
-                                            .width(180.dp)
-                                            .padding(4.dp)
-                                            .clip(RoundedCornerShape(8.dp))
-                                    ) {
-                                        ZoomableAsyncImage(
-                                            modifier = Modifier.fillMaxSize(),
-                                            model = photoUri[it],
-                                            contentDescription = stringResource(R.string.image),
-                                            contentScale = ContentScale.Crop
-                                        )
-                                        FilledTonalIconButton(
-                                            modifier = Modifier.align(Alignment.TopEnd).size(25.dp),
-                                            onClick = {
-                                                photoUri = photoUri.filterIndexed { index, _ -> index != it }
-                                            },
-                                            colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
-                                                    alpha = 0.6f
+                    BottomAppBar(content = {
+                        IconButton(onClick = { showSheet = true }) {
+                            Icon(
+                                modifier = Modifier.size(25.dp),
+                                painter = painterResource(id = R.drawable.add_box_icon),
+                                contentDescription = stringResource(R.string.add_box)
+                            )
+                        }
+                        if (showSheet) {
+                            ModalBottomSheet(
+                                onDismissRequest = { showSheet = false },
+                                sheetState = bottomSheetState,
+                                dragHandle = { BottomSheetDefaults.DragHandle() }
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .navigationBarsPadding()
+                                        .padding(16.dp)
+                                ) {
+                                    BottomSheetOptions(
+                                        text = stringResource(R.string.take_image),
+                                        icon = painterResource(id = R.drawable.camera_icon),
+                                        onClick = {
+                                            if (camPermissionState.status.isGranted) {
+                                                openCameraBottomSheet = true
+                                            } else {
+                                                camPermissionState.launchPermissionRequest()
+                                            }
+                                            showSheet = false
+                                        }
+                                    )
+                                    BottomSheetOptions(
+                                        text = stringResource(R.string.add_image),
+                                        icon = painterResource(id = R.drawable.gallery_icon),
+                                        onClick = {
+                                            launcher.launch(
+                                                PickVisualMediaRequest(
+                                                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
                                                 )
                                             )
+                                            showSheet = false
+                                        }
+                                    )
+                                    BottomSheetOptions(
+                                        text = stringResource(R.string.speech_to_text),
+                                        icon = painterResource(id = R.drawable.mic_icon),
+                                        onClick = {
+                                            if (permissionState.status.isGranted) {
+                                                speechRecognizerLauncher.launch(Unit)
+                                            } else {
+                                                permissionState.launchPermissionRequest()
+                                            }
+                                            showSheet = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    })
+                }
+            }
+        }) { contentPadding ->
+
+            val scrollState = rememberScrollState()
+            var descriptionScrollOffset by remember { mutableIntStateOf(0) }
+            var contentSize by remember { mutableIntStateOf(0) }
+
+            Box(
+                modifier = Modifier
+                    .padding(contentPadding)
+                    .onGloballyPositioned {
+                        contentSize = it.size.height
+                    }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                ) {
+                    Column(
+                        modifier = Modifier.onGloballyPositioned { layoutCoordinates ->
+                            descriptionScrollOffset = layoutCoordinates.size.height
+                        }
+                    ) {
+                        if (isNew) {
+                            if (photoUri.isNotEmpty()) {
+                                LazyRow {
+                                    items(photoUri.size) {
+                                        Box(
+                                            Modifier
+                                                .height(180.dp)
+                                                .width(180.dp)
+                                                .padding(4.dp)
+                                                .clip(RoundedCornerShape(8.dp))
                                         ) {
-                                            Icon(
-                                                imageVector = Icons.Outlined.Close,
-                                                contentDescription = stringResource(R.string.clear_image)
+                                            ZoomableAsyncImage(
+                                                modifier = Modifier.fillMaxSize(),
+                                                model = photoUri[it],
+                                                contentDescription = stringResource(R.string.image),
+                                                contentScale = ContentScale.Crop
                                             )
+                                            FilledTonalIconButton(
+                                                modifier = Modifier.align(Alignment.TopEnd).size(25.dp),
+                                                onClick = {
+                                                    photoUri = photoUri.filterIndexed { index, _ -> index != it }
+                                                },
+                                                colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
+                                                        alpha = 0.6f
+                                                    )
+                                                )
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Close,
+                                                    contentDescription = stringResource(R.string.clear_image)
+                                                )
+                                            }
                                         }
                                     }
                                 }
                             }
+                        } else {
+                            Row(
+                                modifier = Modifier
+                                    .horizontalScroll(rememberScrollState())
+                            ) {
+                                photoUri.forEach { uri ->
+                                    ZoomableAsyncImage(
+                                        modifier = Modifier
+                                            .height(180.dp)
+                                            .width(180.dp)
+                                            .padding(4.dp)
+                                            .clip(RoundedCornerShape(8.dp)),
+                                        model = uri ?: "",
+                                        contentDescription = stringResource(R.string.image),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+                            }
                         }
-                    } else {
-                        Row(
-                            modifier = Modifier
-                                .horizontalScroll(rememberScrollState())
-                        ) {
-                            photoUri.forEach { uri ->
-                                ZoomableAsyncImage(
-                                    modifier = Modifier
-                                        .height(180.dp)
-                                        .width(180.dp)
-                                        .padding(4.dp)
-                                        .clip(RoundedCornerShape(8.dp)),
-                                    model = uri ?: "",
-                                    contentDescription = stringResource(R.string.image),
-                                    contentScale = ContentScale.Crop
+                        TextField(
+                            modifier = Modifier.fillMaxWidth(), value = title, onValueChange = { newTitle ->
+                                if (isNew) {
+                                    title = newTitle
+                                    characterCount = title.length + description.length
+                                } else {
+                                    addEditViewModel.updateTitle(newTitle)
+                                }
+                            }, placeholder = {
+                                Text(
+                                    stringResource(R.string.title),
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.W700,
+                                    color = Color.Gray,
+                                    fontFamily = FontFamily(Font(R.font.poppins_medium))
                                 )
-                            }
-                        }
-                    }
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(), value = title, onValueChange = { newTitle ->
-                            if (isNew) {
-                                title = newTitle
-                                characterCount = title.length + description.length
-                            } else {
-                                addEditViewModel.updateTitle(newTitle)
-                            }
-                        }, placeholder = {
-                            Text(
-                                stringResource(R.string.title),
+                            },
+                            textStyle = TextStyle(
                                 fontSize = 24.sp,
-                                fontWeight = FontWeight.W700,
-                                color = Color.Gray,
                                 fontFamily = FontFamily(Font(R.font.poppins_medium))
-                            )
-                        },
-                        textStyle = TextStyle(
-                            fontSize = 24.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_medium))
-                        ),
-                        maxLines = Int.MAX_VALUE,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                            disabledContainerColor = MaterialTheme.colorScheme.surface,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-                        ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            capitalization = KeyboardCapitalization.Sentences,
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Next
-                        ),
-                        keyboardActions = KeyboardActions(onNext = {
-                            focus.moveFocus(FocusDirection.Down)
-                        })
-                    )
-
-
-                    TextField(
-                        value = if (isNew) {
-                            "$currentDate, $currentTime   |  $characterCount characters"
-                        } else {
-                            "$formattedDateTime | $formattedCharacterCount"
-                        },
-                        onValueChange = { },
-                        modifier = Modifier.fillMaxWidth(),
-                        readOnly = true,
-                        textStyle = TextStyle(
-                            fontSize = 15.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_light))
-                        ),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                            disabledContainerColor = MaterialTheme.colorScheme.surface,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-                        ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Text
+                            ),
+                            maxLines = Int.MAX_VALUE,
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                disabledContainerColor = MaterialTheme.colorScheme.surface,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent
+                            ),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                capitalization = KeyboardCapitalization.Sentences,
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Next
+                            ),
+                            keyboardActions = KeyboardActions(onNext = {
+                                focus.moveFocus(FocusDirection.Down)
+                            })
                         )
-                    )
 
-                TextField(
-                    value = if (isNew) {
-                        "$currentDate, $currentTime   |  $readTime sec read"
-                    } else {
-                        "$formattedDateTime   |  $formattedReadTime"
-                    },
-                    onValueChange = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    readOnly = true,
-                    textStyle = TextStyle(
-                        fontSize = 15.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_light))
-                    ),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        disabledContainerColor = MaterialTheme.colorScheme.surface,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text
-                    )
-                )
-                TextField(
-                    value = if (isNew) {
-                        "$characterCount characters|  $totalWords words"
-                    } else {
-                        "$formattedCharacterCount | $formattedWordCount"
-                    },
-                    onValueChange = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    readOnly = true,
-                    textStyle = TextStyle(
-                        fontSize = 15.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_light))
-                    ),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        disabledContainerColor = MaterialTheme.colorScheme.surface,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text
-                    ))
 
-                }
+                        TextField(
+                            value = if (isNew) {
+                                "$currentDate, $currentTime   |  $characterCount characters"
+                            } else {
+                                "$formattedDateTime | $formattedCharacterCount"
+                            },
+                            onValueChange = { },
+                            modifier = Modifier.fillMaxWidth(),
+                            readOnly = true,
+                            textStyle = TextStyle(
+                                fontSize = 15.sp,
+                                fontFamily = FontFamily(Font(R.font.poppins_light))
+                            ),
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                disabledContainerColor = MaterialTheme.colorScheme.surface,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent
+                            ),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Text
+                            )
+                        )
 
-                DescriptionTextField(
-                    scrollOffset = descriptionScrollOffset,
-                    contentSize = contentSize,
-                    description = description,
-                    parentScrollState = scrollState,
-                    onDescriptionChange = { newDescription ->
-                        if (isNew) {
-                            description = newDescription
-                            characterCount = title.length + description.length
-                            totalWords = wordCount.value
-                            readTime = readTimeProcess.value
-                        } else {
-                            addEditViewModel.updateDescription(newDescription)
-                        }
+                        TextField(
+                            value = if (isNew) {
+                                "$currentDate, $currentTime   |  $readTime sec read"
+                            } else {
+                                "$formattedDateTime   |  $formattedReadTime"
+                            },
+                            onValueChange = { },
+                            modifier = Modifier.fillMaxWidth(),
+                            readOnly = true,
+                            textStyle = TextStyle(
+                                fontSize = 15.sp,
+                                fontFamily = FontFamily(Font(R.font.poppins_light))
+                            ),
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                disabledContainerColor = MaterialTheme.colorScheme.surface,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent
+                            ),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Text
+                            )
+                        )
+                        TextField(
+                            value = if (isNew) {
+                                "$characterCount characters|  $totalWords words"
+                            } else {
+                                "$formattedCharacterCount | $formattedWordCount"
+                            },
+                            onValueChange = { },
+                            modifier = Modifier.fillMaxWidth(),
+                            readOnly = true,
+                            textStyle = TextStyle(
+                                fontSize = 15.sp,
+                                fontFamily = FontFamily(Font(R.font.poppins_light))
+                            ),
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                disabledContainerColor = MaterialTheme.colorScheme.surface,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent
+                            ),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Text
+                            )
+                        )
+
                     }
-                )
+
+                    DescriptionTextField(
+                        scrollOffset = descriptionScrollOffset,
+                        contentSize = contentSize,
+                        description = description,
+                        parentScrollState = scrollState,
+                        onDescriptionChange = { newDescription ->
+                            if (isNew) {
+                                description = newDescription
+                                characterCount = title.length + description.length
+                                totalWords = wordCount.value
+                                readTime = readTimeProcess.value
+                            } else {
+                                addEditViewModel.updateDescription(newDescription)
+                            }
+                        }
+                    )
+                }
             }
         }
-    }
-    TextDialog(
-        title = stringResource(R.string.are_you_sure),
-        description = stringResource(R.string.the_text_change_will_not_be_saved),
-        isOpened = cancelDialogState.value,
-        onDismissCallback = { cancelDialogState.value = false },
-        onConfirmCallback = {
-            navigateBack()
-            cancelDialogState.value = false
-        }
-    )
+        TextDialog(
+            title = stringResource(R.string.are_you_sure),
+            description = stringResource(R.string.the_text_change_will_not_be_saved),
+            isOpened = cancelDialogState.value,
+            onDismissCallback = { cancelDialogState.value = false },
+            onConfirmCallback = {
+                navigateBack()
+                cancelDialogState.value = false
+            }
+        )
 
-    if (openCameraBottomSheet) {
-        BottomSheetScaffold(scaffoldState = scaffoldState, sheetPeekHeight = 0.dp, sheetContent = {}) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it)
-            ) {
-                CameraPreview(controller = controller, modifier = Modifier.fillMaxSize())
-
-                IconButton(onClick = {
-                    openCameraBottomSheet = false
-                }, modifier = Modifier.offset(16.dp, 16.dp)) {
-                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "navigate back")
-                }
-                Row(
+        if (openCameraBottomSheet) {
+            BottomSheetScaffold(scaffoldState = scaffoldState, sheetPeekHeight = 0.dp, sheetContent = {}) {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceAround
+                        .fillMaxSize()
+                        .padding(it)
                 ) {
+                    CameraPreview(controller = controller, modifier = Modifier.fillMaxSize())
+
                     IconButton(onClick = {
-                        controller.cameraSelector =
-                            if (controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
-                                CameraSelector.DEFAULT_FRONT_CAMERA
-                            } else {
-                                CameraSelector.DEFAULT_BACK_CAMERA
-                            }
-                    }) {
-                        Icon(imageVector = Icons.Filled.Cameraswitch, contentDescription = "camera Switch")
+                        openCameraBottomSheet = false
+                    }, modifier = Modifier.offset(16.dp, 16.dp)) {
+                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "navigate back")
                     }
-                    IconButton(onClick = {
-                        takePhoto(controller, context, onPhotoCaptured = { receviedUri ->
-                            receviedUri?.let {
-                                photoUri += it
-                            }
-                        })
-                    }) {
-                        Icon(imageVector = Icons.Filled.PhotoCamera, contentDescription = "Click To Capture")
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter)
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceAround
+                    ) {
+                        IconButton(onClick = {
+                            controller.cameraSelector =
+                                if (controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
+                                    CameraSelector.DEFAULT_FRONT_CAMERA
+                                } else {
+                                    CameraSelector.DEFAULT_BACK_CAMERA
+                                }
+                        }) {
+                            Icon(imageVector = Icons.Filled.Cameraswitch, contentDescription = "camera Switch")
+                        }
+                        IconButton(onClick = {
+                            takePhoto(controller, context, onPhotoCaptured = { receviedUri ->
+                                receviedUri?.let {
+                                    photoUri += it
+                                }
+                            })
+                        }) {
+                            Icon(imageVector = Icons.Filled.PhotoCamera, contentDescription = "Click To Capture")
+                        }
                     }
                 }
             }
@@ -618,11 +621,7 @@ fun AddEditScreen(
 }
 
 
-fun takePhoto(
-    controller: LifecycleCameraController,
-    context: Context,
-    onPhotoCaptured: (Uri?) -> Unit,
-) {
+
 
 fun takePhoto(controller: LifecycleCameraController, context: Context, onPhotoCaptured: (Uri?) -> Unit, ) {
 
@@ -649,9 +648,9 @@ fun takePhoto(controller: LifecycleCameraController, context: Context, onPhotoCa
     }
     )
 
-    })
 
 }
+
 
 fun Bitmap.toUri(context: Context, format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG): Uri? {
     val values = ContentValues()
