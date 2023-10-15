@@ -32,7 +32,7 @@ dagger-hilt-android = "2.44"
 devtools-ksp = "1.8.10-1.0.9"
 zoomable = "0.6.2"
 zoomableImageCoil = "0.6.2"
-ktlint = "11.6.0"
+ktlint = "11.6.1"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
