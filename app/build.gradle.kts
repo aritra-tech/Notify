@@ -25,6 +25,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        ksp{
+            arg("room.schemaLocation", "$projectDir/schemas".toString())
+        }
     }
 
     buildTypes {
@@ -128,6 +131,17 @@ dependencies {
 
     implementation(libs.zoomable)
     implementation(libs.zoomable.image.coil)
+
+    // CameraX
+    implementation(libs.camera.core)
+    implementation(libs.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.camera.extensions)
+    implementation(libs.camera.video)
+    implementation(libs.camera.view)
+
+    // Leak Canary
+    debugImplementation(libs.leakcanary.android)
 }
 
 ktlint {

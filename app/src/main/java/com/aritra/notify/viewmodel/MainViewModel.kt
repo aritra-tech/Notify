@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aritra.notify.components.biometric.AppBioMetricManager
 import com.aritra.notify.components.biometric.BiometricAuthListener
+import com.aritra.notify.core.dispatcher.DispatcherProvider
 import com.aritra.notify.di.DataStoreUtil
+import com.aritra.notify.domain.repository.NoteRepository
+import com.aritra.notify.domain.repository.trash.TrashRepository
 import com.aritra.notify.ui.screens.MainActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +23,9 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val appBioMetricManager: AppBioMetricManager,
     dataStoreUtil: DataStoreUtil,
+    private val dispatcherProvider: DispatcherProvider,
+    private val trashRepository: TrashRepository,
+    private val noteRepository: NoteRepository
 ) : ViewModel() {
 
     private val dataStore = dataStoreUtil.dataStore
@@ -46,6 +52,7 @@ class MainViewModel @Inject constructor(
                 }
             }
         }
+
     }
 
     fun showBiometricPrompt(mainActivity: MainActivity) {
@@ -72,6 +79,21 @@ class MainViewModel @Inject constructor(
     private fun finishActivity() {
         viewModelScope.launch {
             _finishActivity.emit(true)
+        }
+    }
+
+     fun checkTrashNote(onDeletedNotes:(Int)->Unit){
+        viewModelScope.launch (dispatcherProvider.io){
+            val getTrashNote = trashRepository.getTrashNotePeriodHasExceeded()
+            getTrashNote.forEach {
+                noteRepository.deleteNoteById(it)
+                trashRepository.deleteTrashNoteById(it)
+            }
+            launch(dispatcherProvider.main) {
+                if (getTrashNote.isNotEmpty()){
+                    onDeletedNotes(getTrashNote.size)
+                }
+            }
         }
     }
 }

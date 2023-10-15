@@ -33,7 +33,8 @@ devtools-ksp = "1.8.10-1.0.9"
 zoomable = "0.6.2"
 zoomableImageCoil = "0.6.2"
 ktlint = "11.6.0"
-
+camerax_version = "1.4.0-alpha01"
+leakcanaryAndroid = "2.12"
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
@@ -77,6 +78,14 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 junit = { module = "junit:junit", version.ref = "junit" }
 zoomable = { module = "me.saket.telephoto:zoomable", version.ref = "zoomable" }
 zoomable-image-coil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "zoomableImageCoil" }
+camera-core = { module = "androidx.camera:camera-core", version.ref = "camerax_version" }
+camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax_version" }
+camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax_version" }
+camera-video = { module = "androidx.camera:camera-video", version.ref = "camerax_version" }
+camera-mlkit-vision = { module = "androidx.camera:camera-mlkit-vision", version.ref = "camerax_version" }
+camera-view = { module = "androidx.camera:camera-view", version.ref = "camerax_version" }
+camera-extensions = { module = "androidx.camera:camera-extensions", version.ref = "camerax_version" }
+leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-application" }

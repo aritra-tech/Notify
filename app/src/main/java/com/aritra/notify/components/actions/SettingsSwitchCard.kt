@@ -2,6 +2,7 @@ package com.aritra.notify.components.actions
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -57,10 +58,10 @@ fun SettingsSwitchCard(
                 fontSize = 18.sp,
                 fontFamily = FontFamily(Font(R.font.poppins_semibold))
             )
+            Spacer(modifier = Modifier.weight(1f))
             Switch(
                 modifier = Modifier
-                    .semantics { contentDescription = "Theme Switch" }
-                    .padding(start = 130.dp),
+                    .semantics { contentDescription = "Theme Switch" },
                 checked = isChecked,
                 onCheckedChange = onCheckedChange
             )

@@ -2,11 +2,19 @@
 
 package com.aritra.notify.ui.screens.notes.homeScreen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -54,12 +63,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BackPressHandler
+import com.aritra.notify.components.actions.FilterNotesButton
 import com.aritra.notify.components.actions.LayoutToggleButton
 import com.aritra.notify.components.note.GridNoteCard
 import com.aritra.notify.components.note.NotesCard
+import com.aritra.notify.components.note.NotesFilterDropdown
 import com.aritra.notify.components.topbar.SelectionModeTopAppBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
+import com.aritra.notify.utils.NotesFilter
+import com.aritra.notify.utils.OrderType
+import com.aritra.notify.utils.filterNotes
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,6 +89,12 @@ fun NoteScreen(
     val listOfAllNotes by viewModel.listOfNotes.observeAsState(listOf())
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var isGridView by rememberSaveable { mutableStateOf(false) }
+    var isFilterOpen by rememberSaveable { mutableStateOf(false) }
+    var currentNotesFilter by remember {
+        mutableStateOf<NotesFilter>(
+            NotesFilter.Date(orderType = OrderType.Descending)
+        )
+    }
 
     var isInSelectionMode by remember {
         mutableStateOf(false)
@@ -136,7 +156,7 @@ fun NoteScreen(
 
                         scope.launch {
                             val snackBarResult = snackBarHostState.showSnackbar(
-                                message = "Notes deleted",
+                                message = "Notes moved to trash",
                                 actionLabel = "Undo",
                                 duration = SnackbarDuration.Short,
                                 withDismissAction = false
@@ -170,17 +190,20 @@ fun NoteScreen(
                     placeholder = { Text(stringResource(R.string.search_your_notes)) },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                     trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            Icon(
-                                modifier = Modifier.clickable { searchQuery = "" },
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Close"
-                            )
-                        } else {
-                            LayoutToggleButton(
-                                isGridView = isGridView,
-                                onToggleClick = { isGridView = !isGridView }
-                            )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            FilterNotesButton(onFilterClick = { isFilterOpen = !isFilterOpen })
+                            if (searchQuery.isNotEmpty()) {
+                                Icon(
+                                    modifier = Modifier.clickable { searchQuery = "" },
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Close"
+                                )
+                            } else {
+                                LayoutToggleButton(
+                                    isGridView = isGridView,
+                                    onToggleClick = { isGridView = !isGridView }
+                                )
+                            }
                         }
                     }
                 ) {}
@@ -191,6 +214,26 @@ fun NoteScreen(
                 modifier = Modifier.padding(it)
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
+                    // Filter Section
+                    AnimatedVisibility(
+                        visible = isFilterOpen,
+                        enter = slideInVertically(initialOffsetY = { -it / 3 }) + fadeIn(),
+                        exit = slideOutVertically(targetOffsetY = { -it / 3 }) + fadeOut(
+                            animationSpec = tween(
+                                durationMillis = 100,
+                                easing = FastOutLinearInEasing
+                            )
+                        )
+                    ) {
+                        NotesFilterDropdown(
+                            modifier = Modifier.padding(top = 16.dp),
+                            notesFilter = currentNotesFilter,
+                            onFilterChange = { notesFilter ->
+                                currentNotesFilter = notesFilter
+                            }
+                        )
+                    }
+
                     if (listOfAllNotes.isNotEmpty()) {
                         if (isGridView) {
                             LazyVerticalStaggeredGrid(
@@ -200,9 +243,11 @@ fun NoteScreen(
                                     .padding(0.dp, 5.dp, 0.dp, 0.dp)
                             ) {
                                 itemsIndexed(
-                                    listOfAllNotes.filter { note ->
-                                        note.title.contains(searchQuery, true)
-                                    }
+                                    listOfAllNotes
+                                        .filter { note ->
+                                            note.title.contains(searchQuery, true)
+                                        }
+                                        .filterNotes(currentNotesFilter)
                                 ) { _, notesModel ->
                                     val isSelected = selectedNoteIds.contains(notesModel.id)
 
@@ -242,9 +287,11 @@ fun NoteScreen(
                                 state = lazyListState
                             ) {
                                 items(
-                                    listOfAllNotes.filter { note ->
-                                        note.title.contains(searchQuery, true)
-                                    }
+                                    listOfAllNotes
+                                        .filter { note ->
+                                            note.title.contains(searchQuery, true)
+                                        }
+                                        .filterNotes(currentNotesFilter)
                                 ) { notesModel ->
 
                                     val isSelected = selectedNoteIds.contains(notesModel.id)
@@ -279,6 +326,7 @@ fun NoteScreen(
                                     }
                                 }
                             }
+
                         }
                     } else {
                         NoList(

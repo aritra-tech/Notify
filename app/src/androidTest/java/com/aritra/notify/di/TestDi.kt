@@ -7,14 +7,15 @@ import com.aritra.notify.data.db.NoteDatabase
 import com.aritra.notify.domain.repository.NoteRepository
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
-class AppModule {
+@TestInstallIn(components = [SingletonComponent::class], replaces = [AppModule::class])
+object TestDi {
+
 
     @Provides
     fun provideContext(@ApplicationContext context: Context): Context {
@@ -33,12 +34,10 @@ class AppModule {
     @Singleton
 
     fun provideDatabase(@ApplicationContext context: Context): NoteDatabase {
-        return Room.databaseBuilder(
+        return Room.inMemoryDatabaseBuilder(
             context.applicationContext,
             NoteDatabase::class.java,
-            "Note_database"
         )
-            .fallbackToDestructiveMigration()
             .build()
     }
 
