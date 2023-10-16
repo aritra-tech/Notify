@@ -36,7 +36,6 @@ zoomableImageCoil = "0.6.2"
 ktlint = "11.6.0"
 camerax_version = "1.4.0-alpha01"
 
-
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
@@ -89,7 +88,6 @@ camera-video = { module = "androidx.camera:camera-video", version.ref = "camerax
 camera-mlkit-vision = { module = "androidx.camera:camera-mlkit-vision", version.ref = "camerax_version" }
 camera-view = { module = "androidx.camera:camera-view", version.ref = "camerax_version" }
 camera-extensions = { module = "androidx.camera:camera-extensions", version.ref = "camerax_version" }
-
 
 
 [plugins]
