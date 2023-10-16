@@ -1,11 +1,13 @@
 package com.aritra.notify.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -14,7 +16,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,7 +36,6 @@ import com.aritra.notify.R
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditScreen
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
-import kotlinx.coroutines.launch
 
 @Composable
 fun NotifyApp(navController: NavHostController = rememberNavController()) {
@@ -41,17 +45,24 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
     )
     val backStackEntry = navController.currentBackStackEntryAsState()
 
-    val listState: LazyListState = rememberLazyListState()
+    var shouldHideBottomBar: Boolean by remember {
+        mutableStateOf(true)
+    }
 
     Scaffold(
         bottomBar = {
-            BottomNavigationBar(
-                backStackEntry,
-                bottomNavItem,
-                screensWithHiddenNavBar,
-                navController,
-                listState
-            )
+            AnimatedVisibility(
+                visible = shouldHideBottomBar,
+                enter = fadeIn(animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing)),
+            ) {
+                BottomNavigationBar(
+                    backStackEntry,
+                    bottomNavItem,
+                    screensWithHiddenNavBar,
+                    navController
+                )
+            }
         }
     ) {
         NavHost(
@@ -78,9 +89,10 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                     onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name + "/0") },
                     navigateToUpdateNoteScreen = { noteId ->
                         navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
-                    },
-                    listState
-                )
+                    }
+                ) { shouldHide ->
+                    shouldHideBottomBar = shouldHide
+                }
             }
 
             composable(
@@ -108,10 +120,8 @@ fun BottomNavigationBar(
     backStackEntry: State<NavBackStackEntry?>,
     bottomNavItem: List<BottomNavItem>,
     screensWithHiddenNavBar: List<String>,
-    navController: NavHostController,
-    lazyListState: LazyListState,
+    navController: NavHostController
 ) {
-    val scope = rememberCoroutineScope()
 
     if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
         NavigationBar(modifier = Modifier.height(75.dp)) {
@@ -146,11 +156,6 @@ fun BottomNavigationBar(
                     },
                     selected = backStackEntry.value?.destination?.route == item.route,
                     onClick = {
-                        if (item.name == getBottomNavItems().first().name) {
-                            scope.launch {
-                                lazyListState.animateScrollToItem(0)
-                            }
-                        }
                         navController.navigate(item.route) {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
