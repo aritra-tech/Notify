@@ -16,10 +16,7 @@ interface NoteDao {
     fun getAllNotes(): Flow<List<Note>>
 
     @Query("SELECT * FROM note WHERE id = :noteId")
-    fun getNoteByIdFlow(noteId: Int): Flow<Note>
-
-    @Query("SELECT * FROM note WHERE id = :noteId")
-    fun getNoteById(noteId: Int): Note?
+    fun getNoteById(noteId: Int): Flow<Note>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNote(noteModel: Note): Long
@@ -35,9 +32,6 @@ interface NoteDao {
 
     @Delete
     suspend fun deleteListOfNote(noteModel: List<Note>)
-
-    @Query("DELETE FROM note WHERE id = :noteId")
-    suspend fun deleteNoteById(noteId:Int)
 
     @Query("DELETE FROM note")
     suspend fun clear()

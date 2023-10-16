@@ -54,5 +54,4 @@
     <string name="notification_permission_settings">The notification permission is important for this app. Please navigate to your device settings and enable notifications for Make it So.</string>
     <string name="ok">OK</string>
     <string name="secure_screen">Secure Screen</string>
-    <string name="trash">Trash</string>
 </resources>
