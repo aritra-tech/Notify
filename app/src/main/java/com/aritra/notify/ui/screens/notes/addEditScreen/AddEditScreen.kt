@@ -479,7 +479,7 @@ fun AddEditScreen(
                 )
                 TextField(
                     value = if (isNew) {
-                        "$characterCount characters|  $totalWords words"
+                        "$characterCount characters   |  $totalWords words"
                     } else {
                         "$formattedCharacterCount | $formattedWordCount"
                     },
