@@ -118,7 +118,7 @@ fun AddEditScreen(
     val context = LocalContext.current
     val isNew = noteId == 0
 
-    val note = if (isNew) {
+    var note = if (isNew) {
         null
     } else {
         Note(noteId, "", "", Date(), emptyList())
@@ -206,6 +206,7 @@ fun AddEditScreen(
         photoUri = addEditViewModel.noteModel.observeAsState().value?.image ?: emptyList()
         dateTime = addEditViewModel.noteModel.observeAsState().value?.dateTime
 
+        note = note?.copy(title = title,note = description, dateTime = dateTime, image = photoUri)
         LaunchedEffect(Unit) {
             addEditViewModel.getNoteById(noteId)
         }

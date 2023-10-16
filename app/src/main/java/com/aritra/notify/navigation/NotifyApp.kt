@@ -32,12 +32,14 @@ import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditScreen
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
 import kotlinx.coroutines.launch
+import com.aritra.notify.ui.screens.notes.trash_note.trashNoteDest
 
 @Composable
 fun NotifyApp(navController: NavHostController = rememberNavController()) {
     val bottomNavItem = getBottomNavItems()
     val screensWithHiddenNavBar = listOf(
-        "${NotifyScreens.AddEditNotes.name}/{noteId}"
+        "${NotifyScreens.AddEditNotes.name}/{noteId}",
+        NotifyScreens.TrashNoteScreen.name
     )
     val backStackEntry = navController.currentBackStackEntryAsState()
 
@@ -97,8 +99,9 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             composable(
                 route = NotifyScreens.Settings.name
             ) {
-                SettingsScreen()
+                SettingsScreen(controller = navController)
             }
+            trashNoteDest(navController)
         }
     }
 }
