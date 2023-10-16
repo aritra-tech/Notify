@@ -56,6 +56,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -78,7 +79,7 @@ import kotlinx.coroutines.launch
 fun NoteScreen(
     onFabClicked: () -> Unit,
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
-    shouldHideBottomBar: (Boolean) -> Unit
+    shouldHideBottomBar: (Boolean) -> Unit,
 ) {
     val viewModel = hiltViewModel<NoteScreenViewModel>()
 
@@ -123,7 +124,6 @@ fun NoteScreen(
     var shouldHideSearchBar by remember {
         mutableStateOf(true)
     }
-
 
     BackPressHandler(isInSelectionMode, resetSelectionMode)
 
@@ -208,7 +208,7 @@ fun NoteScreen(
                 AnimatedVisibility(
                     visible = shouldHideSearchBar,
                     enter = fadeIn(animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing)),
-                    exit = fadeOut(animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing)),
+                    exit = fadeOut(animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing))
                 ) {
                     SearchBar(
                         modifier = Modifier
@@ -340,6 +340,7 @@ fun NoteScreen(
                         }
                     } else {
                         NoList(
+                            image = painterResource(id = R.drawable.no_list),
                             contentDescription = stringResource(R.string.no_notes_added),
                             message = stringResource(R.string.click_on_the_compose_button_to_add)
                         )
@@ -351,7 +352,7 @@ fun NoteScreen(
 }
 
 @Composable
-fun NoList(contentDescription: String, message: String) {
+fun NoList(image: Painter, contentDescription: String, message: String) {
     Column(
         Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -359,7 +360,7 @@ fun NoList(contentDescription: String, message: String) {
     ) {
         Image(
             modifier = Modifier.fillMaxWidth(),
-            painter = painterResource(id = R.drawable.no_list),
+            painter = image,
             contentDescription = "null"
         )
         Spacer(modifier = Modifier.height(20.dp))

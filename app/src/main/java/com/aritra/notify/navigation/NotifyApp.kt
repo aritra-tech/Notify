@@ -54,7 +54,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             AnimatedVisibility(
                 visible = shouldHideBottomBar,
                 enter = fadeIn(animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing)),
-                exit = fadeOut(animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing))
             ) {
                 BottomNavigationBar(
                     backStackEntry,
@@ -120,9 +120,8 @@ fun BottomNavigationBar(
     backStackEntry: State<NavBackStackEntry?>,
     bottomNavItem: List<BottomNavItem>,
     screensWithHiddenNavBar: List<String>,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
-
     if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
         NavigationBar(modifier = Modifier.height(75.dp)) {
             bottomNavItem.forEach { item ->
