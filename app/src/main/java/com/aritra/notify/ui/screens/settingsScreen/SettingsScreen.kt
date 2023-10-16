@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,16 +25,18 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.SettingsComponent
 import com.aritra.notify.components.actions.SettingsSwitchCard
+import com.aritra.notify.navigation.NotifyScreens
 import com.aritra.notify.ui.screens.MainActivity
 import com.aritra.notify.utils.Const
 import com.aritra.notify.utils.shareApp
 import com.aritra.notify.viewmodel.ThemeViewModel
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(controller: NavController) {
     val settingsViewModel = hiltViewModel<SettingsViewModel>()
     val context = LocalContext.current
     val themeViewModel: ThemeViewModel = hiltViewModel()
@@ -80,6 +83,10 @@ fun SettingsScreen() {
                             themeViewModel.toggleTheme()
                         }
                     )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    SettingsComponent(settingHeaderText = stringResource(id = R.string.trash), painterResourceID =R.drawable.ic_delete) {
+                        controller.navigate(NotifyScreens.TrashNoteScreen.name)
+                    }
                 }
 
                 /** Security Settings. */
