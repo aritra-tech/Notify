@@ -199,6 +199,7 @@ fun AddEditScreen(
                 }
             }
         }
+    }
         val speechRecognizerLauncher =
             rememberLauncherForActivityResult(contract = SpeechRecognizerContract(), onResult = {
                 it?.let {
@@ -618,7 +619,7 @@ fun AddEditScreen(
             }
         }
     }
-}
+
 
 
 
