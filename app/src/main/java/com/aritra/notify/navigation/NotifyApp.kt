@@ -151,9 +151,12 @@ fun BottomNavigationBar(
                                 lazyListState.animateScrollToItem(0)
                             }
                         }
-                        navController.navigate(item.route) {
-                            popUpTo(navController.graph.startDestinationId)
-                            launchSingleTop = true
+                        if (backStackEntry.value?.destination?.route != item.route)
+                        {
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.startDestinationId)
+                                launchSingleTop = true
+                            }
                         }
                     }
                 )
