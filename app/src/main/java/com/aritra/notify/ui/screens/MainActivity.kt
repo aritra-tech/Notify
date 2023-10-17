@@ -45,6 +45,9 @@ class MainActivity : FragmentActivity() {
             appUpdateManager.registerListener(installStateUpdatedListener)
         }
         checkForAppUpdates()
+        viewModel.checkTrashNote {
+            Toast.makeText(this, "Deleted Trash Note $it", Toast.LENGTH_SHORT).show()
+        }
         installSplashScreen().apply {
             setKeepOnScreenCondition {
                 viewModel.loading.value
