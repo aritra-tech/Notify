@@ -153,7 +153,6 @@ fun AddEditScreen(
         mutableStateOf(readTimeProcess.value)
     }
 
-
     val scaffoldState = rememberBottomSheetScaffoldState()
     var openCameraBottomSheet by remember {
         mutableStateOf(false)
@@ -185,7 +184,9 @@ fun AddEditScreen(
         SideEffect {
             permissionState.launchPermissionRequest()
         }
-        if ((permissionState.status.isGranted || !permissionState.status.isGranted) && !camPermissionState.status.isGranted) {
+        if ((permissionState.status.isGranted || !permissionState.status.isGranted) &&
+            !camPermissionState.status.isGranted
+        ) {
             SideEffect {
                 camPermissionState.launchPermissionRequest()
             }
@@ -206,7 +207,7 @@ fun AddEditScreen(
         photoUri = addEditViewModel.noteModel.observeAsState().value?.image ?: emptyList()
         dateTime = addEditViewModel.noteModel.observeAsState().value?.dateTime
 
-        note = note?.copy(title = title,note = description, dateTime = dateTime, image = photoUri)
+        note = note?.copy(title = title, note = description, dateTime = dateTime, image = photoUri)
         LaunchedEffect(Unit) {
             addEditViewModel.getNoteById(noteId)
         }
@@ -376,7 +377,9 @@ fun AddEditScreen(
                                             contentScale = ContentScale.Crop
                                         )
                                         FilledTonalIconButton(
-                                            modifier = Modifier.align(Alignment.TopEnd).size(25.dp),
+                                            modifier = Modifier
+                                                .align(Alignment.TopEnd)
+                                                .size(25.dp),
                                             onClick = {
                                                 photoUri = photoUri.filterIndexed { index, _ -> index != it }
                                             },
@@ -453,55 +456,56 @@ fun AddEditScreen(
                             focus.moveFocus(FocusDirection.Down)
                         })
                     )
-                TextField(
-                    value = if (isNew) {
-                        "$currentDate, $currentTime   |  $readTime sec read"
-                    } else {
-                        "$formattedDateTime   |  $formattedReadTime"
-                    },
-                    onValueChange = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    readOnly = true,
-                    textStyle = TextStyle(
-                        fontSize = 15.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_light))
-                    ),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        disabledContainerColor = MaterialTheme.colorScheme.surface,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text
+                    TextField(
+                        value = if (isNew) {
+                            "$currentDate, $currentTime   |  $readTime sec read"
+                        } else {
+                            "$formattedDateTime   |  $formattedReadTime"
+                        },
+                        onValueChange = { },
+                        modifier = Modifier.fillMaxWidth(),
+                        readOnly = true,
+                        textStyle = TextStyle(
+                            fontSize = 15.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_light))
+                        ),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            disabledContainerColor = MaterialTheme.colorScheme.surface,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Text
+                        )
                     )
-                )
-                TextField(
-                    value = if (isNew) {
-                        "$characterCount characters   |  $totalWords words"
-                    } else {
-                        "$formattedCharacterCount | $formattedWordCount"
-                    },
-                    onValueChange = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    readOnly = true,
-                    textStyle = TextStyle(
-                        fontSize = 15.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_light))
-                    ),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        disabledContainerColor = MaterialTheme.colorScheme.surface,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text
-                    ))
+                    TextField(
+                        value = if (isNew) {
+                            "$characterCount characters   |  $totalWords words"
+                        } else {
+                            "$formattedCharacterCount | $formattedWordCount"
+                        },
+                        onValueChange = { },
+                        modifier = Modifier.fillMaxWidth(),
+                        readOnly = true,
+                        textStyle = TextStyle(
+                            fontSize = 15.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_light))
+                        ),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            disabledContainerColor = MaterialTheme.colorScheme.surface,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Text
+                        )
+                    )
                 }
 
                 DescriptionTextField(
@@ -580,27 +584,29 @@ fun AddEditScreen(
     }
 }
 
-fun takePhoto(controller: LifecycleCameraController, context: Context, onPhotoCaptured: (Uri?) -> Unit, ) {
-    controller.takePicture(ContextCompat.getMainExecutor(context),
+fun takePhoto(controller: LifecycleCameraController, context: Context, onPhotoCaptured: (Uri?) -> Unit) {
+    controller.takePicture(
+        ContextCompat.getMainExecutor(context),
         object : OnImageCapturedCallback() {
-        override fun onCaptureSuccess(image: ImageProxy) {
-            super.onCaptureSuccess(image)
-            val matrix = Matrix().apply {
-                postRotate(image.imageInfo.rotationDegrees.toFloat())
-                if (controller.cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
-                    postScale(-1f, 1f)
+            override fun onCaptureSuccess(image: ImageProxy) {
+                super.onCaptureSuccess(image)
+                val matrix = Matrix().apply {
+                    postRotate(image.imageInfo.rotationDegrees.toFloat())
+                    if (controller.cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
+                        postScale(-1f, 1f)
+                    }
                 }
+                val bitmap = Bitmap.createBitmap(image.toBitmap(), 0, 0, image.width, image.height, matrix, true)
+                Toast.makeText(context, "Photo Attached Successfully", Toast.LENGTH_SHORT).show()
+                onPhotoCaptured(bitmap.toUri(context = context))
             }
-            val bitmap = Bitmap.createBitmap(image.toBitmap(), 0, 0, image.width, image.height, matrix, true)
-            Toast.makeText(context, "Photo Attached Successfully", Toast.LENGTH_SHORT).show()
-            onPhotoCaptured(bitmap.toUri(context = context))
-        }
 
-        override fun onError(exception: ImageCaptureException) {
-            super.onError(exception)
-            Toast.makeText(context, "Something Went Wrong ! Try Again", Toast.LENGTH_SHORT).show()
+            override fun onError(exception: ImageCaptureException) {
+                super.onError(exception)
+                Toast.makeText(context, "Something Went Wrong ! Try Again", Toast.LENGTH_SHORT).show()
+            }
         }
-    })
+    )
 }
 
 fun Bitmap.toUri(context: Context, format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG): Uri? {
@@ -618,7 +624,6 @@ fun Bitmap.toUri(context: Context, format: Bitmap.CompressFormat = Bitmap.Compre
 
     return null
 }
-
 
 fun countWords(text: String): Int {
     val words = text.split(Regex("\\s+"))

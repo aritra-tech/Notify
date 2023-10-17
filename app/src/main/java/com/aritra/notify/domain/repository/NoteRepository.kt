@@ -15,7 +15,7 @@ class NoteRepository @Inject constructor(application: Application) {
         val database = NoteDatabase.getInstance(application)
         noteDao = database.noteDao()
     }
-    suspend fun deleteNoteById(noteId:Int){
+    suspend fun deleteNoteById(noteId: Int) {
         noteDao.deleteNoteById(noteId)
     }
     fun getAllNotesFromRoom(): Flow<List<Note>> = noteDao.getAllNotes()
@@ -25,7 +25,7 @@ class NoteRepository @Inject constructor(application: Application) {
     suspend fun insertNoteToRoom(note: Note): Long = noteDao.insertNote(note)
 
     suspend fun insertListOfNotesToRoom(notes: List<Note>): List<Long> = noteDao.insertListOfNotes(notes)
-    fun getNoteById(noteId:Int) :Note?{
+    fun getNoteById(noteId: Int): Note? {
         return noteDao.getNoteById(noteId)
     }
     suspend fun updateNoteInRoom(note: Note) = noteDao.updateNote(note)

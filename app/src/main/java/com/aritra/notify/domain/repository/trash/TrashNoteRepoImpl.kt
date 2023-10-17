@@ -7,10 +7,9 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
-
-class TrashNoteRepository @Inject constructor(
-    private val noteTrashDao: TrashNoteDao
-):TrashRepository {
+class TrashNoteRepoImpl @Inject constructor(
+    private val noteTrashDao: TrashNoteDao,
+) : TrashNoteRepo {
 
     override suspend fun getTrashNotes(): List<TrashNote> {
         return noteTrashDao.getTrashNote()
@@ -28,7 +27,7 @@ class TrashNoteRepository @Inject constructor(
         return noteTrashDao.getTrashNoteWithNote()
     }
 
-    override suspend fun getTrashNotePeriodHasExceeded(localDateTime: LocalDateTime):List<Int> {
+    override suspend fun getTrashNotePeriodHasExceeded(localDateTime: LocalDateTime): List<Int> {
         val getTrashNote = getTrashNotes()
         return getTrashNote.filter {
             val dateTime = it.dateTime

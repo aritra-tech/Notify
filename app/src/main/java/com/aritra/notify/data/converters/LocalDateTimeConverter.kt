@@ -4,13 +4,12 @@ import androidx.room.TypeConverter
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
-
 object LocalDateTimeConverter {
 
     @TypeConverter
     @JvmStatic
     fun toDate(value: Long): LocalDateTime {
-        return LocalDateTime.ofEpochSecond(value,0, ZoneOffset.UTC)
+        return LocalDateTime.ofEpochSecond(value, 0, ZoneOffset.UTC)
     }
 
     @TypeConverter

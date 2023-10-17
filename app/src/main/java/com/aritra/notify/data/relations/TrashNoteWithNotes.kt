@@ -6,10 +6,10 @@ import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.models.TrashNote
 
 data class TrashNoteWithNotes(
-    @Embedded val trashNote : TrashNote,
+    @Embedded val trashNote: TrashNote,
     @Relation(
         parentColumn = "noteId",
         entityColumn = "id"
     )
-    val note: Note
+    val note: Note,
 )

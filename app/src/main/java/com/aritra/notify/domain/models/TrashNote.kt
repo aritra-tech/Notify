@@ -7,6 +7,6 @@ import java.time.LocalDateTime
 @Entity
 data class TrashNote(
     @PrimaryKey(autoGenerate = true)
-    val noteId:Int= 0,
-    val dateTime: LocalDateTime = LocalDateTime.now()
+    val noteId: Int = 0,
+    val dateTime: LocalDateTime = LocalDateTime.now(),
 )

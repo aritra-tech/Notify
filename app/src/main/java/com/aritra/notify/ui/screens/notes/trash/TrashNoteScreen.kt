@@ -1,5 +1,4 @@
-package com.aritra.notify.ui.screens.notes.trash_note
-
+package com.aritra.notify.ui.screens.notes.trash
 
 import TrashNoteState
 import android.widget.Toast
@@ -67,12 +66,17 @@ fun NavGraphBuilder.trashNoteDest(controller: NavController) {
 @Composable
 fun TrashNoteScreen(
     trashNoteState: TrashNoteState,
-    onEvent: (TrashNoteEvent) -> Unit
+    onEvent: (TrashNoteEvent) -> Unit,
 ) {
-
     Scaffold(topBar = {
         TopAppBar(title = {
-            Text(text = if (trashNoteState.isSelectionMode) "${trashNoteState.selectedIds.size} item selected" else "Trash Note")
+            Text(
+                text = if (trashNoteState.isSelectionMode) {
+                    "${trashNoteState.selectedIds.size} item selected"
+                } else {
+                    "Trash Note"
+                }
+            )
         }, modifier = Modifier.shadow(2.dp))
     }) {
         Column(
@@ -109,7 +113,7 @@ fun TrashNoteScreen(
 @Composable
 fun DeleteAndRestoreSection(
     modifier: Modifier = Modifier,
-    onTrashEvent: (TrashNoteEvent) -> Unit
+    onTrashEvent: (TrashNoteEvent) -> Unit,
 ) {
     Row(
         modifier = modifier

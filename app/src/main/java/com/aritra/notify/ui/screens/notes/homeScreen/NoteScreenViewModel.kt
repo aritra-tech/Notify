@@ -9,7 +9,7 @@ import com.aritra.notify.core.DispatcherProvider
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.models.TrashNote
 import com.aritra.notify.domain.repository.NoteRepository
-import com.aritra.notify.domain.repository.trash.TrashRepository
+import com.aritra.notify.domain.repository.trash.TrashNoteRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -19,8 +19,8 @@ import javax.inject.Inject
 class NoteScreenViewModel @Inject constructor(
     application: Application,
     private val homeRepository: NoteRepository,
-    private val trashNote: TrashRepository,
-    private val dispatcherProvider: DispatcherProvider
+    private val trashNote: TrashNoteRepo,
+    private val dispatcherProvider: DispatcherProvider,
 ) : AndroidViewModel(application) {
 
     var listOfNotes = homeRepository.getAllNotesFromRoom().asLiveData().map { it.filter { !it.isMovedToTrash } }
@@ -32,7 +32,7 @@ class NoteScreenViewModel @Inject constructor(
         }
     }
 
-    private suspend fun moveToTrash(note: Note){
+    private suspend fun moveToTrash(note: Note) {
         trashNote.upsertTrashNote(TrashNote(note.id, LocalDateTime.now()))
     }
     fun deleteListOfNote(noteList: List<Note>) {

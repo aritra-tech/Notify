@@ -1,10 +1,10 @@
-package com.aritra.notify.ui.screens.notes.trash_note
+package com.aritra.notify.ui.screens.notes.trash
 import TrashNoteState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aritra.notify.core.DispatcherProvider
 import com.aritra.notify.domain.repository.NoteRepository
-import com.aritra.notify.domain.repository.trash.TrashRepository
+import com.aritra.notify.domain.repository.trash.TrashNoteRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,9 +14,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TrashNoteViewModel @Inject constructor(
-    private val trashNoteRepository: TrashRepository,
+    private val trashNoteRepository: TrashNoteRepo,
     private val dispatcherProvider: DispatcherProvider,
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TrashNoteState())
@@ -55,7 +55,6 @@ class TrashNoteViewModel @Inject constructor(
                             isSelectionMode = updateSelectedIds.isNotEmpty()
                         )
                     }
-
                 }
             }
 
@@ -69,7 +68,6 @@ class TrashNoteViewModel @Inject constructor(
                             _effect.update {
                                 TrashNoteEffect.Message("Deleted successfully")
                             }
-
                         }
                     }
                 }
@@ -86,7 +84,6 @@ class TrashNoteViewModel @Inject constructor(
                             _effect.update {
                                 TrashNoteEffect.Message("Restore successfully")
                             }
-
                         }
                     }
                 }
@@ -127,5 +124,4 @@ sealed class TrashNoteEvent {
     object DeleteNote : TrashNoteEvent()
     object UpdateSelectionMode : TrashNoteEvent()
     class AddSelectedIds(val id: Int) : TrashNoteEvent()
-
 }

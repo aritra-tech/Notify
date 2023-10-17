@@ -2,8 +2,8 @@ package com.aritra.notify.di
 
 import com.aritra.notify.core.DispatcherProvider
 import com.aritra.notify.core.DispatcherProviderImpl
-import com.aritra.notify.domain.repository.trash.TrashNoteRepository
-import com.aritra.notify.domain.repository.trash.TrashRepository
+import com.aritra.notify.domain.repository.trash.TrashNoteRepoImpl
+import com.aritra.notify.domain.repository.trash.TrashNoteRepo
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,11 +15,11 @@ abstract class DispatcherModule {
 
     @Binds
     abstract fun bindDispatcherProvider(
-        dispatcherProvider: DispatcherProviderImpl
+        dispatcherProvider: DispatcherProviderImpl,
     ): DispatcherProvider
 
     @Binds
     abstract fun bindTrashRepo(
-        trashNoteRepository: TrashNoteRepository
-    ): TrashRepository
+        trashNoteRepository: TrashNoteRepoImpl,
+    ): TrashNoteRepo
 }

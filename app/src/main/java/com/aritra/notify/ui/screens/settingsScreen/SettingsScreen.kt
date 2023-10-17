@@ -83,7 +83,10 @@ fun SettingsScreen(controller: NavController) {
                         }
                     )
                     Spacer(modifier = Modifier.height(6.dp))
-                    SettingsComponent(settingHeaderText = stringResource(id = R.string.trash), painterResourceID =R.drawable.ic_delete) {
+                    SettingsComponent(
+                        settingHeaderText = stringResource(id = R.string.trash),
+                        painterResourceID = R.drawable.ic_delete
+                    ) {
                         controller.navigate(NotifyScreens.TrashNoteScreen.name)
                     }
                 }
