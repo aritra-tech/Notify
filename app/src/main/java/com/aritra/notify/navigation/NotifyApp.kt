@@ -59,22 +59,22 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
         NavHost(
             navController = navController,
             startDestination = NotifyScreens.Notes.name,
-            modifier = Modifier.padding(it),
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(700)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(700)
-                )
-            }
+            modifier = Modifier.padding(it)
         ) {
             composable(
-                route = NotifyScreens.Notes.name
+                route = NotifyScreens.Notes.name,
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                        animationSpec = tween(700)
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                        animationSpec = tween(700)
+                    )
+                }
             ) {
                 NoteScreen(
                     onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name + "/0") },
@@ -87,6 +87,18 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
 
             composable(
                 route = "${NotifyScreens.AddEditNotes.name}/{noteId}",
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                        animationSpec = tween(700)
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                        animationSpec = tween(700)
+                    )
+                },
                 arguments = listOf(navArgument("noteId") { type = IntType })
             ) { backStack ->
                 val noteId = backStack.arguments?.getInt("noteId") ?: 0
@@ -97,7 +109,19 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             }
 
             composable(
-                route = NotifyScreens.Settings.name
+                route = NotifyScreens.Settings.name,
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                        animationSpec = tween(700)
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                        animationSpec = tween(700)
+                    )
+                }
             ) {
                 SettingsScreen(controller = navController)
             }
