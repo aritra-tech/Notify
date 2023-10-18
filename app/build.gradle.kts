@@ -139,7 +139,7 @@ dependencies {
 
     // Leak Canary
     debugImplementation(libs.leakcanary.android)
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
 
 ktlint {
