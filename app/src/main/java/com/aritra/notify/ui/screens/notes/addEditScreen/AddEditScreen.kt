@@ -118,7 +118,7 @@ fun AddEditScreen(
     val context = LocalContext.current
     val isNew = noteId == 0
 
-    val note = if (isNew) {
+    var note = if (isNew) {
         null
     } else {
         Note(noteId, "", "", Date(), emptyList())
@@ -184,7 +184,9 @@ fun AddEditScreen(
         SideEffect {
             permissionState.launchPermissionRequest()
         }
-        if ((permissionState.status.isGranted || !permissionState.status.isGranted) && !camPermissionState.status.isGranted) {
+        if ((permissionState.status.isGranted || !permissionState.status.isGranted) &&
+            !camPermissionState.status.isGranted
+        ) {
             SideEffect {
                 camPermissionState.launchPermissionRequest()
             }
@@ -205,6 +207,7 @@ fun AddEditScreen(
         photoUri = addEditViewModel.noteModel.observeAsState().value?.image ?: emptyList()
         dateTime = addEditViewModel.noteModel.observeAsState().value?.dateTime
 
+        note = note?.copy(title = title, note = description, dateTime = dateTime, image = photoUri)
         LaunchedEffect(Unit) {
             addEditViewModel.getNoteById(noteId)
         }
@@ -480,7 +483,7 @@ fun AddEditScreen(
                     )
                     TextField(
                         value = if (isNew) {
-                            "$characterCount characters|  $totalWords words"
+                            "$characterCount characters   |  $totalWords words"
                         } else {
                             "$formattedCharacterCount | $formattedWordCount"
                         },
@@ -582,7 +585,8 @@ fun AddEditScreen(
 }
 
 fun takePhoto(controller: LifecycleCameraController, context: Context, onPhotoCaptured: (Uri?) -> Unit) {
-    controller.takePicture(ContextCompat.getMainExecutor(context),
+    controller.takePicture(
+        ContextCompat.getMainExecutor(context),
         object : OnImageCapturedCallback() {
             override fun onCaptureSuccess(image: ImageProxy) {
                 super.onCaptureSuccess(image)

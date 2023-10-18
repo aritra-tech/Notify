@@ -185,7 +185,7 @@ fun NoteScreen(
 
                         scope.launch {
                             val snackBarResult = snackBarHostState.showSnackbar(
-                                message = "Notes deleted",
+                                message = "Notes moved to trash",
                                 actionLabel = "Undo",
                                 duration = SnackbarDuration.Short,
                                 withDismissAction = false

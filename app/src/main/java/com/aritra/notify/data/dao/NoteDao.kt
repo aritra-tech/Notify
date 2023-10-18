@@ -15,8 +15,14 @@ interface NoteDao {
     @Query("SELECT * FROM note ORDER BY dateTime DESC")
     fun getAllNotes(): Flow<List<Note>>
 
+    @Query("DELETE FROM note WHERE id = :noteId")
+    suspend fun deleteNoteById(noteId: Int)
+
     @Query("SELECT * FROM note WHERE id = :noteId")
-    fun getNoteById(noteId: Int): Flow<Note>
+    fun getNoteByIdFlow(noteId: Int): Flow<Note>
+
+    @Query("SELECT * FROM note WHERE id = :noteId")
+    fun getNoteById(noteId: Int): Note?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNote(noteModel: Note): Long
