@@ -78,6 +78,10 @@ _Notify_ focuses on the following key things:
 - [Material Components for Android](https://github.com/material-components/material-components-android) - Modular and customizable Material Design UI components for Android.
 - [Accompanist](https://google.github.io/accompanist/) - A collection of extension libraries for Jetpack Compose.
 - [Biometric](https://developer.android.com/jetpack/androidx/releases/biometric) - Authenticate with biometrics or device credentials, and perform cryptographic operations.
+- [gson](https://github.com/google/gson) - A Java serialization/deserialization library to convert Java Objects into JSON and back
+- [Coil](https://github.com/coil-kt/coil) - Image loading for Android backed by Kotlin Coroutines.
+- [Telephoto](https://github.com/saket/telephoto) - Building blocks for designing media experiences in Compose UI
+- [Camera X](https://developer.android.com/jetpack/androidx/releases/camera) - CameraX is an addition to Jetpack that makes it easier to add camera capabilities to your app
 
 # Architecture 👷‍♂️
 This app uses [MVVM(Model View View-Model)](https://developer.android.com/topic/architecture#recommended-app-arch) architecture.
