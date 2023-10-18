@@ -33,6 +33,9 @@ Made with ♥ for all Android Developers
 <br>
 <br>
 I’m building it in public. So the idea is for everyone to contribute, leave comments, suggest ideas, etc. using the <a href="https://github.com/aritra-tech/Notify/discussions">Discussions</a> tab.
+<br>
+<br>
+Please go through the <a href="https://github.com/aritra-tech/Notify/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a> file before you start contributing.
 </h4>
 
 <div align="center">
