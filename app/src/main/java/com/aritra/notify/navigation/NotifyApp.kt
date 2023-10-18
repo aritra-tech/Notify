@@ -182,10 +182,14 @@ fun BottomNavigationBar(
                     },
                     selected = backStackEntry.value?.destination?.route == item.route,
                     onClick = {
-                        navController.navigate(item.route) {
-                            popUpTo(navController.graph.startDestinationId)
-                            launchSingleTop = true
+                        val currentDestination = navController.currentBackStackEntry?.destination?.route
+                        if (item.route != currentDestination) {
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.startDestinationId)
+                                launchSingleTop = true
+                            }
                         }
+
                     }
                 )
             }
