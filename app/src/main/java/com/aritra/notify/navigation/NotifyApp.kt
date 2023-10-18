@@ -36,7 +36,6 @@ import com.aritra.notify.R
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditScreen
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
-import kotlinx.coroutines.launch
 import com.aritra.notify.ui.screens.notes.trash.trashNoteDest
 
 @Composable
