@@ -138,6 +138,7 @@ fun AddEditTopBar(
                             Spacer(modifier = Modifier.height(5.dp))
                             ShareOption(
                                 text = stringResource(R.string.share_note_as_text),
+                                icon = painterResource(id = R.drawable.text_icon),
                                 onClick = {
                                     shareNoteAsText(context, title, description)
                                     showSheet = false
@@ -146,6 +147,7 @@ fun AddEditTopBar(
                             Spacer(modifier = Modifier.height(15.dp))
                             ShareOption(
                                 text = stringResource(R.string.share_note_as_picture),
+                                icon = painterResource(id = R.drawable.image_icon),
                                 onClick = {
                                     shareAsImage(view, bitmapSize)
                                     showSheet = false
@@ -154,6 +156,7 @@ fun AddEditTopBar(
                             Spacer(modifier = Modifier.height(15.dp))
                             ShareOption(
                                 text = stringResource(R.string.share_as_pdf),
+                                icon = painterResource(id = R.drawable.pdf_icon),
                                 onClick = {
                                     shareAsPdf(view, "Notify")
                                     showSheet = false

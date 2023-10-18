@@ -94,7 +94,7 @@ fun NotesCard(
                     Row(
                         modifier = Modifier
                             .height(80.dp)
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(10.dp))
                             .horizontalScroll(rememberScrollState()),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
@@ -117,7 +117,7 @@ fun NotesCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = noteModel.note,
                     fontSize = 18.sp,

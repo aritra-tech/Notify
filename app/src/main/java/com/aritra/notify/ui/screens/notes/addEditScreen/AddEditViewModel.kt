@@ -147,7 +147,7 @@ class AddEditViewModel @Inject constructor(
         _noteModel.postValue(noteModel.value?.copy(note = description))
     }
 
- /*   fun updateImage(imageList: List<Uri?>) {
-        _noteModel.postValue(noteModel.value?.copy(image = imageList))
-    }*/
+    /*   fun updateImage(imageList: List<Uri?>) {
+           _noteModel.postValue(noteModel.value?.copy(image = imageList))
+       }*/
 }
