@@ -1,5 +1,6 @@
 package com.aritra.notify.components.note
 
+import TrashNoteInfo
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,6 +51,7 @@ import java.util.Locale
 fun NotesCard(
     noteModel: Note,
     isSelected: Boolean,
+    dateTimeDeleted: TrashNoteInfo? = null,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
@@ -133,13 +136,23 @@ fun NotesCard(
                             Locale.getDefault()
                         ).format(it)
                     }
-                formattedDateTime?.let {
-                    Text(
-                        text = formattedDateTime,
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_light)),
-                        color = Color.Gray
-                    )
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    formattedDateTime?.let {
+                        Text(
+                            text = formattedDateTime,
+                            fontSize = 16.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_light)),
+                            color = Color.Gray
+                        )
+                    }
+                    dateTimeDeleted?.let {
+                        Text(
+                            text = stringResource(id = R.string.format_deleted_note, it.formatDate),
+                            fontSize = 16.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_light)),
+                            color = it.getDateColor()
+                        )
+                    }
                 }
             }
         }

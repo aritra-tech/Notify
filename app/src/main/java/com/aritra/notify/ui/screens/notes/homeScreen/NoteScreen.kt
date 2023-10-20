@@ -310,8 +310,8 @@ fun NoteScreen(
                                     Box {
                                         NotesCard(
                                             noteModel = notesModel,
-                                            isSelected,
-                                            {
+                                            isSelected = isSelected,
+                                            onClick = {
                                                 if (isInSelectionMode) {
                                                     if (isSelected) {
                                                         selectedNoteIds.remove(notesModel.id)
