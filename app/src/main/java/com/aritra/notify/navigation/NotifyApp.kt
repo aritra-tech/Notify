@@ -189,7 +189,6 @@ fun BottomNavigationBar(
                                 launchSingleTop = true
                             }
                         }
-
                     }
                 )
             }
