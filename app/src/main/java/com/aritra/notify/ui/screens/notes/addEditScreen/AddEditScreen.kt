@@ -274,7 +274,8 @@ fun AddEditScreen(
                     .navigationBarsPadding()
                     .imePadding()
             ) {
-                BottomAppBar(content = {
+                BottomAppBar(containerColor = Color.Transparent,
+                    content = {
                     IconButton(onClick = { showSheet = true }) {
                         Icon(
                             modifier = Modifier.size(25.dp),
