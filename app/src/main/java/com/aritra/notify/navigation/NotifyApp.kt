@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -150,7 +151,7 @@ fun BottomNavigationBar(
     navController: NavHostController,
 ) {
     if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
-        NavigationBar(modifier = Modifier.height(75.dp)) {
+        NavigationBar(containerColor = Color.Transparent,modifier = Modifier.height(75.dp)) {
             bottomNavItem.forEach { item ->
                 NavigationBarItem(
                     alwaysShowLabel = true,
