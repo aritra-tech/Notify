@@ -514,6 +514,7 @@ fun AddEditScreen(
                     contentSize = contentSize,
                     description = description,
                     parentScrollState = scrollState,
+                    isNewNote = isNew,
                     onDescriptionChange = { newDescription ->
                         if (isNew) {
                             description = newDescription
