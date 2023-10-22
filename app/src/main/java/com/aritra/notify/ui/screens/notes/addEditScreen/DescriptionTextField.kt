@@ -51,8 +51,6 @@ fun DescriptionTextField(
     var descriptionFieldValue by remember {
         mutableStateOf(TextFieldValue(description))
     }
-
-
     remember(description) {
         descriptionFieldValue = descriptionFieldValue.copy(text = description)
         Any()
@@ -88,11 +86,7 @@ fun DescriptionTextField(
             }
         }
     }
-
     val interactionSource = remember { MutableInteractionSource() }
-
-
-
     BasicTextField(
         modifier = modifier.fillMaxSize(),
         value = descriptionFieldValue,
@@ -143,4 +137,3 @@ fun DescriptionTextField(
         }
     )
 }
-

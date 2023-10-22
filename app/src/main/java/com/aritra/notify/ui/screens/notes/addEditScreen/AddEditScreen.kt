@@ -162,8 +162,6 @@ fun AddEditScreen(
     val formattedCharacterCount = "${(title.length) + (description.length)} characters"
     val formattedWordCount = "${countWords(description)} words"
     val formattedReadTime = "${calculateReadTime(countWords(description), wordsPerMinute)} sec read"
-
-
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
         photoUri = uris
     }
@@ -509,9 +507,6 @@ fun AddEditScreen(
                         )
                     )
                 }
-
-
-
                 DescriptionTextField(
                     scrollOffset = descriptionScrollOffset,
                     contentSize = contentSize,
