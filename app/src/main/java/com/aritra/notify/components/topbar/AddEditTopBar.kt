@@ -117,7 +117,7 @@ fun AddEditTopBar(
                     )
                 }
             }
-            if (title.isNotEmpty() && description.isNotEmpty()) {
+            if (title.trim().isNotEmpty() && description.trim().isNotEmpty() ) {
                 IconButton(onClick = { showSheet = true }) {
                     Icon(
                         painterResource(R.drawable.ic_share),

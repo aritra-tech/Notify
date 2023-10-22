@@ -115,6 +115,7 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+    implementation(libs.richeditor.compose)
 
     // Biometric
     implementation(libs.androidx.biometric)

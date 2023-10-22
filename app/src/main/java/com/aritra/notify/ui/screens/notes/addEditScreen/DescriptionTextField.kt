@@ -33,6 +33,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
+
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
 import kotlinx.coroutines.launch
@@ -50,6 +51,8 @@ fun DescriptionTextField(
     var descriptionFieldValue by remember {
         mutableStateOf(TextFieldValue(description))
     }
+
+
     remember(description) {
         descriptionFieldValue = descriptionFieldValue.copy(text = description)
         Any()
@@ -87,6 +90,8 @@ fun DescriptionTextField(
     }
 
     val interactionSource = remember { MutableInteractionSource() }
+
+
 
     BasicTextField(
         modifier = modifier.fillMaxSize(),
@@ -138,3 +143,4 @@ fun DescriptionTextField(
         }
     )
 }
+

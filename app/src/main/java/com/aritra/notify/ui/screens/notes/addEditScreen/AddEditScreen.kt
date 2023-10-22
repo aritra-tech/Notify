@@ -163,6 +163,7 @@ fun AddEditScreen(
     val formattedWordCount = "${countWords(description)} words"
     val formattedReadTime = "${calculateReadTime(countWords(description), wordsPerMinute)} sec read"
 
+
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
         photoUri = uris
     }
@@ -456,6 +457,7 @@ fun AddEditScreen(
                             focus.moveFocus(FocusDirection.Down)
                         })
                     )
+
                     TextField(
                         value = if (isNew) {
                             "$currentDate, $currentTime   |  $readTime sec read"
@@ -507,6 +509,8 @@ fun AddEditScreen(
                         )
                     )
                 }
+
+
 
                 DescriptionTextField(
                     scrollOffset = descriptionScrollOffset,
