@@ -6,7 +6,6 @@ androidx-junit = "1.1.5"
 appUpdate = "2.1.0"
 biometric = "1.2.0-alpha05"
 coilCompose = "2.4.0"
-richeditor-compose="1.0.0-beta03"
 core-ktx = "1.12.0"
 coreSplashscreen = "1.0.1"
 datastorePreferences = "1.0.0"
@@ -91,7 +90,6 @@ camera-video = { module = "androidx.camera:camera-video", version.ref = "camerax
 camera-mlkit-vision = { module = "androidx.camera:camera-mlkit-vision", version.ref = "camerax_version" }
 camera-view = { module = "androidx.camera:camera-view", version.ref = "camerax_version" }
 camera-extensions = { module = "androidx.camera:camera-extensions", version.ref = "camerax_version" }
-richeditor-compose = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "richeditor-compose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-application" }
