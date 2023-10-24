@@ -81,19 +81,23 @@ class Arrow(properties: DrawableProperties) : Line(properties) {
         val (radius, angle) = 30f to 60f
         val angleInRad = PI * angle / 180f
         val lineAngle = atan2(end.y - start.y, end.x - start.x)
-        scope.drawPath(Path().apply {
-            fillType = PathFillType.EvenOdd
-            moveTo(end.x, end.y)
-            lineTo(
-                (end.x - radius * cos(lineAngle - (angleInRad / 2))).toFloat(),
-                (end.y - radius * sin(lineAngle - (angleInRad / 2))).toFloat(),
-            )
-            moveTo(end.x, end.y)
-            lineTo(
-                (end.x - radius * cos(lineAngle + (angleInRad / 2))).toFloat(),
-                (end.y - radius * sin(lineAngle + (angleInRad / 2))).toFloat(),
-            )
-        }, color, style = stroke)
+        scope.drawPath(
+            Path().apply {
+                fillType = PathFillType.EvenOdd
+                moveTo(end.x, end.y)
+                lineTo(
+                    (end.x - radius * cos(lineAngle - (angleInRad / 2))).toFloat(),
+                    (end.y - radius * sin(lineAngle - (angleInRad / 2))).toFloat(),
+                )
+                moveTo(end.x, end.y)
+                lineTo(
+                    (end.x - radius * cos(lineAngle + (angleInRad / 2))).toFloat(),
+                    (end.y - radius * sin(lineAngle + (angleInRad / 2))).toFloat(),
+                )
+            },
+            color,
+            style = stroke
+        )
     }
 }
 
