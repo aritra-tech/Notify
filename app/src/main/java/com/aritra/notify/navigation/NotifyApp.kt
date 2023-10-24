@@ -79,34 +79,36 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             startDestination = NotifyScreens.Notes.name,
             modifier = Modifier.padding(it),
             enterTransition = {
-                fadeIn(animationSpec = tween(220, delayMillis = 90)) +
-                        scaleIn(
-                            initialScale = 0.92f,
-                            animationSpec = tween(220, delayMillis = 90)
-                        )
+                fadeIn(
+                    animationSpec = tween(220, delayMillis = 90)
+                ) + scaleIn(
+                    initialScale = 0.92f,
+                    animationSpec = tween(220, delayMillis = 90)
+                )
             },
             exitTransition = {
                 fadeOut(animationSpec = tween(90))
             },
             popEnterTransition = {
-                fadeIn(animationSpec = tween(220, delayMillis = 90)) +
-                        scaleIn(
-                            initialScale = 0.92f,
-                            animationSpec = tween(220, delayMillis = 90)
-                        )
+                fadeIn(
+                    animationSpec = tween(220, delayMillis = 90)
+                ) + scaleIn(
+                    initialScale = 0.92f,
+                    animationSpec = tween(220, delayMillis = 90)
+                )
             },
             popExitTransition = {
                 fadeOut(animationSpec = tween(90))
-            },
+            }
         ) {
             composable(
-                route = NotifyScreens.Notes.name,
+                route = NotifyScreens.Notes.name
             ) {
                 NoteScreen(
                     onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name + "/-1") },
                     navigateToUpdateNoteScreen = { noteId ->
                         navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
-                    },
+                    }
                 ) { shouldHide ->
                     shouldHideBottomBar = shouldHide
                 }
@@ -134,14 +136,14 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             }
 
             composable(
-                route = NotifyScreens.Settings.name,
+                route = NotifyScreens.Settings.name
             ) {
                 SettingsScreen(controller = navController)
             }
             trashNoteDest(navController)
 
             composable(
-                route = NotifyScreens.Drawing.name,
+                route = NotifyScreens.Drawing.name
             ) {
                 DrawingScreen(
                     onBack = {

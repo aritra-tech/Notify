@@ -24,7 +24,10 @@ abstract class Drawable(
 ) {
 
     constructor(props: DrawableProperties) : this(
-        props.start, props.end, props.stroke, props.color,
+        props.start,
+        props.end,
+        props.stroke,
+        props.color
     )
 
     /**
@@ -49,8 +52,10 @@ class Pencil(properties: DrawableProperties) : Drawable(properties) {
     override var end: Offset = start.x pos start.y
         set(value) {
             path.quadraticBezierTo(
-                end.x, end.y,
-                ((end.x + value.x) / 2), ((end.y + value.y) / 2)
+                end.x,
+                end.y,
+                ((end.x + value.x) / 2),
+                ((end.y + value.y) / 2)
             )
             path.lineTo(value.x, value.y)
             field = value
@@ -68,7 +73,14 @@ class Pencil(properties: DrawableProperties) : Drawable(properties) {
 open class Line(properties: DrawableProperties) : Drawable(properties) {
 
     override fun draw(scope: DrawScope) {
-        scope.drawLine(color, start, end, stroke.width, stroke.cap, stroke.pathEffect)
+        scope.drawLine(
+            color,
+            start,
+            end,
+            stroke.width,
+            stroke.cap,
+            stroke.pathEffect
+        )
     }
 }
 
@@ -87,12 +99,12 @@ class Arrow(properties: DrawableProperties) : Line(properties) {
                 moveTo(end.x, end.y)
                 lineTo(
                     (end.x - radius * cos(lineAngle - (angleInRad / 2))).toFloat(),
-                    (end.y - radius * sin(lineAngle - (angleInRad / 2))).toFloat(),
+                    (end.y - radius * sin(lineAngle - (angleInRad / 2))).toFloat()
                 )
                 moveTo(end.x, end.y)
                 lineTo(
                     (end.x - radius * cos(lineAngle + (angleInRad / 2))).toFloat(),
-                    (end.y - radius * sin(lineAngle + (angleInRad / 2))).toFloat(),
+                    (end.y - radius * sin(lineAngle + (angleInRad / 2))).toFloat()
                 )
             },
             color,

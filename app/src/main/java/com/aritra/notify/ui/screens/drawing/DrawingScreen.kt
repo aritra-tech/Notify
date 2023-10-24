@@ -106,8 +106,6 @@ fun DrawingScreen(
             )
         }
     )
-
-
 }
 
 private fun createBitmapFromPicture(picture: Picture): Bitmap {

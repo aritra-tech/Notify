@@ -31,7 +31,7 @@ private const val TOUCH_TOLERANCE = 4
 private val stroke = Stroke(
     width = 10f,
     cap = StrokeCap.Round,
-    join = StrokeJoin.Round,
+    join = StrokeJoin.Round
 )
 
 /**
@@ -44,7 +44,7 @@ private var currentOffset = 0 pos 0
 fun DrawingCanvas(
     modifier: Modifier = Modifier,
     drawableFactory: DrawableFactory,
-    colorFactory: ColorFactory
+    colorFactory: ColorFactory,
 ) {
     val drawables = remember { mutableListOf<Drawable>() }
     var invalidate by remember { mutableIntStateOf(0) }

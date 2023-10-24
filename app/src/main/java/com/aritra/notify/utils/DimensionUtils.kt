@@ -12,7 +12,9 @@ import kotlin.math.absoluteValue
  * @return the dp equivalent of this number in int
  * */
 fun Number.dp(resources: Resources) = TypedValue.applyDimension(
-    TypedValue.COMPLEX_UNIT_DIP, toFloat(), resources.displayMetrics
+    TypedValue.COMPLEX_UNIT_DIP,
+    toFloat(),
+    resources.displayMetrics
 ).toInt()
 
 infix fun Number.pos(other: Number) = Offset(toFloat(), other.toFloat())

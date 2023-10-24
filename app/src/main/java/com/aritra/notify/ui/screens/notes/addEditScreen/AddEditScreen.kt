@@ -249,7 +249,7 @@ fun AddEditScreen(
                 {}
             } else {
                 saveEditNote
-            },
+            }
         )
     }, bottomBar = {
         if (isNew) {
@@ -258,7 +258,8 @@ fun AddEditScreen(
                     .navigationBarsPadding()
                     .imePadding()
             ) {
-                BottomAppBar(containerColor = Color.Transparent,
+                BottomAppBar(
+                    containerColor = Color.Transparent,
                     content = {
                         IconButton(onClick = { showSheet = true }) {
                             Icon(
@@ -326,7 +327,8 @@ fun AddEditScreen(
                                 }
                             }
                         }
-                    })
+                    }
+                )
             }
         }
     }) { contentPadding ->

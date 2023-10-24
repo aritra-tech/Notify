@@ -41,22 +41,21 @@ private val Tools = listOf(
     "Arrow" to Icons.Outlined.ArrowOutward,
     "Rectangle" to Icons.Outlined.Square,
     "Oval" to Icons.Outlined.Circle,
-    "Color Palette" to Icons.Outlined.ColorLens,
+    "Color Palette" to Icons.Outlined.ColorLens
 )
 
 internal val Colors = listOf(
     Color(251, 0, 8),
     Color(0, 127, 8),
     Color(0, 120, 122),
-    Color(0, 0, 0),
+    Color(0, 0, 0)
 )
-
 
 @Composable
 fun Toolbar(
     modifier: Modifier = Modifier,
     color: (Color) -> Unit,
-    updateDrawableFactory: (DrawableFactory?) -> Unit
+    updateDrawableFactory: (DrawableFactory?) -> Unit,
 ) {
     // holds the currently selected tool index
     var selected by remember { mutableIntStateOf(0) }
@@ -114,7 +113,7 @@ fun Toolbar(
                             name = tool.first,
                             image = tool.second,
                             selected = selected == index,
-                            onClick = { updateTool(index) },
+                            onClick = { updateTool(index) }
                         )
                     }
                 }
@@ -143,7 +142,7 @@ fun Tool(
     image: ImageVector,
     selected: Boolean,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -157,7 +156,7 @@ fun Tool(
                     .size(24.dp),
                 imageVector = image,
                 contentDescription = name,
-                tint = if (selected) Color.Black else Tool,
+                tint = if (selected) Color.Black else Tool
             )
         }
     )
@@ -171,6 +170,6 @@ fun Color(color: Color, onClick: () -> Unit) {
             .clip(MaterialTheme.shapes.medium)
             .background(color)
             .size(32.dp)
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
     )
 }
