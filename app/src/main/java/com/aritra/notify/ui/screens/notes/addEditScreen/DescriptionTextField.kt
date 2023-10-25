@@ -25,7 +25,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-    import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -47,13 +47,13 @@ fun DescriptionTextField(
     contentSize: Int,
     description: String,
     parentScrollState: ScrollState,
-    isNewNote:Boolean = false,
+    isNewNote: Boolean = false,
     onDescriptionChange: (String) -> Unit,
 ) {
     val focusRequester = remember {
         FocusRequester()
     }
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         if (isNewNote) {
             focusRequester.requestFocus()
         }
@@ -100,7 +100,8 @@ fun DescriptionTextField(
     val interactionSource = remember { MutableInteractionSource() }
 
     BasicTextField(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
             .focusRequester(focusRequester),
         value = descriptionFieldValue,
         onValueChange = { newDescription ->
