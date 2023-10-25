@@ -1,4 +1,4 @@
-package com.aritra.notify.ui.screens.drawing
+package com.aritra.notify.components.drawing
 
 import android.graphics.Canvas
 import android.view.MotionEvent

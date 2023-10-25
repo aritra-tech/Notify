@@ -1,4 +1,4 @@
-package com.aritra.notify.ui.screens.drawing
+package com.aritra.notify.components.drawing
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

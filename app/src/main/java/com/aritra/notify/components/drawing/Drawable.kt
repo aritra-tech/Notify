@@ -1,4 +1,4 @@
-package com.aritra.notify.ui.screens.drawing
+package com.aritra.notify.components.drawing
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color

@@ -1,4 +1,4 @@
-package com.aritra.notify.ui.screens.drawing
+package com.aritra.notify.components.drawing
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.drawscope.draw
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
@@ -87,7 +88,7 @@ fun DrawingScreen(
                     .fillMaxSize()
                     .drawWithCache {
                         onDrawWithContent {
-                            val pictureCanvas = androidx.compose.ui.graphics.Canvas(
+                            val pictureCanvas = Canvas(
                                 picture.beginRecording(
                                     size.width.toInt(),
                                     size.height.toInt()
