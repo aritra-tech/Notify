@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -17,6 +18,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,13 +40,16 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cameraswitch
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.ElevatedAssistChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -94,15 +99,18 @@ import com.aritra.notify.R
 import com.aritra.notify.components.actions.BottomSheetOptions
 import com.aritra.notify.components.actions.SpeechRecognizerContract
 import com.aritra.notify.components.camPreview.CameraPreview
+import com.aritra.notify.components.dialog.DateTimeDialog
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.topbar.AddEditTopBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.utils.Const
+import com.aritra.notify.utils.formatReminderDateTime
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -124,11 +132,14 @@ fun AddEditScreen(
         Note(noteId, "", "", Date(), emptyList())
     }
 
+    var shouldShowDialogDateTime by remember {
+        mutableStateOf(false)
+    }
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
     var photoUri by remember { mutableStateOf(emptyList<Uri?>()) }
-
+    var reminderDateTime by remember { mutableStateOf<LocalDateTime?>(null) }
     var characterCount by remember { mutableIntStateOf(title.length + description.length) }
     val cancelDialogState = remember { mutableStateOf(false) }
     var showSheet by remember { mutableStateOf(false) }
@@ -206,8 +217,8 @@ fun AddEditScreen(
         description = addEditViewModel.noteModel.observeAsState().value?.note ?: ""
         photoUri = addEditViewModel.noteModel.observeAsState().value?.image ?: emptyList()
         dateTime = addEditViewModel.noteModel.observeAsState().value?.dateTime
-
-        note = note?.copy(title = title, note = description, dateTime = dateTime, image = photoUri)
+        reminderDateTime = addEditViewModel.noteModel.observeAsState().value?.reminderDateTime
+        note = note?.copy(title = title, note = description, dateTime = dateTime, image = photoUri, reminderDateTime = reminderDateTime)
         LaunchedEffect(Unit) {
             addEditViewModel.getNoteById(noteId)
         }
@@ -222,7 +233,9 @@ fun AddEditScreen(
                         title = title,
                         note = description,
                         dateTime = dateTime,
-                        image = photoUri
+                        image = photoUri,
+                        reminderDateTime = reminderDateTime,
+
                     ),
                     onSuccess = {
                         navigateBack()
@@ -276,65 +289,73 @@ fun AddEditScreen(
             ) {
                 BottomAppBar(containerColor = Color.Transparent,
                     content = {
-                    IconButton(onClick = { showSheet = true }) {
-                        Icon(
-                            modifier = Modifier.size(25.dp),
-                            painter = painterResource(id = R.drawable.add_box_icon),
-                            contentDescription = stringResource(R.string.add_box)
-                        )
-                    }
-                    if (showSheet) {
-                        ModalBottomSheet(
-                            onDismissRequest = { showSheet = false },
-                            sheetState = bottomSheetState,
-                            dragHandle = { BottomSheetDefaults.DragHandle() }
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .navigationBarsPadding()
-                                    .padding(16.dp)
+
+                        IconButton(onClick = { showSheet = true }) {
+                            Icon(
+                                modifier = Modifier.size(25.dp),
+                                painter = painterResource(id = R.drawable.add_box_icon),
+                                contentDescription = stringResource(R.string.add_box)
+                            )
+                        }
+                        IconButton(onClick = { shouldShowDialogDateTime = true }) {
+                            Icon(
+                                modifier = Modifier.size(25.dp),
+                                painter = painterResource(id = R.drawable.add_alert),
+                                contentDescription = stringResource(R.string.add_box)
+                            )
+                        }
+                        if (showSheet) {
+                            ModalBottomSheet(
+                                onDismissRequest = { showSheet = false },
+                                sheetState = bottomSheetState,
+                                dragHandle = { BottomSheetDefaults.DragHandle() }
                             ) {
-                                BottomSheetOptions(
-                                    text = stringResource(R.string.take_image),
-                                    icon = painterResource(id = R.drawable.camera_icon),
-                                    onClick = {
-                                        if (camPermissionState.status.isGranted) {
-                                            openCameraBottomSheet = true
-                                        } else {
-                                            camPermissionState.launchPermissionRequest()
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .navigationBarsPadding()
+                                        .padding(16.dp)
+                                ) {
+                                    BottomSheetOptions(
+                                        text = stringResource(R.string.take_image),
+                                        icon = painterResource(id = R.drawable.camera_icon),
+                                        onClick = {
+                                            if (camPermissionState.status.isGranted) {
+                                                openCameraBottomSheet = true
+                                            } else {
+                                                camPermissionState.launchPermissionRequest()
+                                            }
+                                            showSheet = false
                                         }
-                                        showSheet = false
-                                    }
-                                )
-                                BottomSheetOptions(
-                                    text = stringResource(R.string.add_image),
-                                    icon = painterResource(id = R.drawable.gallery_icon),
-                                    onClick = {
-                                        launcher.launch(
-                                            PickVisualMediaRequest(
-                                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                    )
+                                    BottomSheetOptions(
+                                        text = stringResource(R.string.add_image),
+                                        icon = painterResource(id = R.drawable.gallery_icon),
+                                        onClick = {
+                                            launcher.launch(
+                                                PickVisualMediaRequest(
+                                                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                                )
                                             )
-                                        )
-                                        showSheet = false
-                                    }
-                                )
-                                BottomSheetOptions(
-                                    text = stringResource(R.string.speech_to_text),
-                                    icon = painterResource(id = R.drawable.mic_icon),
-                                    onClick = {
-                                        if (permissionState.status.isGranted) {
-                                            speechRecognizerLauncher.launch(Unit)
-                                        } else {
-                                            permissionState.launchPermissionRequest()
+                                            showSheet = false
                                         }
-                                        showSheet = false
-                                    }
-                                )
+                                    )
+                                    BottomSheetOptions(
+                                        text = stringResource(R.string.speech_to_text),
+                                        icon = painterResource(id = R.drawable.mic_icon),
+                                        onClick = {
+                                            if (permissionState.status.isGranted) {
+                                                speechRecognizerLauncher.launch(Unit)
+                                            } else {
+                                                permissionState.launchPermissionRequest()
+                                            }
+                                            showSheet = false
+                                        }
+                                    )
+                                }
                             }
                         }
-                    }
-                })
+                    })
             }
         }
     }) { contentPadding ->
@@ -482,6 +503,7 @@ fun AddEditScreen(
                             keyboardType = KeyboardType.Text
                         )
                     )
+
                     TextField(
                         value = if (isNew) {
                             "$characterCount characters   |  $totalWords words"
@@ -489,7 +511,7 @@ fun AddEditScreen(
                             "$formattedCharacterCount | $formattedWordCount"
                         },
                         onValueChange = { },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier,
                         readOnly = true,
                         textStyle = TextStyle(
                             fontSize = 15.sp,
@@ -507,6 +529,22 @@ fun AddEditScreen(
                             keyboardType = KeyboardType.Text
                         )
                     )
+                    reminderDateTime?.let {
+                        ElevatedAssistChip(leadingIcon = {
+                            Icon(imageVector = Icons.Default.AccessTime, contentDescription = "")
+                        }, onClick = { /*TODO*/ }, label = {
+                            Text(
+                                text = it.formatReminderDateTime(),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }, trailingIcon = {
+                            Icon(imageVector = Icons.Default.Close, contentDescription = "",modifier = Modifier.clickable {
+                                reminderDateTime = null
+                            })
+                        }, modifier = Modifier)
+                    }
+
                 }
 
                 DescriptionTextField(
@@ -540,6 +578,14 @@ fun AddEditScreen(
         }
     )
 
+    DateTimeDialog(isOpen = shouldShowDialogDateTime, onDateTimeUpdated = {
+        reminderDateTime = it
+        shouldShowDialogDateTime = false
+    }, onConfirmCallback = {
+
+    }) {
+        shouldShowDialogDateTime = false
+    }
     if (openCameraBottomSheet) {
         BottomSheetScaffold(scaffoldState = scaffoldState, sheetPeekHeight = 0.dp, sheetContent = {}) {
             Box(
