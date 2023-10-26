@@ -44,6 +44,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -72,6 +73,7 @@ import com.aritra.notify.components.note.NotesCard
 import com.aritra.notify.components.topbar.SelectionModeTopAppBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
+import com.aritra.notify.ui.screens.settingsScreen.SettingsViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,11 +84,13 @@ fun NoteScreen(
     shouldHideBottomBar: (Boolean) -> Unit,
 ) {
     val viewModel = hiltViewModel<NoteScreenViewModel>()
+    val settingsViewModel = hiltViewModel<SettingsViewModel>()
 
     val addEditViewModel = hiltViewModel<AddEditViewModel>()
     val listOfAllNotes by viewModel.listOfNotes.observeAsState(listOf())
     var searchQuery by rememberSaveable { mutableStateOf("") }
-    var isGridView by rememberSaveable { mutableStateOf(false) }
+
+    val isGridView by settingsViewModel.notesViewModeState.collectAsState()
 
     var isInSelectionMode by remember {
         mutableStateOf(false)
@@ -233,7 +237,7 @@ fun NoteScreen(
                             } else {
                                 LayoutToggleButton(
                                     isGridView = isGridView,
-                                    onToggleClick = { isGridView = !isGridView }
+                                    onToggleClick = { settingsViewModel.toggleNotesViewMode()}
                                 )
                             }
                         }

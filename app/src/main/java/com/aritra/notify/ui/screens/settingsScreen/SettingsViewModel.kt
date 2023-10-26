@@ -54,8 +54,12 @@ class SettingsViewModel @Inject constructor(
     private val _biometricAuthState = MutableStateFlow(false)
     val biometricAuthState: StateFlow<Boolean> = _biometricAuthState
 
+    private val _notesViewModeState = MutableStateFlow(false)
+    val notesViewModeState: StateFlow<Boolean> = _notesViewModeState
+
     init {
         observe()
+
         viewModelScope.launch(Dispatchers.IO) {
             dataStore.data.map { preferences ->
                 preferences[DataStoreUtil.IS_BIOMETRIC_AUTH_SET_KEY] ?: false
@@ -63,7 +67,28 @@ class SettingsViewModel @Inject constructor(
                 _biometricAuthState.value = it
             }
         }
+
+
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStore.data.map { preferences ->
+                preferences[DataStoreUtil.IS_GRID_NOTES_VIEW_MODE_KEY] ?: false
+            }.collect {
+                _notesViewModeState.value = it
+            }
+        }
+
+
     }
+
+
+    fun toggleNotesViewMode() {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStore.edit { preferences ->
+                preferences[DataStoreUtil.IS_GRID_NOTES_VIEW_MODE_KEY] = !(preferences[DataStoreUtil.IS_GRID_NOTES_VIEW_MODE_KEY] ?: false)
+            }
+        }
+    }
+
 
     fun showBiometricPrompt(activity: MainActivity) {
         appBioMetricManager.initBiometricPrompt(
