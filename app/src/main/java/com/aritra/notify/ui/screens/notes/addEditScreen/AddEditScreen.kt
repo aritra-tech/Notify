@@ -17,6 +17,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,13 +39,16 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cameraswitch
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.ElevatedAssistChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -61,6 +65,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -94,17 +99,19 @@ import com.aritra.notify.R
 import com.aritra.notify.components.actions.BottomSheetOptions
 import com.aritra.notify.components.actions.SpeechRecognizerContract
 import com.aritra.notify.components.camPreview.CameraPreview
+import com.aritra.notify.components.dialog.DateTimeDialog
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.topbar.AddEditTopBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.utils.Const
+import com.aritra.notify.utils.formatReminderDateTime
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import kotlin.math.ceil
 
@@ -126,12 +133,7 @@ fun AddEditScreen(
     var shouldShowDialogDateTime by remember {
         mutableStateOf(false)
     }
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
-    var photoUri by remember { mutableStateOf(emptyList<Uri?>()) }
-    var reminderDateTime by remember { mutableStateOf<LocalDateTime?>(null) }
-    var characterCount by remember { mutableIntStateOf(title.length + description.length) }
+
     val note by viewModel.note.collectAsState()
 
 
@@ -210,17 +212,7 @@ fun AddEditScreen(
     })
 
 // edit note
-    if (!isNew) {
-        title = viewModel.noteModel.observeAsState().value?.title ?: ""
-        description = viewModel.noteModel.observeAsState().value?.note ?: ""
-        photoUri = viewModel.noteModel.observeAsState().value?.image ?: emptyList()
-        dateTime = viewModel.noteModel.observeAsState().value?.dateTime
-        reminderDateTime = viewModel.noteModel.observeAsState().value?.reminderDateTime
-        note = note?.copy(title = title, note = description, dateTime = dateTime, image = photoUri, reminderDateTime = reminderDateTime)
-        LaunchedEffect(Unit) {
-            viewModel.getNoteById(noteId)
-        }
-    }
+
 
     val saveEditNote: () -> Unit = if (isNew) {
         remember {
@@ -228,15 +220,6 @@ fun AddEditScreen(
                 viewModel.insertNote(
                     note = note.copy(
                         dateTime = dateTime
-                                viewModel.insertNote(
-                    note = Note(
-                        id = 0,
-                        title = title,
-                        note = description,
-                        dateTime = dateTime,
-                        image = photoUri,
-                        reminderDateTime = reminderDateTime,
-
                     ),
                     onSuccess = {
                         navigateBack()
@@ -294,6 +277,13 @@ fun AddEditScreen(
                             Icon(
                                 modifier = Modifier.size(25.dp),
                                 painter = painterResource(id = R.drawable.add_box_icon),
+                                contentDescription = stringResource(R.string.add_box)
+                            )
+                        }
+                        IconButton(onClick = { shouldShowDialogDateTime = true }) {
+                            Icon(
+                                modifier = Modifier.size(25.dp),
+                                painter = painterResource(id = R.drawable.add_alert),
                                 contentDescription = stringResource(R.string.add_box)
                             )
                         }
@@ -530,6 +520,21 @@ fun AddEditScreen(
                             keyboardType = KeyboardType.Text
                         )
                     )
+                    note.reminderDateTime?.let {
+                        ElevatedAssistChip(leadingIcon = {
+                            Icon(imageVector = Icons.Default.AccessTime, contentDescription = "")
+                        }, onClick = { /*TODO*/ }, label = {
+                            Text(
+                                text = it.formatReminderDateTime(),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }, trailingIcon = {
+                            Icon(imageVector = Icons.Default.Close, contentDescription = "",modifier = Modifier.clickable {
+                                viewModel.updateReminderDateTime(null)
+                            })
+                        }, modifier = Modifier)
+                    }
                 }
 
                 DescriptionTextField(
@@ -549,6 +554,7 @@ fun AddEditScreen(
                         }
                     }
                 )
+
             }
         }
     }
@@ -564,7 +570,7 @@ fun AddEditScreen(
     )
 
     DateTimeDialog(isOpen = shouldShowDialogDateTime, onDateTimeUpdated = {
-        reminderDateTime = it
+        viewModel.updateReminderDateTime(it)
         shouldShowDialogDateTime = false
     }, onConfirmCallback = {
 

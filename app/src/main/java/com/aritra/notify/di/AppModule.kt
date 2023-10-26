@@ -1,6 +1,7 @@
 package com.aritra.notify.di
 
 import android.app.Application
+import android.app.NotificationManager
 import android.content.Context
 import androidx.room.Room
 import com.aritra.notify.data.db.NoteDatabase
@@ -24,10 +25,7 @@ class AppModule {
     @Provides
     fun provideDataStoreUtil(@ApplicationContext context: Context): DataStoreUtil = DataStoreUtil(context)
 
-    @Provides
-    fun provideRepository(application: Application): NoteRepository {
-        return NoteRepository(application)
-    }
+
 
     @Provides
     @Singleton
@@ -44,4 +42,9 @@ class AppModule {
     @Provides
     @Singleton
     fun provideTrashNote(noteDatabase: NoteDatabase) = noteDatabase.trashNote
+
+    @Provides
+    @Singleton
+    fun providerNotificationManager(@ApplicationContext context: Context) =
+        context.getSystemService(NotificationManager::class.java)
 }

@@ -42,3 +42,8 @@ fun LocalDateTime.checkTimeIsNotOld():Boolean{
     val currentDateTime = LocalTime.now()
     return currentDateTime.until(this.toLocalTime(),ChronoUnit.MILLIS) >= 0
 }
+
+fun LocalDateTime.triggerDateTime():Long{
+    val currentDateTime = LocalDateTime.now()
+    return currentDateTime.until(this,ChronoUnit.MILLIS)
+}

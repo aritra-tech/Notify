@@ -4,6 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.aritra.notify.core.alarm.AlarmScheduler
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.repository.NoteRepository
 import com.aritra.notify.domain.usecase.SaveSelectedImageUseCase
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 import java.util.Date
 import javax.inject.Inject
 
@@ -94,7 +96,7 @@ class AddEditViewModel @Inject constructor(
         val oldNote = noteRepository.getNoteById(newNote.id) ?: return@launch
         // exit the method if the note has not been modified
 
-        if (oldNote.title == newNote.title && oldNote.note == newNote.note && oldNote.image == newNote.image) {
+        if (oldNote.title == newNote.title && oldNote.note == newNote.note && oldNote.image == newNote.image && oldNote.reminderDateTime == newNote.reminderDateTime) {
             // Note has not been modified
             withContext(Dispatchers.Main) {
                 onSuccess(false)
@@ -146,6 +148,14 @@ class AddEditViewModel @Inject constructor(
     fun addImages(vararg image: Uri?) {
         _note.update {
             it.copy(image = it.image + image)
+        }
+    }
+
+    fun updateReminderDateTime(dateTime: LocalDateTime?) {
+        _note.update {
+            it.copy(
+                reminderDateTime = dateTime
+            )
         }
     }
 
