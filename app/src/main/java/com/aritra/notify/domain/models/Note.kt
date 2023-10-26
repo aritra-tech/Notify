@@ -13,10 +13,10 @@ import java.util.Date
 data class Note(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
-    var title: String,
-    var note: String,
-    var dateTime: Date?,
-    var image: List<Uri?>,
+    var title: String = "",
+    var note: String = "",
+    var dateTime: Date? = null,
+    var image: List<Uri?> = emptyList(),
     @ColumnInfo(defaultValue = "false")
     var isMovedToTrash: Boolean = false,
     @ColumnInfo(defaultValue = "false")

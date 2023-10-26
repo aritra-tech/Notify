@@ -44,6 +44,7 @@
     <string name="no_clicked_photos">No Clicked Photos</string>
     <string name="clear_image">Clear Image</string>
     <string name="speech_to_text">Speech to Text</string>
+    <string name="drawing">Drawing</string>
     <string name="add_image">Add image</string>
     <string name="take_image">Capture a Photo</string>
     <string name="add_box">Add Box</string>
@@ -55,4 +56,5 @@
     <string name="ok">OK</string>
     <string name="secure_screen">Secure Screen</string>
     <string name="trash">Trash</string>
+    <string name="format_deleted_note">%s left</string>
 </resources>

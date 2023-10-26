@@ -1,11 +1,12 @@
 package com.aritra.notify.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -15,15 +16,18 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType.Companion.IntType
@@ -33,17 +37,20 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aritra.notify.R
+import com.aritra.notify.components.drawing.DrawingScreen
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditScreen
+import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
-import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
 import com.aritra.notify.ui.screens.notes.trash.trashNoteDest
+import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
 
 @Composable
 fun NotifyApp(navController: NavHostController = rememberNavController()) {
     val bottomNavItem = getBottomNavItems()
     val screensWithHiddenNavBar = listOf(
         "${NotifyScreens.AddEditNotes.name}/{noteId}",
-        NotifyScreens.TrashNoteScreen.name
+        NotifyScreens.TrashNoteScreen.name,
+        NotifyScreens.Drawing.name
     )
     val backStackEntry = navController.currentBackStackEntryAsState()
 
@@ -55,8 +62,8 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
         bottomBar = {
             AnimatedVisibility(
                 visible = shouldHideBottomBar,
-                enter = fadeIn(animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing)),
-                exit = fadeOut(animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing))
+                enter = fadeIn(animationSpec = tween(delayMillis = 500, easing = LinearOutSlowInEasing)),
+                exit = fadeOut(animationSpec = tween(delayMillis = 500, easing = LinearOutSlowInEasing))
             ) {
                 BottomNavigationBar(
                     backStackEntry,
@@ -70,25 +77,35 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
         NavHost(
             navController = navController,
             startDestination = NotifyScreens.Notes.name,
-            modifier = Modifier.padding(it)
+            modifier = Modifier.padding(it),
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(220, delayMillis = 90)
+                ) + scaleIn(
+                    initialScale = 0.92f,
+                    animationSpec = tween(220, delayMillis = 90)
+                )
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(90))
+            },
+            popEnterTransition = {
+                fadeIn(
+                    animationSpec = tween(220, delayMillis = 90)
+                ) + scaleIn(
+                    initialScale = 0.92f,
+                    animationSpec = tween(220, delayMillis = 90)
+                )
+            },
+            popExitTransition = {
+                fadeOut(animationSpec = tween(90))
+            }
         ) {
             composable(
-                route = NotifyScreens.Notes.name,
-                enterTransition = {
-                    slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                        animationSpec = tween(700)
-                    )
-                },
-                exitTransition = {
-                    slideOutOfContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                        animationSpec = tween(700)
-                    )
-                }
+                route = NotifyScreens.Notes.name
             ) {
                 NoteScreen(
-                    onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name + "/0") },
+                    onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name + "/-1") },
                     navigateToUpdateNoteScreen = { noteId ->
                         navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
                     }
@@ -99,45 +116,45 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
 
             composable(
                 route = "${NotifyScreens.AddEditNotes.name}/{noteId}",
-                enterTransition = {
-                    slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                        animationSpec = tween(700)
-                    )
-                },
-                exitTransition = {
-                    slideOutOfContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                        animationSpec = tween(700)
-                    )
-                },
                 arguments = listOf(navArgument("noteId") { type = IntType })
             ) { backStack ->
                 val noteId = backStack.arguments?.getInt("noteId") ?: 0
+                val viewModel = hiltViewModel<AddEditViewModel>()
+                val drawing = backStack.savedStateHandle.get<Uri?>("drawing")
+
+                LaunchedEffect(drawing) {
+                    if (drawing != null) {
+                        viewModel.addImages(drawing)
+                    }
+                }
+
                 AddEditScreen(
-                    noteId = noteId,
-                    navigateBack = { navController.popBackStack() }
+                    noteId = if (noteId < 0) null else noteId,
+                    navigateBack = { navController.popBackStack() },
+                    showDrawingScreen = { navController.navigate(NotifyScreens.Drawing.name) }
                 )
             }
 
             composable(
-                route = NotifyScreens.Settings.name,
-                enterTransition = {
-                    slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                        animationSpec = tween(700)
-                    )
-                },
-                exitTransition = {
-                    slideOutOfContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                        animationSpec = tween(700)
-                    )
-                }
+                route = NotifyScreens.Settings.name
             ) {
                 SettingsScreen(controller = navController)
             }
             trashNoteDest(navController)
+
+            composable(
+                route = NotifyScreens.Drawing.name
+            ) {
+                DrawingScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                    onSave = { drawing ->
+                        navController.popBackStack()
+                        navController.currentBackStackEntry?.savedStateHandle?.set("drawing", drawing)
+                    }
+                )
+            }
         }
     }
 }
@@ -150,7 +167,7 @@ fun BottomNavigationBar(
     navController: NavHostController,
 ) {
     if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
-        NavigationBar(modifier = Modifier.height(75.dp)) {
+        NavigationBar(containerColor = Color.Transparent, modifier = Modifier.height(75.dp)) {
             bottomNavItem.forEach { item ->
                 NavigationBarItem(
                     alwaysShowLabel = true,
@@ -182,9 +199,12 @@ fun BottomNavigationBar(
                     },
                     selected = backStackEntry.value?.destination?.route == item.route,
                     onClick = {
-                        navController.navigate(item.route) {
-                            popUpTo(navController.graph.startDestinationId)
-                            launchSingleTop = true
+                        val currentDestination = navController.currentBackStackEntry?.destination?.route
+                        if (item.route != currentDestination) {
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.startDestinationId)
+                                launchSingleTop = true
+                            }
                         }
                     }
                 )

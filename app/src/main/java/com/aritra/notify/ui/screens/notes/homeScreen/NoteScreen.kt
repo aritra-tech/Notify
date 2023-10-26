@@ -3,7 +3,7 @@
 package com.aritra.notify.ui.screens.notes.homeScreen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -214,8 +214,8 @@ fun NoteScreen(
             } else {
                 AnimatedVisibility(
                     visible = shouldHideSearchBar,
-                    enter = fadeIn(animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing)),
-                    exit = fadeOut(animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing))
+                    enter = fadeIn(animationSpec = tween(delayMillis = 500, easing = LinearOutSlowInEasing)),
+                    exit = fadeOut(animationSpec = tween(delayMillis = 500, easing = LinearOutSlowInEasing))
                 ) {
                     SearchBar(
                         modifier = Modifier
@@ -360,8 +360,8 @@ fun NoteScreen(
                                     Box {
                                         NotesCard(
                                             noteModel = notesModel,
-                                            isSelected,
-                                            {
+                                            isSelected = isSelected,
+                                            onClick = {
                                                 if (isInSelectionMode) {
                                                     if (isSelected) {
                                                         selectedNoteIds.remove(notesModel.id)

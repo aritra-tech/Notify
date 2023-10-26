@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -61,9 +62,9 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -96,7 +97,6 @@ import com.aritra.notify.components.actions.SpeechRecognizerContract
 import com.aritra.notify.components.camPreview.CameraPreview
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.topbar.AddEditTopBar
-import com.aritra.notify.domain.models.Note
 import com.aritra.notify.utils.Const
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -104,32 +104,33 @@ import com.google.accompanist.permissions.rememberPermissionState
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import kotlin.math.ceil
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun AddEditScreen(
-    noteId: Int = 0,
+    noteId: Int?,
     navigateBack: () -> Unit,
+    showDrawingScreen: () -> Unit,
 ) {
-    val addEditViewModel = hiltViewModel<AddEditViewModel>()
+    val viewModel = hiltViewModel<AddEditViewModel>()
     val context = LocalContext.current
-    val isNew = noteId == 0
+    val isNew = noteId == null
 
-    var note = if (isNew) {
-        null
-    } else {
-        Note(noteId, "", "", Date(), emptyList())
+    LaunchedEffect(noteId) {
+        viewModel.getNoteById(noteId)
     }
 
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
-    var photoUri by remember { mutableStateOf(emptyList<Uri?>()) }
+    val note by viewModel.note.collectAsState()
 
-    var characterCount by remember { mutableIntStateOf(title.length + description.length) }
+    LaunchedEffect(note) {
+        Log.i("Screen", note.toString())
+    }
+
+    val dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
+
+    var characterCount by remember(note) { mutableIntStateOf(note.title.length + note.note.length) }
     val cancelDialogState = remember { mutableStateOf(false) }
     var showSheet by remember { mutableStateOf(false) }
     val dateFormat = SimpleDateFormat(Const.DATE_FORMAT, Locale.getDefault())
@@ -144,13 +145,13 @@ fun AddEditScreen(
     )
 
     val wordsPerMinute = 238 // words per minute
-    val wordCount = remember { derivedStateOf { countWords(description) } }
-    var totalWords by remember {
+    val wordCount = remember(note) { derivedStateOf { countWords(note.note) } }
+    var totalWords by remember(wordCount) {
         mutableIntStateOf(wordCount.value)
     }
     val readTimeProcess = remember { derivedStateOf { calculateReadTime(totalWords, wordsPerMinute) } }
     var readTime by remember {
-        mutableStateOf(readTimeProcess.value)
+        mutableIntStateOf(readTimeProcess.value)
     }
 
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -159,12 +160,12 @@ fun AddEditScreen(
     }
 
     val formattedDateTime = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
-    val formattedCharacterCount = "${(title.length) + (description.length)} characters"
-    val formattedWordCount = "${countWords(description)} words"
-    val formattedReadTime = "${calculateReadTime(countWords(description), wordsPerMinute)} sec read"
+    val formattedCharacterCount = remember(note) { "${(note.title.length) + (note.note.length)} characters" }
+    val formattedWordCount = remember(note) { "${countWords(note.note)} words" }
+    val formattedReadTime = remember(note) { "${calculateReadTime(countWords(note.note), wordsPerMinute)} sec read" }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
-        photoUri = uris
+        viewModel.addImages(*uris.toTypedArray())
     }
     val controller = remember {
         LifecycleCameraController(context).apply {
@@ -193,36 +194,20 @@ fun AddEditScreen(
         }
     }
     val speechRecognizerLauncher = rememberLauncherForActivityResult(contract = SpeechRecognizerContract(), onResult = {
-        it?.let {
-            for (st in it) {
-                description += " $st"
-            }
+        if (it.isNullOrEmpty()) {
+            return@rememberLauncherForActivityResult
+        }
+        for (st in it) {
+            viewModel.updateDescription("${note.note} $st")
         }
     })
-
-// edit note
-    if (!isNew) {
-        title = addEditViewModel.noteModel.observeAsState().value?.title ?: ""
-        description = addEditViewModel.noteModel.observeAsState().value?.note ?: ""
-        photoUri = addEditViewModel.noteModel.observeAsState().value?.image ?: emptyList()
-        dateTime = addEditViewModel.noteModel.observeAsState().value?.dateTime
-
-        note = note?.copy(title = title, note = description, dateTime = dateTime, image = photoUri)
-        LaunchedEffect(Unit) {
-            addEditViewModel.getNoteById(noteId)
-        }
-    }
 
     val saveEditNote: () -> Unit = if (isNew) {
         remember {
             {
-                addEditViewModel.insertNote(
-                    note = Note(
-                        id = 0,
-                        title = title,
-                        note = description,
-                        dateTime = dateTime,
-                        image = photoUri
+                viewModel.insertNote(
+                    note = note.copy(
+                        dateTime = dateTime
                     ),
                     onSuccess = {
                         navigateBack()
@@ -234,7 +219,7 @@ fun AddEditScreen(
     } else {
         remember {
             {
-                addEditViewModel.updateNotes { updated ->
+                viewModel.updateNotes { updated ->
                     if (updated) {
                         navigateBack()
                         Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
@@ -248,8 +233,8 @@ fun AddEditScreen(
 
     Scaffold(topBar = {
         AddEditTopBar(
-            title = title,
-            description = description,
+            note = note,
+            isNew = isNew,
             onBackPress = if (isNew) {
                 { cancelDialogState.value = true }
             } else {
@@ -264,8 +249,7 @@ fun AddEditScreen(
                 {}
             } else {
                 saveEditNote
-            },
-            note = note
+            }
         )
     }, bottomBar = {
         if (isNew) {
@@ -274,66 +258,77 @@ fun AddEditScreen(
                     .navigationBarsPadding()
                     .imePadding()
             ) {
-                BottomAppBar(content = {
-                    IconButton(onClick = { showSheet = true }) {
-                        Icon(
-                            modifier = Modifier.size(25.dp),
-                            painter = painterResource(id = R.drawable.add_box_icon),
-                            contentDescription = stringResource(R.string.add_box)
-                        )
-                    }
-                    if (showSheet) {
-                        ModalBottomSheet(
-                            onDismissRequest = { showSheet = false },
-                            sheetState = bottomSheetState,
-                            dragHandle = { BottomSheetDefaults.DragHandle() }
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .navigationBarsPadding()
-                                    .padding(16.dp)
+                BottomAppBar(
+                    containerColor = Color.Transparent,
+                    content = {
+                        IconButton(onClick = { showSheet = true }) {
+                            Icon(
+                                modifier = Modifier.size(25.dp),
+                                painter = painterResource(id = R.drawable.add_box_icon),
+                                contentDescription = stringResource(R.string.add_box)
+                            )
+                        }
+                        if (showSheet) {
+                            ModalBottomSheet(
+                                onDismissRequest = { showSheet = false },
+                                sheetState = bottomSheetState,
+                                dragHandle = { BottomSheetDefaults.DragHandle() }
                             ) {
-                                BottomSheetOptions(
-                                    text = stringResource(R.string.take_image),
-                                    icon = painterResource(id = R.drawable.camera_icon),
-                                    onClick = {
-                                        if (camPermissionState.status.isGranted) {
-                                            openCameraBottomSheet = true
-                                        } else {
-                                            camPermissionState.launchPermissionRequest()
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .navigationBarsPadding()
+                                        .padding(16.dp)
+                                ) {
+                                    BottomSheetOptions(
+                                        text = stringResource(R.string.take_image),
+                                        icon = painterResource(id = R.drawable.camera_icon),
+                                        onClick = {
+                                            if (camPermissionState.status.isGranted) {
+                                                openCameraBottomSheet = true
+                                            } else {
+                                                camPermissionState.launchPermissionRequest()
+                                            }
+                                            showSheet = false
                                         }
-                                        showSheet = false
-                                    }
-                                )
-                                BottomSheetOptions(
-                                    text = stringResource(R.string.add_image),
-                                    icon = painterResource(id = R.drawable.gallery_icon),
-                                    onClick = {
-                                        launcher.launch(
-                                            PickVisualMediaRequest(
-                                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                    )
+                                    BottomSheetOptions(
+                                        text = stringResource(R.string.add_image),
+                                        icon = painterResource(id = R.drawable.gallery_icon),
+                                        onClick = {
+                                            launcher.launch(
+                                                PickVisualMediaRequest(
+                                                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                                )
                                             )
-                                        )
-                                        showSheet = false
-                                    }
-                                )
-                                BottomSheetOptions(
-                                    text = stringResource(R.string.speech_to_text),
-                                    icon = painterResource(id = R.drawable.mic_icon),
-                                    onClick = {
-                                        if (permissionState.status.isGranted) {
-                                            speechRecognizerLauncher.launch(Unit)
-                                        } else {
-                                            permissionState.launchPermissionRequest()
+                                            showSheet = false
                                         }
-                                        showSheet = false
-                                    }
-                                )
+                                    )
+                                    BottomSheetOptions(
+                                        text = stringResource(R.string.drawing),
+                                        icon = painterResource(id = R.drawable.gallery_icon),
+                                        onClick = {
+                                            showDrawingScreen()
+                                            showSheet = false
+                                        }
+                                    )
+                                    BottomSheetOptions(
+                                        text = stringResource(R.string.speech_to_text),
+                                        icon = painterResource(id = R.drawable.mic_icon),
+                                        onClick = {
+                                            if (permissionState.status.isGranted) {
+                                                speechRecognizerLauncher.launch(Unit)
+                                            } else {
+                                                permissionState.launchPermissionRequest()
+                                            }
+                                            showSheet = false
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
-                })
+                )
             }
         }
     }) { contentPadding ->
@@ -360,9 +355,9 @@ fun AddEditScreen(
                     }
                 ) {
                     if (isNew) {
-                        if (photoUri.isNotEmpty()) {
+                        if (note.image.isNotEmpty()) {
                             LazyRow {
-                                items(photoUri.size) {
+                                items(note.image.size) { index ->
                                     Box(
                                         Modifier
                                             .height(180.dp)
@@ -372,7 +367,7 @@ fun AddEditScreen(
                                     ) {
                                         ZoomableAsyncImage(
                                             modifier = Modifier.fillMaxSize(),
-                                            model = photoUri[it],
+                                            model = note.image[index],
                                             contentDescription = stringResource(R.string.image),
                                             contentScale = ContentScale.Crop
                                         )
@@ -381,7 +376,7 @@ fun AddEditScreen(
                                                 .align(Alignment.TopEnd)
                                                 .size(25.dp),
                                             onClick = {
-                                                photoUri = photoUri.filterIndexed { index, _ -> index != it }
+                                                viewModel.removeImage(index)
                                             },
                                             colors = IconButtonDefaults.filledTonalIconButtonColors(
                                                 containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
@@ -403,7 +398,7 @@ fun AddEditScreen(
                             modifier = Modifier
                                 .horizontalScroll(rememberScrollState())
                         ) {
-                            photoUri.forEach { uri ->
+                            note.image.forEach { uri ->
                                 ZoomableAsyncImage(
                                     modifier = Modifier
                                         .height(180.dp)
@@ -418,12 +413,12 @@ fun AddEditScreen(
                         }
                     }
                     TextField(
-                        modifier = Modifier.fillMaxWidth(), value = title, onValueChange = { newTitle ->
+                        modifier = Modifier.fillMaxWidth(),
+                        value = note.title,
+                        onValueChange = { newTitle ->
+                            viewModel.updateTitle(newTitle)
                             if (isNew) {
-                                title = newTitle
-                                characterCount = title.length + description.length
-                            } else {
-                                addEditViewModel.updateTitle(newTitle)
+                                characterCount = newTitle.length + note.note.length
                             }
                         }, placeholder = {
                             Text(
@@ -511,17 +506,15 @@ fun AddEditScreen(
                 DescriptionTextField(
                     scrollOffset = descriptionScrollOffset,
                     contentSize = contentSize,
-                    description = description,
+                    description = note.note,
                     parentScrollState = scrollState,
                     isNewNote = isNew,
                     onDescriptionChange = { newDescription ->
+                        viewModel.updateDescription(newDescription)
                         if (isNew) {
-                            description = newDescription
-                            characterCount = title.length + description.length
+                            characterCount = note.title.length + newDescription.length
                             totalWords = wordCount.value
                             readTime = readTimeProcess.value
-                        } else {
-                            addEditViewModel.updateDescription(newDescription)
                         }
                     }
                 )
@@ -571,11 +564,9 @@ fun AddEditScreen(
                         Icon(imageVector = Icons.Filled.Cameraswitch, contentDescription = "camera Switch")
                     }
                     IconButton(onClick = {
-                        takePhoto(controller, context, onPhotoCaptured = { receviedUri ->
-                            receviedUri?.let {
-                                photoUri += it
-                            }
-                            openCameraBottomSheet = false
+                        takePhoto(controller, context, onPhotoCaptured = { uri ->
+                            if (uri == null) return@takePhoto
+                            viewModel.addImages(uri)
                         })
                     }) {
                         Icon(imageVector = Icons.Filled.PhotoCamera, contentDescription = "Click To Capture")

@@ -1,4 +1,5 @@
 package com.aritra.notify.ui.screens.notes.trash
+import TrashNoteInfo
 import TrashNoteState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,7 +30,11 @@ class TrashNoteViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(dispatcherProvider.io) {
-            val getNotes = trashNoteRepository.getTrashNoteWithNote().map { it.note }
+            val getNotes = trashNoteRepository.getTrashNoteWithNote().sortedBy { it.note.dateTime }.map {
+                val getCurrentDate = LocalDateTime.now()
+                val calcDate = 28 - it.trashNote.dateTime.until(getCurrentDate, ChronoUnit.DAYS)
+                TrashNoteInfo(it.note, it.trashNote.dateTime, calcDate.toString())
+            }
             _state.update {
                 it.copy(
                     getNotes
