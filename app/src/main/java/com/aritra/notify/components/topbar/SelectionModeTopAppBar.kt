@@ -39,13 +39,5 @@ fun SelectionModeTopAppBar(selectedItems: List<Int>, onDeleteClick: () -> Unit, 
                 fontFamily = FontFamily(Font(R.font.poppins_medium))
             )
         )
-    }, actions = {
-        IconButton(onDeleteClick) {
-            Icon(
-                imageVector = Icons.Outlined.DeleteOutline,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        }
     })
 }

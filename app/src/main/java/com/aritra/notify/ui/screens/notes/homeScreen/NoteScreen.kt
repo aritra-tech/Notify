@@ -67,6 +67,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BackPressHandler
 import com.aritra.notify.components.actions.LayoutToggleButton
+import com.aritra.notify.components.bottombar.SelectedModeBottomBar
 import com.aritra.notify.components.note.GridNoteCard
 import com.aritra.notify.components.note.NotesCard
 import com.aritra.notify.components.topbar.SelectionModeTopAppBar
@@ -140,7 +141,10 @@ fun NoteScreen(
         snapshotFlow { listState.layoutInfo }
             .collect {
                 if (it.visibleItemsInfo.isNotEmpty()) {
-                    shouldHideBottomBar.invoke(shouldHideSearchBarForList)
+                    if (isInSelectionMode)
+                        shouldHideBottomBar.invoke(!isInSelectionMode)
+                    else
+                        shouldHideBottomBar.invoke(shouldHideSearchBarForList)
                     shouldHideSearchBar = shouldHideSearchBarForList
                 }
             }
@@ -149,7 +153,10 @@ fun NoteScreen(
         snapshotFlow { staggeredGState.layoutInfo }
             .collect {
                 if (it.visibleItemsInfo.isNotEmpty()) {
-                    shouldHideBottomBar.invoke(shouldHideSearchBarForGrid)
+                    if (isInSelectionMode)
+                        shouldHideBottomBar.invoke(!isInSelectionMode)
+                    else
+                        shouldHideBottomBar.invoke(shouldHideSearchBarForGrid)
                     shouldHideSearchBar = shouldHideSearchBarForGrid
                 }
             }
@@ -239,6 +246,49 @@ fun NoteScreen(
                         }
                     ) {}
                 }
+            }
+        },
+        bottomBar = {
+            if (isInSelectionMode) {
+                SelectedModeBottomBar(
+                    selectedNotes = listOfAllNotes.filter { note -> note.id in selectedNoteIds },
+                    onPinNote = {currentStatus ->
+                        val selectedNotes = listOfAllNotes.filter { note -> note.id in selectedNoteIds }
+                        if (selectedNotes.size == 1) {
+                            val selectedNote: Note = selectedNotes[0]
+                            selectedNote.isPinned = !currentStatus
+                            viewModel.updateNote(selectedNote){
+                                resetSelectionMode()
+                            }
+                        }
+                    },
+                    onDeleteClick = {
+                        val selectedNotes =
+                            listOfAllNotes.filter { note -> note.id in selectedNoteIds }
+
+                        viewModel.deleteListOfNote(selectedNotes)
+
+                        deletedNotes.addAll(selectedNotes)
+                        resetSelectionMode()
+
+                        scope.launch {
+                            val snackBarResult = snackBarHostState.showSnackbar(
+                                message = "Notes moved to trash",
+                                actionLabel = "Undo",
+                                duration = SnackbarDuration.Short,
+                                withDismissAction = false
+                            )
+
+                            when (snackBarResult) {
+                                SnackbarResult.ActionPerformed -> {
+                                    addEditViewModel.insertListOfNote(deletedNotes) {}
+                                }
+
+                                SnackbarResult.Dismissed -> {
+                                }
+                            }
+                        }
+                    })
             }
         },
         content = {

@@ -19,4 +19,6 @@ data class Note(
     var image: List<Uri?>,
     @ColumnInfo(defaultValue = "false")
     var isMovedToTrash: Boolean = false,
+    @ColumnInfo(defaultValue = "false")
+    var isPinned: Boolean = false
 ) : Parcelable
