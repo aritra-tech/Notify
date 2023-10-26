@@ -10,8 +10,11 @@ import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.models.TrashNote
 import com.aritra.notify.domain.repository.NoteRepository
 import com.aritra.notify.domain.repository.trash.TrashNoteRepo
+import com.aritra.notify.domain.usecase.SaveSelectedImageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -35,12 +38,22 @@ class NoteScreenViewModel @Inject constructor(
     private suspend fun moveToTrash(note: Note) {
         trashNote.upsertTrashNote(TrashNote(note.id, LocalDateTime.now()))
     }
+
     fun deleteListOfNote(noteList: List<Note>) {
         viewModelScope.launch(dispatcherProvider.io) {
             noteList.forEach {
                 moveToTrash(it)
                 homeRepository.updateNoteInRoom(it.copy(isMovedToTrash = true))
             }
+        }
+    }
+
+    fun updateNote(note:Note, onSuccess: (updated: Boolean) -> Unit) = viewModelScope.launch(Dispatchers.IO){
+        homeRepository.updateNoteInRoom(
+            note
+        )
+        withContext(Dispatchers.Main) {
+            onSuccess(true)
         }
     }
 }
