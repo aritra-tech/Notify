@@ -575,6 +575,7 @@ fun AddEditScreen(
                             receviedUri?.let {
                                 photoUri += it
                             }
+                            openCameraBottomSheet = false
                         })
                     }) {
                         Icon(imageVector = Icons.Filled.PhotoCamera, contentDescription = "Click To Capture")
