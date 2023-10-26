@@ -26,7 +26,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.aritra.notify.domain.models.Note
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -34,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.ShareOption
 import com.aritra.notify.components.dialog.TextDialog
+import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
 import com.aritra.notify.utils.shareAsImage
 import com.aritra.notify.utils.shareAsPdf
@@ -42,9 +42,8 @@ import com.aritra.notify.utils.shareNoteAsText
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditTopBar(
-    note: Note?,
-    title: String,
-    description: String,
+    note: Note,
+    isNew: Boolean,
     onBackPress: () -> Unit,
     saveNote: () -> Unit,
     updateNote: () -> Unit,
@@ -61,10 +60,10 @@ fun AddEditTopBar(
     val deleteDialogVisible = remember { mutableStateOf(false) }
 
     BackHandler(onBack = {
-        if (note != null) {
-            updateNote()
-        } else {
+        if (isNew) {
             onBackPress()
+        } else {
+            updateNote()
         }
     })
 
@@ -80,10 +79,10 @@ fun AddEditTopBar(
         },
         navigationIcon = {
             IconButton(onClick = {
-                if (note != null) {
-                    updateNote()
-                } else {
+                if (isNew) {
                     onBackPress()
+                } else {
+                    updateNote()
                 }
             }) {
                 Icon(
@@ -93,7 +92,7 @@ fun AddEditTopBar(
             }
         },
         actions = {
-            note?.let {
+            if (!isNew) {
                 IconButton(onClick = { deleteDialogVisible.value = true }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_delete),
@@ -117,7 +116,7 @@ fun AddEditTopBar(
                     )
                 }
             }
-            if (title.isNotEmpty() && description.isNotEmpty()) {
+            if (note.title.isNotEmpty() && note.note.isNotEmpty()) {
                 IconButton(onClick = { showSheet = true }) {
                     Icon(
                         painterResource(R.drawable.ic_share),
@@ -140,7 +139,7 @@ fun AddEditTopBar(
                                 text = stringResource(R.string.share_note_as_text),
                                 icon = painterResource(id = R.drawable.text_icon),
                                 onClick = {
-                                    shareNoteAsText(context, title, description)
+                                    shareNoteAsText(context, note.title, note.note)
                                     showSheet = false
                                 }
                             )
@@ -166,10 +165,10 @@ fun AddEditTopBar(
                     }
                 }
                 IconButton(onClick = {
-                    if (note != null) {
-                        updateNote()
-                    } else {
+                    if (isNew) {
                         saveNote()
+                    } else {
+                        updateNote()
                     }
                 }) {
                     Icon(

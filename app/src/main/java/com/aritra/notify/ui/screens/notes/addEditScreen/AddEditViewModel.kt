@@ -1,9 +1,8 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.repository.NoteRepository
@@ -11,7 +10,9 @@ import com.aritra.notify.domain.usecase.SaveSelectedImageUseCase
 import com.aritra.notify.utils.toFile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
@@ -23,23 +24,23 @@ class AddEditViewModel @Inject constructor(
     private val noteRepository: NoteRepository,
 ) : AndroidViewModel(application) {
 
-    private val _noteModel = MutableLiveData(Note(0, "", "", Date(), emptyList()))
-    val noteModel: LiveData<Note> get() = _noteModel
+    private val _note = MutableStateFlow(Note(dateTime = Date()))
+    val note: StateFlow<Note> = _note
 
     fun insertNote(note: Note, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val id: Int = noteRepository.insertNoteToRoom(note).toInt()
 
-            val imageUris = note.image.filterNotNull()
+            val images = _note.value.image.filterNotNull()
 
-            if (imageUris.isNotEmpty()) {
+            if (images.isNotEmpty()) {
                 // update the note with the new image uri
                 noteRepository.updateNoteInRoom(
                     note.copy(
                         id = id,
                         image = SaveSelectedImageUseCase(
                             context = getApplication(),
-                            uris = imageUris,
+                            uris = images,
                             noteId = id
                         )
                     )
@@ -79,27 +80,18 @@ class AddEditViewModel @Inject constructor(
         }
     }
 
-    fun getNoteById(noteId: Int) = viewModelScope.launch(Dispatchers.IO) {
-        noteRepository.getNoteByIdFromRoom(noteId).collect { response ->
-            _noteModel.postValue(response)
+    fun getNoteById(noteId: Int?) = viewModelScope.launch(Dispatchers.IO) {
+        var note = note.value
+        if (noteId != null) {
+            note = noteRepository.getNoteById(noteId) ?: note
         }
+        _note.update { note }
     }
-    /*fun getNoteById(noteId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val note = if (noteId != 0) {
-                noteRepository.getNoteByIdFromRoom(noteId).first()
-            } else {
-                // If noteId is 0, it's a new note
-                Note(0, "", "", Date(), null)
-            }
-            _noteModel.postValue(note)
-        }
-    }*/
 
     fun updateNotes(onSuccess: (updated: Boolean) -> Unit) = viewModelScope.launch(Dispatchers.IO) {
-        val newNote = noteModel.value ?: return@launch
+        val newNote = note.value
         // retrieve the note from the database to check if the image has been modified
-        val oldNote = noteRepository.getNoteByIdFromRoom(newNote.id).first()
+        val oldNote = noteRepository.getNoteById(newNote.id) ?: return@launch
         // exit the method if the note has not been modified
 
         if (oldNote.title == newNote.title && oldNote.note == newNote.note && oldNote.image == newNote.image) {
@@ -140,14 +132,32 @@ class AddEditViewModel @Inject constructor(
     }
 
     fun updateTitle(title: String) {
-        _noteModel.postValue(noteModel.value?.copy(title = title))
+        _note.update {
+            it.copy(title = title)
+        }
     }
 
     fun updateDescription(description: String) {
-        _noteModel.postValue(noteModel.value?.copy(note = description))
+        _note.update {
+            it.copy(note = description)
+        }
     }
 
-    /*   fun updateImage(imageList: List<Uri?>) {
-           _noteModel.postValue(noteModel.value?.copy(image = imageList))
-       }*/
+    fun addImages(vararg image: Uri?) {
+        _note.update {
+            it.copy(image = it.image + image)
+        }
+    }
+
+    fun removeImage(index: Int) {
+        _note.update {
+            it.copy(
+                image = it.image.toMutableList().apply {
+                    if (index in 0..<size) {
+                        removeAt(index)
+                    }
+                }.toList()
+            )
+        }
+    }
 }
