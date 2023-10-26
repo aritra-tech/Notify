@@ -12,6 +12,7 @@ import com.aritra.notify.domain.repository.NoteRepository
 import com.aritra.notify.domain.repository.trash.TrashNoteRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -23,22 +24,29 @@ class NoteScreenViewModel @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
 ) : AndroidViewModel(application) {
 
-    var listOfNotes = homeRepository.getAllNotesFromRoom().asLiveData().map { it.filter { !it.isMovedToTrash } }
+    var listOfNotes = homeRepository.getAllNotesFromRoom().asLiveData().map { notes ->
+        notes.filterNot { it.isMovedToTrash }
+    }
 
-    fun deleteNote(note: Note) {
+    fun deleteNote(noteId: Int, onSuccess: () -> Unit) {
         viewModelScope.launch(dispatcherProvider.io) {
-            moveToTrash(note)
+            val note = homeRepository.getNoteById(noteId) ?: return@launch
+            moveToTrash(noteId)
             homeRepository.updateNoteInRoom(note.copy(isMovedToTrash = true))
+            withContext(dispatcherProvider.main) {
+                onSuccess()
+            }
         }
     }
 
-    private suspend fun moveToTrash(note: Note) {
-        trashNote.upsertTrashNote(TrashNote(note.id, LocalDateTime.now()))
+    private suspend fun moveToTrash(noteId: Int) {
+        trashNote.upsertTrashNote(TrashNote(noteId, LocalDateTime.now()))
     }
+
     fun deleteListOfNote(noteList: List<Note>) {
         viewModelScope.launch(dispatcherProvider.io) {
             noteList.forEach {
-                moveToTrash(it)
+                moveToTrash(it.id)
                 homeRepository.updateNoteInRoom(it.copy(isMovedToTrash = true))
             }
         }

@@ -1,4 +1,4 @@
-package com.aritra.notify.components.topbar
+package com.aritra.notify.components.appbar
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
