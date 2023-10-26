@@ -28,7 +28,6 @@ fun AddEditRoute(
     }
     val viewModel = hiltViewModel<AddEditViewModel>()
     val noteViewModel = hiltViewModel<NoteScreenViewModel>()
-    val drawing = backStack.savedStateHandle.get<Uri?>("drawing")
 
     val note by viewModel.note.collectAsState()
 
@@ -42,8 +41,6 @@ fun AddEditRoute(
     }
     val saveNote: (String, String, List<Uri>) -> Unit = remember(note, isNew) {
         { title, description, images ->
-            Log.e("AddEditRoute", title)
-            Log.e("AddEditRoute", description)
             if (isNew) {
                 viewModel.insertNote(
                     title = title,
@@ -82,12 +79,6 @@ fun AddEditRoute(
         }
     }
 
-    LaunchedEffect(drawing) {
-        if (drawing != null) {
-            viewModel.addImages(drawing)
-        }
-    }
-
     LaunchedEffect(noteId) {
         viewModel.getNoteById(noteId)
     }
@@ -97,7 +88,6 @@ fun AddEditRoute(
         note = note,
         isNew = isNew,
         navigateBack = navigateBack,
-        showDrawingScreen = { navController.navigate(NotifyScreens.Drawing.name) },
         saveNote = saveNote,
         deleteNote = deleteNote
     )

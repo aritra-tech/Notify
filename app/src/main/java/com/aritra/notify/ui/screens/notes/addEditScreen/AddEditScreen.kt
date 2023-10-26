@@ -43,6 +43,7 @@ import com.aritra.notify.components.appbar.AddEditBottomBar
 import com.aritra.notify.components.appbar.AddEditTopBar
 import com.aritra.notify.components.camPreview.CameraPreview
 import com.aritra.notify.components.dialog.TextDialog
+import com.aritra.notify.components.drawing.DrawingScreen
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.theme.NotifyTheme
 import java.util.Date
@@ -53,7 +54,6 @@ fun AddEditScreen(
     isNew: Boolean,
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
-    showDrawingScreen: () -> Unit,
     saveNote: (String, String, List<Uri>) -> Unit,
     deleteNote: (() -> Unit) -> Unit,
 ) {
@@ -72,6 +72,9 @@ fun AddEditScreen(
         mutableStateOf(false)
     }
     var openCameraPreview by remember {
+        mutableStateOf(false)
+    }
+    var openDrawingScreen by remember {
         mutableStateOf(false)
     }
 
@@ -128,7 +131,7 @@ fun AddEditScreen(
                                 images = images,
                                 isNew = isNew,
                                 onRemoveImage = { index ->
-                                    if (index >= 0 && index < images.lastIndex) {
+                                    if (index >= 0 && index <= images.lastIndex) {
                                         images.removeAt(index)
                                     }
                                 }
@@ -198,7 +201,9 @@ fun AddEditScreen(
         bottomBar = {
             if (isNew) {
                 AddEditBottomBar(
-                    showDrawingScreen = showDrawingScreen,
+                    showDrawingScreen = {
+                        openDrawingScreen = true
+                    },
                     showCameraSheet = {
                         openCameraPreview = true
                     },
@@ -220,6 +225,18 @@ fun AddEditScreen(
             },
             onImageCaptured = { image ->
                 images += image
+            }
+        )
+    }
+
+    if (openDrawingScreen) {
+        DrawingScreen(
+            onBack = {
+                openDrawingScreen = false
+            },
+            onSave = {
+                images += it
+                openDrawingScreen = false
             }
         )
     }
@@ -248,7 +265,6 @@ private fun AddEditScreenPreview() = NotifyTheme {
         ),
         isNew = true,
         navigateBack = {},
-        showDrawingScreen = {},
         saveNote = { _, _, _ -> },
         deleteNote = {}
     )

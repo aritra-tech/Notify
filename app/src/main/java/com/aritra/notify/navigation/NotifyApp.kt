@@ -34,7 +34,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aritra.notify.R
-import com.aritra.notify.components.drawing.DrawingScreen
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditRoute
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
 import com.aritra.notify.ui.screens.notes.trash.trashNoteDest
@@ -45,8 +44,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
     val bottomNavItem = getBottomNavItems()
     val screensWithHiddenNavBar = listOf(
         "${NotifyScreens.AddEditNotes.name}/{noteId}",
-        NotifyScreens.TrashNoteScreen.name,
-        NotifyScreens.Drawing.name
+        NotifyScreens.TrashNoteScreen.name
     )
     val backStackEntry = navController.currentBackStackEntryAsState()
 
@@ -126,20 +124,6 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                 SettingsScreen(controller = navController)
             }
             trashNoteDest(navController)
-
-            composable(
-                route = NotifyScreens.Drawing.name
-            ) {
-                DrawingScreen(
-                    onBack = {
-                        navController.popBackStack()
-                    },
-                    onSave = { drawing ->
-                        navController.popBackStack()
-                        navController.currentBackStackEntry?.savedStateHandle?.set("drawing", drawing)
-                    }
-                )
-            }
         }
     }
 }

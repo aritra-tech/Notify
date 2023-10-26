@@ -145,10 +145,4 @@ class AddEditViewModel @Inject constructor(
             onSuccess(true)
         }
     }
-
-    fun addImages(vararg image: Uri?) {
-        _note.update {
-            it.copy(image = it.image + image)
-        }
-    }
 }

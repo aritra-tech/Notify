@@ -39,6 +39,7 @@ fun NoteImages(
             content = {
                 items(
                     count = images.size,
+                    key = { index -> images[index] },
                     itemContent = { index ->
                         Box(
                             Modifier
