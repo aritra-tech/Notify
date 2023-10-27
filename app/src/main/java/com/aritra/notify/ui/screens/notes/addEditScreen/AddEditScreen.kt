@@ -131,7 +131,7 @@ fun AddEditScreen(
                                 images = images,
                                 isNew = isNew,
                                 onRemoveImage = { index ->
-                                    if (index >= 0 && index <= images.lastIndex) {
+                                    if (index in images.indices) {
                                         images.removeAt(index)
                                     }
                                 }

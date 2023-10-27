@@ -1,12 +1,14 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.net.Uri
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
@@ -33,54 +35,63 @@ fun NoteImages(
     modifier: Modifier = Modifier,
     onRemoveImage: (Int) -> Unit,
 ) {
-    if (images.isNotEmpty()) {
-        LazyRow(
-            modifier = modifier.fillMaxWidth(),
-            content = {
-                items(
-                    count = images.size,
-                    key = { index -> images[index] },
-                    itemContent = { index ->
-                        Box(
-                            Modifier
-                                .size(180.dp)
-                                .padding(4.dp)
-                                .clip(RoundedCornerShape(8.dp)),
-                            content = {
-                                ZoomableAsyncImage(
-                                    modifier = Modifier.fillMaxSize(),
-                                    model = images[index],
-                                    contentDescription = stringResource(R.string.image),
-                                    contentScale = ContentScale.Crop
-                                )
-                                if (isNew) {
-                                    FilledTonalIconButton(
-                                        modifier = Modifier
-                                            .align(Alignment.TopEnd)
-                                            .size(25.dp),
-                                        onClick = {
-                                            onRemoveImage(index)
-                                        },
-                                        colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
-                                                alpha = 0.6f
-                                            )
-                                        ),
-                                        content = {
-                                            Icon(
-                                                imageVector = Icons.Outlined.Close,
-                                                contentDescription = stringResource(R.string.clear_image)
-                                            )
-                                        }
-                                    )
-                                }
-                            }
+    // TODO: Lazy Row crashes when removing images, should report to the compose team, so for now we use scrollable row
+    Row(
+        modifier = modifier
+            .horizontalScroll(rememberScrollState())
+            .fillMaxWidth(),
+        content = {
+            images.forEachIndexed { index, image ->
+                ImageItem(
+                    image = image,
+                    showRemoveButton = isNew,
+                    onRemove = { onRemoveImage(index) }
+                )
+            }
+        }
+    )
+}
+
+@Composable
+private fun ImageItem(
+    image: Uri,
+    showRemoveButton: Boolean,
+    modifier: Modifier = Modifier,
+    onRemove: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .size(180.dp)
+            .padding(4.dp)
+            .clip(RoundedCornerShape(8.dp)),
+        content = {
+            ZoomableAsyncImage(
+                modifier = Modifier.fillMaxSize(),
+                model = image,
+                contentDescription = stringResource(R.string.image),
+                contentScale = ContentScale.Crop
+            )
+            if (showRemoveButton) {
+                FilledTonalIconButton(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .size(25.dp),
+                    onClick = onRemove,
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
+                            alpha = 0.6f
+                        )
+                    ),
+                    content = {
+                        Icon(
+                            imageVector = Icons.Outlined.Close,
+                            contentDescription = stringResource(R.string.clear_image)
                         )
                     }
                 )
             }
-        )
-    }
+        }
+    )
 }
 
 @Preview(showBackground = true)
