@@ -26,8 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +44,8 @@ import com.aritra.notify.domain.models.Note
 import com.aritra.notify.utils.Const
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -56,7 +56,7 @@ fun NotesCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
-    val painter = rememberSaveable { mutableStateOf(noteModel.image) }
+    val painter by rememberUpdatedState(newValue = noteModel.image)
     val context = LocalContext.current
 
     OutlinedCard(
