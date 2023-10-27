@@ -19,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -79,21 +80,34 @@ fun NotesCard(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            if (isSelected) {
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.TopEnd)
-                )
+            Row(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+            ) {
+                if (noteModel.isPinned) {
+                    Icon(
+                        imageVector = Icons.Default.PushPin,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier
+                            .size(24.dp)
+                    )
+                }
+                if (isSelected) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier
+                            .size(24.dp)
+                    )
+                }
             }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                if (painter.value.isNotEmpty()) {
+                if (painter.isNotEmpty()) {
                     Row(
                         modifier = Modifier
                             .height(80.dp)
@@ -101,7 +115,7 @@ fun NotesCard(
                             .horizontalScroll(rememberScrollState()),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        painter.value.forEach {
+                        painter.forEach {
                             AsyncImage(
                                 model = ImageRequest.Builder(context)
                                     .data(it ?: "")

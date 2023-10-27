@@ -309,6 +309,8 @@ fun NoteScreen(
                                 itemsIndexed(
                                     listOfAllNotes.filter { note ->
                                         note.title.contains(searchQuery, true)
+                                    }.sortedByDescending {note->
+                                        note.isPinned
                                     }
                                 ) { _, notesModel ->
                                     val isSelected = selectedNoteIds.contains(notesModel.id)
@@ -352,6 +354,8 @@ fun NoteScreen(
                                 items(
                                     listOfAllNotes.filter { note ->
                                         note.title.contains(searchQuery, true)
+                                    }.sortedByDescending {note->
+                                        note.isPinned
                                     }
                                 ) { notesModel ->
 
