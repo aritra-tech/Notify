@@ -70,7 +70,7 @@ import com.aritra.notify.components.actions.LayoutToggleButton
 import com.aritra.notify.components.bottombar.SelectedModeBottomBar
 import com.aritra.notify.components.note.GridNoteCard
 import com.aritra.notify.components.note.NotesCard
-import com.aritra.notify.components.topbar.SelectionModeTopAppBar
+import com.aritra.notify.components.appbar.SelectionModeTopAppBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
 import kotlinx.coroutines.launch
