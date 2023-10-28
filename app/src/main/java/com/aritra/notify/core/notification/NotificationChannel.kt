@@ -8,10 +8,10 @@ import android.os.Build
 
 fun createNotificationChannel(
     context: Context,
-){
+) {
     val notificationManager = context.getSystemService(NotificationManager::class.java)
-    if (Build.VERSION.SDK_INT >= 26){
-        NotificationChannel("1","ReminderNote",NotificationManager.IMPORTANCE_HIGH).apply {
+    if (Build.VERSION.SDK_INT >= 26) {
+        NotificationChannel("1", "ReminderNote", NotificationManager.IMPORTANCE_HIGH).apply {
             description = "Reminder Notes"
             enableLights(true)
             lightColor = Color.BLUE

@@ -146,7 +146,6 @@ fun NotesCard(
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Column {
                         formattedDateTime?.let {
-
                             Text(
                                 text = formattedDateTime,
                                 fontSize = 16.sp,
@@ -155,7 +154,7 @@ fun NotesCard(
                             )
                         }
                         noteModel.reminderDateTime?.let {
-                            ReminderSection(it)
+                            ReminderSection(it, noteModel.isReminded)
                         }
                     }
                     dateTimeDeleted?.let {
@@ -175,7 +174,7 @@ fun NotesCard(
 @Composable
 fun ReminderSection(
     dateTime: LocalDateTime,
-    isReminded: Boolean = false
+    isReminded: Boolean = false,
 ) {
     ElevatedAssistChip(elevation = AssistChipDefaults.elevatedAssistChipElevation(4.dp), leadingIcon = {
         Icon(imageVector = Icons.Default.AccessTime, contentDescription = "")

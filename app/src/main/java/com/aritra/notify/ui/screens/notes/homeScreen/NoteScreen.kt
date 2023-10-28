@@ -46,7 +46,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,6 +63,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BackPressHandler
 import com.aritra.notify.components.actions.LayoutToggleButton
@@ -84,7 +84,7 @@ fun NoteScreen(
     val viewModel = hiltViewModel<NoteScreenViewModel>()
 
     val addEditViewModel = hiltViewModel<AddEditViewModel>()
-    val listOfAllNotes by viewModel.listOfNotes.observeAsState(listOf())
+    val listOfAllNotes by viewModel.listOfNotes.collectAsStateWithLifecycle(emptyList())
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var isGridView by rememberSaveable { mutableStateOf(false) }
 
@@ -302,7 +302,9 @@ fun NoteScreen(
                                 items(
                                     listOfAllNotes.filter { note ->
                                         note.title.contains(searchQuery, true)
-                                    }
+                                    },
+                                    key = { it.id },
+                                    contentType = { it.id }
                                 ) { notesModel ->
 
                                     val isSelected = selectedNoteIds.contains(notesModel.id)

@@ -16,27 +16,35 @@ class AlarmSchedulerImpl @Inject constructor(private val context: Context) : Ala
     init {
         checkAlarm()
     }
+
     override fun scheduleAlarm(alarmInfo: AlarmInfo) {
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.ELAPSED_REALTIME_WAKEUP,
             SystemClock.elapsedRealtime() + alarmInfo.triggerMillis,
-            getNoteAlarmPendingIntent(context,alarmInfo.noteId)!!
+            getNoteAlarmPendingIntent(context, alarmInfo.noteId)!!
         )
     }
 
     override fun cancelAlarm(alarmInfo: AlarmInfo) {
-        getNoteAlarmPendingIntent(context,alarmInfo.noteId,PendingIntent.FLAG_NO_CREATE)?.let {
+        getNoteAlarmPendingIntent(context, alarmInfo.noteId, PendingIntent.FLAG_NO_CREATE)?.let {
             alarmManager.cancel(it)
         }
     }
-    private fun checkAlarm(){
-        if (Build.VERSION.SDK_INT >= 31){
-            if (alarmManager.canScheduleExactAlarms()){
+
+    override fun editScheduleAlarm(alarmInfo: AlarmInfo) {
+        // TODO: improve later it is better tp check if pending Intent sent by using  Flag_NO_CREATE if return null it means not set pending intent by note id
+        cancelAlarm(alarmInfo)
+        scheduleAlarm(alarmInfo)
+    }
+
+    private fun checkAlarm() {
+        if (Build.VERSION.SDK_INT >= 31) {
+            if (alarmManager.canScheduleExactAlarms()) {
                 // NO OP for now
-            }else{
+            } else {
                 context.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
             }
-        }else{
+        } else {
             // NO OP for now
         }
     }

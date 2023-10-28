@@ -4,7 +4,6 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.aritra.notify.core.alarm.AlarmScheduler
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.repository.NoteRepository
 import com.aritra.notify.domain.usecase.SaveSelectedImageUseCase
@@ -96,7 +95,9 @@ class AddEditViewModel @Inject constructor(
         val oldNote = noteRepository.getNoteById(newNote.id) ?: return@launch
         // exit the method if the note has not been modified
 
-        if (oldNote.title == newNote.title && oldNote.note == newNote.note && oldNote.image == newNote.image && oldNote.reminderDateTime == newNote.reminderDateTime) {
+        if (oldNote.title == newNote.title && oldNote.note == newNote.note && oldNote.image == newNote.image &&
+            oldNote.reminderDateTime == newNote.reminderDateTime
+        ) {
             // Note has not been modified
             withContext(Dispatchers.Main) {
                 onSuccess(false)
@@ -105,6 +106,9 @@ class AddEditViewModel @Inject constructor(
         }
 //        if (oldNote.title == newNote.title && oldNote.note == newNote.note && oldNote.image == newNote.image) return@launch
         // if the image has been modified, delete the old image
+
+        if (oldNote.reminderDateTime != null && !oldNote.isReminded) {
+        }
         if (oldNote.image != newNote.image) {
             oldNote.image.forEach { imageUri ->
                 imageUri?.toFile(getApplication())?.delete()
@@ -154,7 +158,8 @@ class AddEditViewModel @Inject constructor(
     fun updateReminderDateTime(dateTime: LocalDateTime?) {
         _note.update {
             it.copy(
-                reminderDateTime = dateTime
+                reminderDateTime = dateTime,
+                isReminded = false
             )
         }
     }

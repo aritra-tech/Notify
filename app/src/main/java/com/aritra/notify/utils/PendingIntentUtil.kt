@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import com.aritra.notify.reciever.ReminderNoteNotificationBroadcast
 
-
 fun getNoteAlarmPendingIntent(
     context: Context,
     id: Int,
@@ -15,7 +14,7 @@ fun getNoteAlarmPendingIntent(
         context,
         id,
         Intent(context, ReminderNoteNotificationBroadcast::class.java).apply {
-            putExtra("noteID", id)
+            putExtra(Const.NOTE_ID_EXTRA, id)
         },
         flag or PendingIntent.FLAG_IMMUTABLE
     )

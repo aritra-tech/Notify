@@ -68,7 +68,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -91,6 +90,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -102,7 +102,6 @@ import com.aritra.notify.components.camPreview.CameraPreview
 import com.aritra.notify.components.dialog.DateTimeDialog
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.topbar.AddEditTopBar
-import com.aritra.notify.domain.models.Note
 import com.aritra.notify.utils.Const
 import com.aritra.notify.utils.formatReminderDateTime
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -110,7 +109,6 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.Calendar
 import java.util.Locale
 import kotlin.math.ceil
@@ -135,7 +133,6 @@ fun AddEditScreen(
     }
 
     val note by viewModel.note.collectAsState()
-
 
     val dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
 
@@ -168,6 +165,9 @@ fun AddEditScreen(
         mutableStateOf(false)
     }
 
+    var isEditDateTime by remember {
+        mutableStateOf(false)
+    }
     val formattedDateTime = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
     val formattedCharacterCount = remember(note) { "${(note.title.length) + (note.note.length)} characters" }
     val formattedWordCount = remember(note) { "${countWords(note.note)} words" }
@@ -212,7 +212,6 @@ fun AddEditScreen(
     })
 
 // edit note
-
 
     val saveEditNote: () -> Unit = if (isNew) {
         remember {
@@ -523,16 +522,23 @@ fun AddEditScreen(
                     note.reminderDateTime?.let {
                         ElevatedAssistChip(leadingIcon = {
                             Icon(imageVector = Icons.Default.AccessTime, contentDescription = "")
-                        }, onClick = { /*TODO*/ }, label = {
+                        }, onClick = {
+                            isEditDateTime = !isEditDateTime
+                        }, label = {
                             Text(
                                 text = it.formatReminderDateTime(),
                                 fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.SemiBold,
+                                textDecoration = if (note.isReminded) TextDecoration.LineThrough else null
                             )
                         }, trailingIcon = {
-                            Icon(imageVector = Icons.Default.Close, contentDescription = "",modifier = Modifier.clickable {
-                                viewModel.updateReminderDateTime(null)
-                            })
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "",
+                                modifier = Modifier.clickable {
+                                    viewModel.updateReminderDateTime(null)
+                                }
+                            )
                         }, modifier = Modifier)
                     }
                 }
@@ -554,7 +560,6 @@ fun AddEditScreen(
                         }
                     }
                 )
-
             }
         }
     }
@@ -569,13 +574,13 @@ fun AddEditScreen(
         }
     )
 
-    DateTimeDialog(isOpen = shouldShowDialogDateTime, onDateTimeUpdated = {
+    DateTimeDialog(isOpen = shouldShowDialogDateTime, isEdit = isEditDateTime, onDateTimeUpdated = {
         viewModel.updateReminderDateTime(it)
         shouldShowDialogDateTime = false
     }, onConfirmCallback = {
-
     }) {
         shouldShowDialogDateTime = false
+        isEditDateTime = false
     }
     if (openCameraBottomSheet) {
         BottomSheetScaffold(scaffoldState = scaffoldState, sheetPeekHeight = 0.dp, sheetContent = {}) {

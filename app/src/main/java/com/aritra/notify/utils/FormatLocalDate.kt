@@ -5,7 +5,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.time.temporal.ChronoField
 import java.time.temporal.ChronoUnit
 
 fun LocalDateTime.formatReminderDateTime(): String {
@@ -14,7 +13,6 @@ fun LocalDateTime.formatReminderDateTime(): String {
     val buildString = StringBuilder()
     when {
         calcDays == 1 -> {
-
             buildString.append("Tomorrow , ")
             buildString.append(format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)))
         }
@@ -33,17 +31,17 @@ fun LocalDateTime.formatReminderDateTime(): String {
     return buildString.toString()
 }
 
-fun LocalDateTime.checkDateIsNotOld():Boolean{
+fun LocalDateTime.checkDateIsNotOld(): Boolean {
     val currentDateTime = LocalDateTime.now()
     return (currentDateTime.dayOfMonth - dayOfMonth) <= 0
 }
 
-fun LocalDateTime.checkTimeIsNotOld():Boolean{
+fun LocalDateTime.checkTimeIsNotOld(): Boolean {
     val currentDateTime = LocalTime.now()
-    return currentDateTime.until(this.toLocalTime(),ChronoUnit.MILLIS) >= 0
+    return currentDateTime.until(this.toLocalTime(), ChronoUnit.MILLIS) >= 0
 }
 
-fun LocalDateTime.triggerDateTime():Long{
+fun LocalDateTime.triggerDateTime(): Long {
     val currentDateTime = LocalDateTime.now()
-    return currentDateTime.until(this,ChronoUnit.MILLIS)
+    return currentDateTime.until(this, ChronoUnit.MILLIS)
 }
