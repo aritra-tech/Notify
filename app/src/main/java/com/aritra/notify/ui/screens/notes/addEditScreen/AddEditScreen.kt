@@ -1,87 +1,33 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
-import android.Manifest
-import android.content.ContentValues
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.net.Uri
-import android.provider.MediaStore
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture.OnImageCapturedCallback
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
-import androidx.camera.view.CameraController
-import androidx.camera.view.LifecycleCameraController
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import android.util.Log
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Cameraswitch
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.ElevatedAssistChip
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -90,434 +36,156 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
-import com.aritra.notify.components.actions.BottomSheetOptions
-import com.aritra.notify.components.actions.SpeechRecognizerContract
+import com.aritra.notify.components.appbar.AddEditBottomBar
+import com.aritra.notify.components.appbar.AddEditTopBar
 import com.aritra.notify.components.camPreview.CameraPreview
-import com.aritra.notify.components.dialog.DateTimeDialog
 import com.aritra.notify.components.dialog.TextDialog
-import com.aritra.notify.components.topbar.AddEditTopBar
-import com.aritra.notify.utils.Const
-import com.aritra.notify.utils.formatReminderDateTime
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
-import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-import kotlin.math.ceil
+import com.aritra.notify.components.drawing.DrawingScreen
+import com.aritra.notify.domain.models.Note
+import com.aritra.notify.ui.theme.NotifyTheme
+import java.util.Date
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun AddEditScreen(
-    noteId: Int?,
+    note: Note,
+    isNew: Boolean,
+    modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
-    showDrawingScreen: () -> Unit,
+    saveNote: (String, String, List<Uri>) -> Unit,
+    deleteNote: (() -> Unit) -> Unit,
 ) {
-    val viewModel = hiltViewModel<AddEditViewModel>()
-    val context = LocalContext.current
-    val isNew = noteId == null
-
-    LaunchedEffect(noteId) {
-        viewModel.getNoteById(noteId)
-    }
-
-    var shouldShowDialogDateTime by remember {
-        mutableStateOf(false)
-    }
-
-    val note by viewModel.note.collectAsState()
-
-    val dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
-
-    var characterCount by remember(note) { mutableIntStateOf(note.title.length + note.note.length) }
-    val cancelDialogState = remember { mutableStateOf(false) }
-    var showSheet by remember { mutableStateOf(false) }
-    val dateFormat = SimpleDateFormat(Const.DATE_FORMAT, Locale.getDefault())
-    val timeFormat = SimpleDateFormat(Const.TIME_FORMAT, Locale.getDefault())
-    timeFormat.isLenient = false
-    val currentDate = dateFormat.format(Calendar.getInstance().time)
-    val currentTime = timeFormat.format(Calendar.getInstance().time).uppercase(Locale.getDefault())
     val focus = LocalFocusManager.current
-    val skipPartiallyExpanded by remember { mutableStateOf(false) }
-    val bottomSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = skipPartiallyExpanded
-    )
 
-    val wordsPerMinute = 238 // words per minute
-    val wordCount = remember(note) { derivedStateOf { countWords(note.note) } }
-    var totalWords by remember(wordCount) {
-        mutableIntStateOf(wordCount.value)
+    var title by remember {
+        mutableStateOf(note.title)
     }
-    val readTimeProcess = remember { derivedStateOf { calculateReadTime(totalWords, wordsPerMinute) } }
-    var readTime by remember {
-        mutableIntStateOf(readTimeProcess.value)
+    var description by remember {
+        mutableStateOf(note.note)
     }
-
-    val scaffoldState = rememberBottomSheetScaffoldState()
-    var openCameraBottomSheet by remember {
+    val images = remember {
+        mutableStateListOf(*note.image.filterNotNull().toTypedArray())
+    }
+    val cancelDialogState = remember {
         mutableStateOf(false)
     }
-
+    var openCameraPreview by remember {
+        mutableStateOf(false)
+    }
     var isEditDateTime by remember {
         mutableStateOf(false)
     }
-    val formattedDateTime = SimpleDateFormat(Const.DATE_TIME_FORMAT, Locale.getDefault()).format(dateTime ?: 0)
-    val formattedCharacterCount = remember(note) { "${(note.title.length) + (note.note.length)} characters" }
-    val formattedWordCount = remember(note) { "${countWords(note.note)} words" }
-    val formattedReadTime = remember(note) { "${calculateReadTime(countWords(note.note), wordsPerMinute)} sec read" }
-
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
-        viewModel.addImages(*uris.toTypedArray())
-    }
-    val controller = remember {
-        LifecycleCameraController(context).apply {
-            setEnabledUseCases(CameraController.IMAGE_CAPTURE)
-        }
+    var openDrawingScreen by remember {
+        mutableStateOf(false)
     }
 
-    val permissionState = rememberPermissionState(
-        permission = Manifest.permission.RECORD_AUDIO
-    )
-    val camPermissionState = rememberPermissionState(
-        permission = Manifest.permission.CAMERA
-    )
-
-    // add note
-    if (isNew) {
-        SideEffect {
-            permissionState.launchPermissionRequest()
-        }
-        if ((permissionState.status.isGranted || !permissionState.status.isGranted) &&
-            !camPermissionState.status.isGranted
-        ) {
-            SideEffect {
-                camPermissionState.launchPermissionRequest()
-            }
-        }
-    }
-    val speechRecognizerLauncher = rememberLauncherForActivityResult(contract = SpeechRecognizerContract(), onResult = {
-        if (it.isNullOrEmpty()) {
-            return@rememberLauncherForActivityResult
-        }
-        for (st in it) {
-            viewModel.updateDescription("${note.note} $st")
-        }
-    })
-
-// edit note
-
-    val saveEditNote: () -> Unit = if (isNew) {
-        remember {
-            {
-                viewModel.insertNote(
-                    note = note.copy(
-                        dateTime = dateTime
-                    ),
-                    onSuccess = {
-                        navigateBack()
-                        Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
-                    }
-                )
-            }
-        }
-    } else {
-        remember {
-            {
-                viewModel.updateNotes { updated ->
-                    if (updated) {
-                        navigateBack()
-                        Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
-                    } else {
-                        navigateBack()
-                    }
-                }
-            }
-        }
+    // Makes sure that the title is updated when the note is updated
+    LaunchedEffect(note.title) {
+        title = note.title
     }
 
-    Scaffold(topBar = {
-        AddEditTopBar(
-            note = note,
-            isNew = isNew,
-            onBackPress = if (isNew) {
-                { cancelDialogState.value = true }
-            } else {
-                navigateBack
-            },
-            saveNote = if (isNew) {
-                saveEditNote
-            } else {
-                {}
-            },
-            updateNote = if (isNew) {
-                {}
-            } else {
-                saveEditNote
-            }
-        )
-    }, bottomBar = {
-        if (isNew) {
-            Column(
-                Modifier
-                    .navigationBarsPadding()
-                    .imePadding()
-            ) {
-                BottomAppBar(
-                    containerColor = Color.Transparent,
-                    content = {
-                        IconButton(onClick = { showSheet = true }) {
-                            Icon(
-                                modifier = Modifier.size(25.dp),
-                                painter = painterResource(id = R.drawable.add_box_icon),
-                                contentDescription = stringResource(R.string.add_box)
-                            )
-                        }
-                        IconButton(onClick = { shouldShowDialogDateTime = true }) {
-                            Icon(
-                                modifier = Modifier.size(25.dp),
-                                painter = painterResource(id = R.drawable.add_alert),
-                                contentDescription = stringResource(R.string.add_box)
-                            )
-                        }
-                        if (showSheet) {
-                            ModalBottomSheet(
-                                onDismissRequest = { showSheet = false },
-                                sheetState = bottomSheetState,
-                                dragHandle = { BottomSheetDefaults.DragHandle() }
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .navigationBarsPadding()
-                                        .padding(16.dp)
-                                ) {
-                                    BottomSheetOptions(
-                                        text = stringResource(R.string.take_image),
-                                        icon = painterResource(id = R.drawable.camera_icon),
-                                        onClick = {
-                                            if (camPermissionState.status.isGranted) {
-                                                openCameraBottomSheet = true
-                                            } else {
-                                                camPermissionState.launchPermissionRequest()
-                                            }
-                                            showSheet = false
-                                        }
-                                    )
-                                    BottomSheetOptions(
-                                        text = stringResource(R.string.add_image),
-                                        icon = painterResource(id = R.drawable.gallery_icon),
-                                        onClick = {
-                                            launcher.launch(
-                                                PickVisualMediaRequest(
-                                                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                                )
-                                            )
-                                            showSheet = false
-                                        }
-                                    )
-                                    BottomSheetOptions(
-                                        text = stringResource(R.string.drawing),
-                                        icon = painterResource(id = R.drawable.gallery_icon),
-                                        onClick = {
-                                            showDrawingScreen()
-                                            showSheet = false
-                                        }
-                                    )
-                                    BottomSheetOptions(
-                                        text = stringResource(R.string.speech_to_text),
-                                        icon = painterResource(id = R.drawable.mic_icon),
-                                        onClick = {
-                                            if (permissionState.status.isGranted) {
-                                                speechRecognizerLauncher.launch(Unit)
-                                            } else {
-                                                permissionState.launchPermissionRequest()
-                                            }
-                                            showSheet = false
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                )
-            }
-        }
-    }) { contentPadding ->
+    // Makes sure that the description is updated when the note is updated
+    LaunchedEffect(note.note) {
+        description = note.note
+    }
 
-        val scrollState = rememberScrollState()
-        var descriptionScrollOffset by remember { mutableIntStateOf(0) }
-        var contentSize by remember { mutableIntStateOf(0) }
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            AddEditTopBar(
+                title = title,
+                description = description,
+                isNew = isNew,
+                onBackPress = if (isNew) {
+                    { cancelDialogState.value = true }
+                } else {
+                    navigateBack
+                },
+                saveNote = {
+                    Log.e("AddEditScreen app bar", title)
+                    Log.e("AddEditScreen app bar", description)
+                    saveNote(title, description, images)
+                },
+                deleteNote = deleteNote
+            )
+        },
+        content = { scaffoldPadding ->
+            val scrollState = rememberScrollState()
+            var descriptionScrollOffset by remember { mutableIntStateOf(0) }
+            var contentSize by remember { mutableIntStateOf(0) }
 
-        Box(
-            modifier = Modifier
-                .padding(contentPadding)
-                .onGloballyPositioned {
-                    contentSize = it.size.height
-                }
-        ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-            ) {
-                Column(
-                    modifier = Modifier.onGloballyPositioned { layoutCoordinates ->
-                        descriptionScrollOffset = layoutCoordinates.size.height
+                    .padding(scaffoldPadding)
+                    .onGloballyPositioned {
+                        contentSize = it.size.height
                     }
-                ) {
-                    if (isNew) {
-                        if (note.image.isNotEmpty()) {
-                            LazyRow {
-                                items(note.image.size) { index ->
-                                    Box(
-                                        Modifier
-                                            .height(180.dp)
-                                            .width(180.dp)
-                                            .padding(4.dp)
-                                            .clip(RoundedCornerShape(8.dp))
-                                    ) {
-                                        ZoomableAsyncImage(
-                                            modifier = Modifier.fillMaxSize(),
-                                            model = note.image[index],
-                                            contentDescription = stringResource(R.string.image),
-                                            contentScale = ContentScale.Crop
-                                        )
-                                        FilledTonalIconButton(
-                                            modifier = Modifier
-                                                .align(Alignment.TopEnd)
-                                                .size(25.dp),
-                                            onClick = {
-                                                viewModel.removeImage(index)
-                                            },
-                                            colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
-                                                    alpha = 0.6f
-                                                )
-                                            )
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Outlined.Close,
-                                                contentDescription = stringResource(R.string.clear_image)
-                                            )
-                                        }
+                    .fillMaxSize()
+                    .verticalScroll(scrollState),
+                content = {
+                    Column(
+                        modifier = Modifier.onGloballyPositioned { layoutCoordinates ->
+                            descriptionScrollOffset = layoutCoordinates.size.height
+                        },
+                        content = {
+                            NoteImages(
+                                images = images,
+                                isNew = isNew,
+                                onRemoveImage = { index ->
+                                    if (index in images.indices) {
+                                        images.removeAt(index)
                                     }
                                 }
-                            }
-                        }
-                    } else {
-                        Row(
-                            modifier = Modifier
-                                .horizontalScroll(rememberScrollState())
-                        ) {
-                            note.image.forEach { uri ->
-                                ZoomableAsyncImage(
-                                    modifier = Modifier
-                                        .height(180.dp)
-                                        .width(180.dp)
-                                        .padding(4.dp)
-                                        .clip(RoundedCornerShape(8.dp)),
-                                    model = uri ?: "",
-                                    contentDescription = stringResource(R.string.image),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-                        }
-                    }
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = note.title,
-                        onValueChange = { newTitle ->
-                            viewModel.updateTitle(newTitle)
-                            if (isNew) {
-                                characterCount = newTitle.length + note.note.length
-                            }
-                        }, placeholder = {
-                            Text(
-                                stringResource(R.string.title),
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.W700,
-                                color = Color.Gray,
-                                fontFamily = FontFamily(Font(R.font.poppins_medium))
                             )
-                        },
-                        textStyle = TextStyle(
-                            fontSize = 24.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_medium))
-                        ),
-                        maxLines = Int.MAX_VALUE,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                            disabledContainerColor = MaterialTheme.colorScheme.surface,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-                        ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            capitalization = KeyboardCapitalization.Sentences,
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Next
-                        ),
-                        keyboardActions = KeyboardActions(onNext = {
-                            focus.moveFocus(FocusDirection.Down)
-                        })
+
+                            TextField(
+                                modifier = Modifier.fillMaxWidth(),
+                                value = title,
+                                onValueChange = { newTitle ->
+                                    title = newTitle
+                                },
+                                placeholder = {
+                                    Text(
+                                        stringResource(R.string.title),
+                                        fontSize = 24.sp,
+                                        fontWeight = FontWeight.W700,
+                                        color = Color.Gray,
+                                        fontFamily = FontFamily(Font(R.font.poppins_medium))
+                                    )
+                                },
+                                textStyle = TextStyle(
+                                    fontSize = 24.sp,
+                                    fontFamily = FontFamily(Font(R.font.poppins_medium))
+                                ),
+                                maxLines = Int.MAX_VALUE,
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                    disabledContainerColor = MaterialTheme.colorScheme.surface,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                    disabledIndicatorColor = Color.Transparent
+                                ),
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    capitalization = KeyboardCapitalization.Sentences,
+                                    keyboardType = KeyboardType.Text,
+                                    imeAction = ImeAction.Next
+                                ),
+                                keyboardActions = KeyboardActions(
+                                    onNext = {
+                                        focus.moveFocus(FocusDirection.Down)
+                                    }
+                                )
+                            )
+                        }
                     )
-                    TextField(
-                        value = if (isNew) {
-                            "$currentDate, $currentTime   |  $readTime sec read"
-                        } else {
-                            "$formattedDateTime   |  $formattedReadTime"
-                        },
-                        onValueChange = { },
-                        modifier = Modifier.fillMaxWidth(),
-                        readOnly = true,
-                        textStyle = TextStyle(
-                            fontSize = 15.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_light))
-                        ),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                            disabledContainerColor = MaterialTheme.colorScheme.surface,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-                        ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Text
-                        )
-                    )
-                    TextField(
-                        value = if (isNew) {
-                            "$characterCount characters   |  $totalWords words"
-                        } else {
-                            "$formattedCharacterCount | $formattedWordCount"
-                        },
-                        onValueChange = { },
-                        modifier = Modifier.fillMaxWidth(),
-                        readOnly = true,
-                        textStyle = TextStyle(
-                            fontSize = 15.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_light))
-                        ),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                            disabledContainerColor = MaterialTheme.colorScheme.surface,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-                        ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Text
-                        )
+
+                    NoteStats(
+                        title = title,
+                        description = description,
+                        dateTime = note.dateTime
                     )
                     note.reminderDateTime?.let {
                         ElevatedAssistChip(leadingIcon = {
@@ -543,25 +211,60 @@ fun AddEditScreen(
                     }
                 }
 
-                DescriptionTextField(
-                    scrollOffset = descriptionScrollOffset,
-                    contentSize = contentSize,
-                    description = note.note,
-                    parentScrollState = scrollState,
-                    isNewNote = isNew,
-                    onDescriptionChange = { newDescription ->
-                        viewModel.updateDescription(newDescription)
-                        if (isNew) {
-                            characterCount = note.title.length + newDescription.length
-                            totalWords = wordCount.value
-                            readTime = readTimeProcess.value
-                        } else {
-                            viewModel.updateDescription(newDescription)
+                    DescriptionTextField(
+                        scrollOffset = descriptionScrollOffset,
+                        contentSize = contentSize,
+                        description = description,
+                        parentScrollState = scrollState,
+                        isNewNote = isNew,
+                        onDescriptionChange = { newDescription ->
+                            description = newDescription
                         }
+                    )
+                }
+            )
+        },
+        bottomBar = {
+            if (isNew) {
+                AddEditBottomBar(
+                    showDrawingScreen = {
+                        openDrawingScreen = true
+                    },
+                    showCameraSheet = {
+                        openCameraPreview = true
+                    },
+                    onImagesSelected = {
+                        images += it
+                    },
+                    onSpeechRecognized = {
+                        description += " $it"
                     }
                 )
             }
         }
+    )
+
+    if (openCameraPreview) {
+        CameraPreview(
+            close = {
+                openCameraPreview = false
+            },
+            onImageCaptured = { image ->
+                images += image
+            }
+        )
+    }
+
+    if (openDrawingScreen) {
+        DrawingScreen(
+            onBack = {
+                openDrawingScreen = false
+            },
+            onSave = {
+                images += it
+                openDrawingScreen = false
+            }
+        )
     }
     TextDialog(
         title = stringResource(R.string.are_you_sure),
@@ -627,53 +330,19 @@ fun AddEditScreen(
     }
 }
 
-fun takePhoto(controller: LifecycleCameraController, context: Context, onPhotoCaptured: (Uri?) -> Unit) {
-    controller.takePicture(
-        ContextCompat.getMainExecutor(context),
-        object : OnImageCapturedCallback() {
-            override fun onCaptureSuccess(image: ImageProxy) {
-                super.onCaptureSuccess(image)
-                val matrix = Matrix().apply {
-                    postRotate(image.imageInfo.rotationDegrees.toFloat())
-                    if (controller.cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
-                        postScale(-1f, 1f)
-                    }
-                }
-                val bitmap = Bitmap.createBitmap(image.toBitmap(), 0, 0, image.width, image.height, matrix, true)
-                Toast.makeText(context, "Photo Attached Successfully", Toast.LENGTH_SHORT).show()
-                onPhotoCaptured(bitmap.toUri(context = context))
-            }
-
-            override fun onError(exception: ImageCaptureException) {
-                super.onError(exception)
-                Toast.makeText(context, "Something Went Wrong ! Try Again", Toast.LENGTH_SHORT).show()
-            }
-        }
+@Preview(showBackground = true)
+@Composable
+private fun AddEditScreenPreview() = NotifyTheme {
+    AddEditScreen(
+        note = Note(
+            title = "Title",
+            note = "Description",
+            image = listOf(),
+            dateTime = Date()
+        ),
+        isNew = true,
+        navigateBack = {},
+        saveNote = { _, _, _ -> },
+        deleteNote = {}
     )
-}
-
-fun Bitmap.toUri(context: Context, format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG): Uri? {
-    val values = ContentValues()
-    values.put(MediaStore.Images.Media.MIME_TYPE, "image/${format.name.lowercase(Locale.ROOT)}")
-    val uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-
-    uri?.let { imageUri ->
-        context.contentResolver.openOutputStream(imageUri)?.use { outputStream ->
-            if (compress(format, 100, outputStream)) {
-                return imageUri
-            }
-        }
-    }
-
-    return null
-}
-
-fun countWords(text: String): Int {
-    val words = text.split(Regex("\\s+"))
-    return words.count { it.isNotEmpty() }
-}
-
-private fun calculateReadTime(words: Int, wordsPerMinute: Int): Int {
-    val minutes = words / wordsPerMinute.toDouble()
-    return ceil(minutes * 60).toInt() // Convert to seconds
 }
