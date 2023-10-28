@@ -95,7 +95,7 @@ fun AddEditBottomBar(
                             content = {
                                 BottomSheetOptions(
                                     text = stringResource(R.string.take_image),
-                                    icon = painterResource(id = R.drawable.camera_icon),
+                                    icon = painterResource(id = R.drawable.camera),
                                     onClick = {
                                         if (cameraPermissionState.status.isGranted) {
                                             showCameraSheet()
@@ -107,7 +107,7 @@ fun AddEditBottomBar(
                                 )
                                 BottomSheetOptions(
                                     text = stringResource(R.string.add_image),
-                                    icon = painterResource(id = R.drawable.gallery_icon),
+                                    icon = painterResource(id = R.drawable.gallery),
                                     onClick = {
                                         imageLauncher.launch(
                                             PickVisualMediaRequest(
@@ -119,7 +119,7 @@ fun AddEditBottomBar(
                                 )
                                 BottomSheetOptions(
                                     text = stringResource(R.string.drawing),
-                                    icon = painterResource(id = R.drawable.gallery_icon),
+                                    icon = painterResource(id = R.drawable.drawing),
                                     onClick = {
                                         showDrawingScreen()
                                         showSheet = false
