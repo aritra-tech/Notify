@@ -44,7 +44,7 @@ class NoteScreenViewModel @Inject constructor(
 
     private suspend fun moveToTrash(noteId: Int) {
         trashNote.upsertTrashNote(TrashNote(noteId, LocalDateTime.now()))
-        val getNoteById = homeRepository.getNoteById(noteId)?: return
+        val getNoteById = homeRepository.getNoteById(noteId) ?: return
         if (getNoteById.reminderDateTime != null) {
             alarmScheduler.cancelAlarm(AlarmInfo(getNoteById.id, 0))
         }

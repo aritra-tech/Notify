@@ -78,8 +78,8 @@ fun AddEditRoute(
         }
     }
 
-    var rememberUpdateDateTime = remember{
-        {localDateTime :LocalDateTime? ->
+    var rememberUpdateDateTime = remember {
+        { localDateTime: LocalDateTime? ->
             viewModel.updateReminderDateTime(localDateTime)
         }
     }

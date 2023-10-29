@@ -66,7 +66,7 @@ fun AddEditScreen(
     navigateBack: () -> Unit,
     saveNote: (String, String, List<Uri>) -> Unit,
     deleteNote: (() -> Unit) -> Unit,
-    onUpdateReminderDateTime:(LocalDateTime?) -> Unit
+    onUpdateReminderDateTime: (LocalDateTime?) -> Unit,
 ) {
     val focus = LocalFocusManager.current
 
@@ -92,7 +92,7 @@ fun AddEditScreen(
         mutableStateOf(false)
     }
 
-    var shouldShowDialogDateTime by remember{
+    var shouldShowDialogDateTime by remember {
         mutableStateOf(false)
     }
     // Makes sure that the title is updated when the note is updated
@@ -302,9 +302,7 @@ fun AddEditScreen(
         shouldShowDialogDateTime = false
         isEditDateTime = false
     }
-
 }
-
 
 @Preview(showBackground = true)
 @Composable

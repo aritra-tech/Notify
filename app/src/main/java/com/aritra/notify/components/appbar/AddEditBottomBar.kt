@@ -43,7 +43,7 @@ fun AddEditBottomBar(
     onSpeechRecognized: (String) -> Unit,
     showDrawingScreen: () -> Unit,
     showCameraSheet: () -> Unit,
-    onReminderDateTime:() -> Unit
+    onReminderDateTime: () -> Unit,
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()

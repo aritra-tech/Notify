@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.repository.NoteRepository
 import com.aritra.notify.domain.usecase.SaveSelectedImageUseCase
-import com.aritra.notify.utils.toFile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -121,7 +120,9 @@ class AddEditViewModel @Inject constructor(
         val oldNote = noteRepository.getNoteById(newNote.id) ?: return@launch
 
         // exit the method if the note has not been modified
-        if (oldNote.title == title && oldNote.note == description && oldNote.image == images  && oldNote.reminderDateTime == newNote.reminderDateTime) {
+        if (oldNote.title == title && oldNote.note == description && oldNote.image == images &&
+            oldNote.reminderDateTime == newNote.reminderDateTime
+        ) {
             // Note has not been modified
             withContext(Dispatchers.Main) {
                 onSuccess(false)
