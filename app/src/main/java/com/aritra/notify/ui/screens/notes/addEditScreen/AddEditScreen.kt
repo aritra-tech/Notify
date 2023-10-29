@@ -2,6 +2,7 @@ package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +11,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.ElevatedAssistChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -36,16 +42,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
 import com.aritra.notify.components.appbar.AddEditBottomBar
 import com.aritra.notify.components.appbar.AddEditTopBar
 import com.aritra.notify.components.camPreview.CameraPreview
+import com.aritra.notify.components.dialog.DateTimeDialog
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.drawing.DrawingScreen
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.theme.NotifyTheme
+import com.aritra.notify.utils.formatReminderDateTime
+import java.time.LocalDateTime
 import java.util.Date
 
 @Composable
@@ -56,6 +66,7 @@ fun AddEditScreen(
     navigateBack: () -> Unit,
     saveNote: (String, String, List<Uri>) -> Unit,
     deleteNote: (() -> Unit) -> Unit,
+    onUpdateReminderDateTime:(LocalDateTime?) -> Unit
 ) {
     val focus = LocalFocusManager.current
 
@@ -81,6 +92,9 @@ fun AddEditScreen(
         mutableStateOf(false)
     }
 
+    var shouldShowDialogDateTime by remember{
+        mutableStateOf(false)
+    }
     // Makes sure that the title is updated when the note is updated
     LaunchedEffect(note.title) {
         title = note.title
@@ -187,6 +201,7 @@ fun AddEditScreen(
                         description = description,
                         dateTime = note.dateTime
                     )
+
                     note.reminderDateTime?.let {
                         ElevatedAssistChip(leadingIcon = {
                             Icon(imageVector = Icons.Default.AccessTime, contentDescription = "")
@@ -204,12 +219,11 @@ fun AddEditScreen(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = "",
                                 modifier = Modifier.clickable {
-                                    viewModel.updateReminderDateTime(null)
+                                    onUpdateReminderDateTime(null)
                                 }
                             )
                         }, modifier = Modifier)
                     }
-                }
 
                     DescriptionTextField(
                         scrollOffset = descriptionScrollOffset,
@@ -238,6 +252,9 @@ fun AddEditScreen(
                     },
                     onSpeechRecognized = {
                         description += " $it"
+                    },
+                    onReminderDateTime = {
+                        shouldShowDialogDateTime = true
                     }
                 )
             }
@@ -278,57 +295,16 @@ fun AddEditScreen(
     )
 
     DateTimeDialog(isOpen = shouldShowDialogDateTime, isEdit = isEditDateTime, onDateTimeUpdated = {
-        viewModel.updateReminderDateTime(it)
+        onUpdateReminderDateTime(it)
         shouldShowDialogDateTime = false
     }, onConfirmCallback = {
     }) {
         shouldShowDialogDateTime = false
         isEditDateTime = false
     }
-    if (openCameraBottomSheet) {
-        BottomSheetScaffold(scaffoldState = scaffoldState, sheetPeekHeight = 0.dp, sheetContent = {}) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it)
-            ) {
-                CameraPreview(controller = controller, modifier = Modifier.fillMaxSize())
 
-                IconButton(onClick = {
-                    openCameraBottomSheet = false
-                }, modifier = Modifier.offset(16.dp, 16.dp)) {
-                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "navigate back")
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    IconButton(onClick = {
-                        controller.cameraSelector =
-                            if (controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
-                                CameraSelector.DEFAULT_FRONT_CAMERA
-                            } else {
-                                CameraSelector.DEFAULT_BACK_CAMERA
-                            }
-                    }) {
-                        Icon(imageVector = Icons.Filled.Cameraswitch, contentDescription = "camera Switch")
-                    }
-                    IconButton(onClick = {
-                        takePhoto(controller, context, onPhotoCaptured = { uri ->
-                            if (uri == null) return@takePhoto
-                            viewModel.addImages(uri)
-                        })
-                    }) {
-                        Icon(imageVector = Icons.Filled.PhotoCamera, contentDescription = "Click To Capture")
-                    }
-                }
-            }
-        }
-    }
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -343,6 +319,7 @@ private fun AddEditScreenPreview() = NotifyTheme {
         isNew = true,
         navigateBack = {},
         saveNote = { _, _, _ -> },
-        deleteNote = {}
+        deleteNote = {},
+        onUpdateReminderDateTime = {}
     )
 }

@@ -13,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
+import java.time.LocalDateTime
 
 @Composable
 fun AddEditRoute(
@@ -77,6 +78,11 @@ fun AddEditRoute(
         }
     }
 
+    var rememberUpdateDateTime = remember{
+        {localDateTime :LocalDateTime? ->
+            viewModel.updateReminderDateTime(localDateTime)
+        }
+    }
     LaunchedEffect(noteId) {
         viewModel.getNoteById(noteId)
     }
@@ -87,6 +93,7 @@ fun AddEditRoute(
         isNew = isNew,
         navigateBack = navigateBack,
         saveNote = saveNote,
-        deleteNote = deleteNote
+        deleteNote = deleteNote,
+        onUpdateReminderDateTime = rememberUpdateDateTime
     )
 }

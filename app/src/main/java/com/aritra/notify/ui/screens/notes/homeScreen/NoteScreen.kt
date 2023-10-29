@@ -46,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -84,7 +85,7 @@ fun NoteScreen(
     val viewModel = hiltViewModel<NoteScreenViewModel>()
 
     val addEditViewModel = hiltViewModel<AddEditViewModel>()
-    val listOfAllNotes by viewModel.listOfNotes.collectAsStateWithLifecycle(emptyList())
+    val listOfAllNotes by viewModel.listOfNotes.observeAsState(emptyList())
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var isGridView by rememberSaveable { mutableStateOf(false) }
 
