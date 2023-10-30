@@ -5,8 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.aritra.notify.data.converters.CollectionConverter
 import com.aritra.notify.data.converters.DateTypeConverter
-import com.aritra.notify.data.converters.ListConverter
 import com.aritra.notify.data.converters.LocalDateTimeConverter
 import com.aritra.notify.data.converters.UriConverter
 import com.aritra.notify.data.dao.NoteDao
@@ -14,8 +14,13 @@ import com.aritra.notify.data.dao.TrashNoteDao
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.models.TrashNote
 
-@Database(entities = [Note::class, TrashNote::class], version = 4)
-@TypeConverters(DateTypeConverter::class, UriConverter::class, ListConverter::class, LocalDateTimeConverter::class)
+@Database(entities = [Note::class, TrashNote::class], version = 5)
+@TypeConverters(
+    DateTypeConverter::class,
+    UriConverter::class,
+    CollectionConverter::class,
+    LocalDateTimeConverter::class
+)
 abstract class NoteDatabase : RoomDatabase() {
 
     abstract fun noteDao(): NoteDao

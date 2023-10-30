@@ -1,7 +1,6 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -45,6 +45,7 @@ import com.aritra.notify.components.camPreview.CameraPreview
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.drawing.DrawingScreen
 import com.aritra.notify.domain.models.Note
+import com.aritra.notify.domain.models.Todo
 import com.aritra.notify.ui.theme.NotifyTheme
 import java.util.Date
 
@@ -54,7 +55,7 @@ fun AddEditScreen(
     isNew: Boolean,
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
-    saveNote: (String, String, List<Uri>) -> Unit,
+    saveNote: (String, String, List<Uri>, List<Todo>) -> Unit,
     deleteNote: (() -> Unit) -> Unit,
 ) {
     val focus = LocalFocusManager.current
@@ -66,7 +67,10 @@ fun AddEditScreen(
         mutableStateOf(note.note)
     }
     val images = remember {
-        mutableStateListOf(*note.image.filterNotNull().toTypedArray())
+        mutableStateListOf<Uri>()
+    }
+    val checklist = remember {
+        mutableStateListOf<Todo>()
     }
     val cancelDialogState = remember {
         mutableStateOf(false)
@@ -77,15 +81,24 @@ fun AddEditScreen(
     var openDrawingScreen by remember {
         mutableStateOf(false)
     }
+    var showChecklist by remember {
+        mutableStateOf(false)
+    }
 
-    // Makes sure that the title is updated when the note is updated
+    // Makes sure that the items are updated when the note is updated
     LaunchedEffect(note.title) {
         title = note.title
     }
-
-    // Makes sure that the description is updated when the note is updated
     LaunchedEffect(note.note) {
         description = note.note
+    }
+    LaunchedEffect(note.image) {
+        images.clear()
+        images.addAll(note.image.filterNotNull())
+    }
+    LaunchedEffect(note.checklist) {
+        checklist.clear()
+        checklist.addAll(note.checklist.sortedBy { it.isChecked })
     }
 
     Scaffold(
@@ -101,9 +114,7 @@ fun AddEditScreen(
                     navigateBack
                 },
                 saveNote = {
-                    Log.e("AddEditScreen app bar", title)
-                    Log.e("AddEditScreen app bar", description)
-                    saveNote(title, description, images)
+                    saveNote(title, description, images, checklist)
                 },
                 deleteNote = deleteNote
             )
@@ -185,6 +196,21 @@ fun AddEditScreen(
                         dateTime = note.dateTime
                     )
 
+                    TextButton(
+                        onClick = {
+                            showChecklist = !showChecklist
+                        },
+                        content = {
+                            Text(
+                                stringResource(R.string.show_checklist),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.W700,
+                                color = Color.Gray,
+                                fontFamily = FontFamily(Font(R.font.poppins_medium))
+                            )
+                        }
+                    )
+
                     DescriptionTextField(
                         scrollOffset = descriptionScrollOffset,
                         contentSize = contentSize,
@@ -241,6 +267,28 @@ fun AddEditScreen(
         )
     }
 
+    if (showChecklist) {
+        NoteChecklist(
+            checklist = checklist,
+            onDismiss = {
+                showChecklist = false
+            },
+            onAdd = {
+                checklist.add(Todo(title = it))
+            },
+            onDelete = {
+                checklist.removeAt(it)
+            },
+            onUpdate = { index, newTitle ->
+                checklist[index] = checklist[index].copy(title = newTitle)
+            },
+            onToggle = { index ->
+                checklist[index] = checklist[index].copy(isChecked = !checklist[index].isChecked)
+                checklist.sortBy { it.isChecked }
+            }
+        )
+    }
+
     TextDialog(
         title = stringResource(R.string.are_you_sure),
         description = stringResource(R.string.the_text_change_will_not_be_saved),
@@ -265,7 +313,7 @@ private fun AddEditScreenPreview() = NotifyTheme {
         ),
         isNew = true,
         navigateBack = {},
-        saveNote = { _, _, _ -> },
+        saveNote = { _, _, _, _ -> },
         deleteNote = {}
     )
 }
