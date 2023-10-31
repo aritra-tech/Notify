@@ -28,7 +28,7 @@ fun BottomSheetOptions(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clickable { onClick() }
-            .padding(16.dp)
+            .padding(12.dp)
     ) {
         Icon(
             painter = icon,

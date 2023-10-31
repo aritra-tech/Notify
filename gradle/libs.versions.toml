@@ -1,5 +1,5 @@
 [versions]
-accompanistPermissions = "0.28.0"
+accompanistPermissions = "0.32.0"
 accompanistSystemuicontroller = "0.32.0"
 activity-compose = "1.8.0"
 androidx-junit = "1.1.5"
@@ -21,7 +21,7 @@ lifecycle-runtime-ktx = "2.6.2"
 lifecycleExtensions = "2.2.0"
 lifecycleVersion = "2.6.2"
 material3 = "1.1.2"
-materialIconsExtended = "1.5.3"
+materialIconsExtended = "1.5.4"
 navVersion = "2.7.4"
 roomVersion = "2.5.2"
 runtimeLivedata = "1.5.3"
@@ -34,7 +34,7 @@ dagger-hilt-android = "2.48.1"
 devtools-ksp = "1.9.0-1.0.12"
 zoomable = "0.6.2"
 zoomableImageCoil = "0.6.2"
-ktlint = "11.6.0"
+ktlint = "11.6.1"
 camerax_version = "1.4.0-alpha01"
 
 [libraries]
@@ -45,7 +45,7 @@ androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "b
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
 android-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "bom" }
 android-kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlinBom" }
-compose-ui = { module = "androidx.compose.ui:ui" }
+compose-ui = "androidx.compose.ui:ui:1.6.0-alpha08"
 compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-material3 = { module = "androidx.compose.material3:material3" }

@@ -21,6 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
@@ -45,8 +47,17 @@ fun DescriptionTextField(
     contentSize: Int,
     description: String,
     parentScrollState: ScrollState,
+    isNewNote: Boolean = false,
     onDescriptionChange: (String) -> Unit,
 ) {
+    val focusRequester = remember {
+        FocusRequester()
+    }
+    LaunchedEffect(Unit) {
+        if (isNewNote) {
+            focusRequester.requestFocus()
+        }
+    }
     var descriptionFieldValue by remember {
         mutableStateOf(TextFieldValue(description))
     }
@@ -89,7 +100,9 @@ fun DescriptionTextField(
     val interactionSource = remember { MutableInteractionSource() }
 
     BasicTextField(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .focusRequester(focusRequester),
         value = descriptionFieldValue,
         onValueChange = { newDescription ->
             descriptionFieldValue = newDescription

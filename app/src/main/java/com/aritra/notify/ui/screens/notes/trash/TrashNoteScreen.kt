@@ -90,14 +90,21 @@ fun TrashNoteScreen(
                     .weight(1f)
             ) {
                 items(trashNoteState.trashNotes) {
-                    NotesCard(noteModel = it, isSelected = trashNoteState.selectedIds.contains(it.id), onClick = {
-                        if (trashNoteState.isSelectionMode) {
-                            onEvent(TrashNoteEvent.AddSelectedIds(it.id))
+                    NotesCard(
+                        noteModel = it.note,
+                        isSelected = trashNoteState.selectedIds.contains(
+                            it.note.id
+                        ),
+                        dateTimeDeleted = it,
+                        onClick = {
+                            if (trashNoteState.isSelectionMode) {
+                                onEvent(TrashNoteEvent.AddSelectedIds(it.note.id))
+                            }
                         }
-                    }) {
+                    ) {
                         if (!trashNoteState.isSelectionMode) {
                             onEvent(TrashNoteEvent.UpdateSelectionMode)
-                            onEvent(TrashNoteEvent.AddSelectedIds(it.id))
+                            onEvent(TrashNoteEvent.AddSelectedIds(it.note.id))
                         }
                     }
                 }
