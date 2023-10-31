@@ -1,23 +1,19 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -42,90 +38,48 @@ import androidx.compose.ui.unit.dp
 import com.aritra.notify.R
 import com.aritra.notify.domain.models.Todo
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteChecklist(
     checklist: List<Todo>,
+    showAddTodo: Boolean,
     modifier: Modifier = Modifier,
     onAdd: (String) -> Unit,
     onDelete: (Int) -> Unit,
     onUpdate: (Int, String) -> Unit,
     onToggle: (Int) -> Unit,
-    onDismiss: () -> Unit,
+    hideAddTodo: () -> Unit,
 ) {
-    var showAddModal by remember {
-        mutableStateOf(false)
+    if (checklist.isNotEmpty()) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth(),
+            content = {
+                checklist.forEachIndexed { index, todo ->
+                    ChecklistItem(
+                        todo = todo,
+                        onValueChange = {
+                            onUpdate(index, it)
+                        },
+                        onCheckedChange = {
+                            onToggle(index)
+                        },
+                        onDelete = {
+                            onDelete(index)
+                        }
+                    )
+                    if (index < checklist.lastIndex) {
+                        Divider()
+                    }
+                }
+            }
+        )
     }
 
-    ModalBottomSheet(
-        modifier = modifier,
-        onDismissRequest = onDismiss,
-        dragHandle = null,
-        content = {
-            Scaffold(
-                topBar = {
-                    CenterAlignedTopAppBar(
-                        title = {
-                            Text("Checklist")
-                        },
-                        actions = {
-                            IconButton(
-                                onClick = {
-                                    showAddModal = true
-                                },
-                                modifier = Modifier.padding(8.dp),
-                                content = {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.add_box_icon),
-                                        contentDescription = "Add"
-                                    )
-                                }
-                            )
-                        }
-                    )
-                },
-                content = { scaffoldPadding ->
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(scaffoldPadding),
-                        contentPadding = PaddingValues(16.dp),
-                        content = {
-                            items(
-                                count = checklist.size,
-                                key = { index -> checklist[index] },
-                                itemContent = { index ->
-                                    ChecklistItem(
-                                        todo = checklist[index],
-                                        onValueChange = {
-                                            onUpdate(index, it)
-                                        },
-                                        onCheckedChange = {
-                                            onToggle(index)
-                                        },
-                                        onDelete = {
-                                            onDelete(index)
-                                        }
-                                    )
-                                    if (index < checklist.lastIndex) {
-                                        Divider()
-                                    }
-                                }
-                            )
-                        }
-                    )
-                }
-            )
-        }
-    )
-
-    if (showAddModal) {
+    if (showAddTodo) {
         AddEditTodoField(
             text = "",
             onUpdate = onAdd,
-            onDismiss = {
-                showAddModal = false
-            }
+            onDismiss = hideAddTodo
         )
     }
 }

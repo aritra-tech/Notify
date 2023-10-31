@@ -12,7 +12,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -66,6 +65,9 @@ fun AddEditScreen(
     var description by remember {
         mutableStateOf(note.note)
     }
+    var showAddTodo by remember {
+        mutableStateOf(false)
+    }
     val images = remember {
         mutableStateListOf<Uri>()
     }
@@ -79,9 +81,6 @@ fun AddEditScreen(
         mutableStateOf(false)
     }
     var openDrawingScreen by remember {
-        mutableStateOf(false)
-    }
-    var showChecklist by remember {
         mutableStateOf(false)
     }
 
@@ -196,18 +195,24 @@ fun AddEditScreen(
                         dateTime = note.dateTime
                     )
 
-                    TextButton(
-                        onClick = {
-                            showChecklist = !showChecklist
+                    NoteChecklist(
+                        checklist = checklist,
+                        showAddTodo = showAddTodo,
+                        onAdd = {
+                            checklist.add(Todo(title = it))
                         },
-                        content = {
-                            Text(
-                                stringResource(R.string.show_checklist),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.W700,
-                                color = Color.Gray,
-                                fontFamily = FontFamily(Font(R.font.poppins_medium))
-                            )
+                        onDelete = {
+                            checklist.removeAt(it)
+                        },
+                        onUpdate = { index, newTitle ->
+                            checklist[index] = checklist[index].copy(title = newTitle)
+                        },
+                        onToggle = { index ->
+                            checklist[index] = checklist[index].copy(isChecked = !checklist[index].isChecked)
+                            checklist.sortBy { it.isChecked }
+                        },
+                        hideAddTodo = {
+                            showAddTodo = false
                         }
                     )
 
@@ -238,6 +243,9 @@ fun AddEditScreen(
                     },
                     onSpeechRecognized = {
                         description += " $it"
+                    },
+                    addTodo = {
+                        showAddTodo = true
                     }
                 )
             }
@@ -263,28 +271,6 @@ fun AddEditScreen(
             onSave = {
                 images += it
                 openDrawingScreen = false
-            }
-        )
-    }
-
-    if (showChecklist) {
-        NoteChecklist(
-            checklist = checklist,
-            onDismiss = {
-                showChecklist = false
-            },
-            onAdd = {
-                checklist.add(Todo(title = it))
-            },
-            onDelete = {
-                checklist.removeAt(it)
-            },
-            onUpdate = { index, newTitle ->
-                checklist[index] = checklist[index].copy(title = newTitle)
-            },
-            onToggle = { index ->
-                checklist[index] = checklist[index].copy(isChecked = !checklist[index].isChecked)
-                checklist.sortBy { it.isChecked }
             }
         )
     }
