@@ -1,6 +1,5 @@
 package com.aritra.notify.components.note
 
-import android.provider.CalendarContract.Reminders
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
@@ -154,7 +153,7 @@ fun GridNoteCard(
                     fontFamily = FontFamily(Font(R.font.poppins_medium)),
                     color = Color.Gray
                 )
-                notesModel.reminderDateTime?.let{
+                notesModel.reminderDateTime?.let {
                     ReminderSection(dateTime = it, notesModel.isReminded)
                 }
             }

@@ -184,7 +184,7 @@ fun ReminderSection(
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
             textDecoration = if (isReminded) TextDecoration.LineThrough else null,
-            maxLines = 1,
+            maxLines = 1
         )
     }, modifier = Modifier)
 }
