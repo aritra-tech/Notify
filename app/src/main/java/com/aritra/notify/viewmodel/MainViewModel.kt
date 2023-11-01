@@ -52,6 +52,9 @@ class MainViewModel @Inject constructor(
                 }
             }
         }
+        viewModelScope.launch(Dispatchers.IO) {
+            noteRepository.checkAlarms()
+        }
     }
 
     fun showBiometricPrompt(mainActivity: MainActivity) {
