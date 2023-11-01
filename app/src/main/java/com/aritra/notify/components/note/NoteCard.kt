@@ -183,7 +183,8 @@ fun ReminderSection(
             text = dateTime.formatReminderDateTime(),
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
-            textDecoration = if (isReminded) TextDecoration.LineThrough else null
+            textDecoration = if (isReminded) TextDecoration.LineThrough else null,
+            maxLines = 1,
         )
     }, modifier = Modifier)
 }
