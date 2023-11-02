@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 import java.util.Date
 import javax.inject.Inject
 
@@ -103,7 +104,14 @@ class AddEditViewModel @Inject constructor(
             }
         }
     }
-
+    fun updateReminderDateTime(dateTime: LocalDateTime?) {
+        _note.update {
+            it.copy(
+                reminderDateTime = dateTime,
+                isReminded = false
+            )
+        }
+    }
     fun updateNote(
         title: String,
         description: String,
@@ -120,7 +128,8 @@ class AddEditViewModel @Inject constructor(
             oldNote.title == title &&
             oldNote.note == description &&
             oldNote.image == images &&
-            checklist == oldNote.checklist
+            checklist == oldNote.checklist &&
+            oldNote.reminderDateTime == newNote.reminderDateTime
         ) {
             // Note has not been modified
             withContext(Dispatchers.Main) {

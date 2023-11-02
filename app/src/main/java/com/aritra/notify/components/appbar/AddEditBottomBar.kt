@@ -43,6 +43,7 @@ fun AddEditBottomBar(
     onSpeechRecognized: (String) -> Unit,
     showDrawingScreen: () -> Unit,
     showCameraSheet: () -> Unit,
+    onReminderDateTime: () -> Unit,
     addTodo: () -> Unit,
 ) {
     var showSheet by remember { mutableStateOf(false) }
@@ -83,6 +84,13 @@ fun AddEditBottomBar(
                     )
                 }
             )
+            IconButton(onClick = { onReminderDateTime() }) {
+                Icon(
+                    modifier = Modifier.size(25.dp),
+                    painter = painterResource(id = R.drawable.add_alert),
+                    contentDescription = stringResource(R.string.add_box)
+                )
+            }
             if (showSheet) {
                 ModalBottomSheet(
                     onDismissRequest = { showSheet = false },

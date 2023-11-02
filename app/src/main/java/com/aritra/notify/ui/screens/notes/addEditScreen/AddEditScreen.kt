@@ -1,6 +1,7 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +10,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.ElevatedAssistChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,17 +41,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
 import com.aritra.notify.components.appbar.AddEditBottomBar
 import com.aritra.notify.components.appbar.AddEditTopBar
 import com.aritra.notify.components.camPreview.CameraPreview
+import com.aritra.notify.components.dialog.DateTimeDialog
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.drawing.DrawingScreen
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.models.Todo
 import com.aritra.notify.ui.theme.NotifyTheme
+import com.aritra.notify.utils.formatReminderDateTime
+import java.time.LocalDateTime
 import java.util.Date
 
 @Composable
@@ -56,6 +66,7 @@ fun AddEditScreen(
     navigateBack: () -> Unit,
     saveNote: (String, String, List<Uri>, List<Todo>) -> Unit,
     deleteNote: (() -> Unit) -> Unit,
+    onUpdateReminderDateTime: (LocalDateTime?) -> Unit,
 ) {
     val focus = LocalFocusManager.current
 
@@ -80,11 +91,17 @@ fun AddEditScreen(
     var openCameraPreview by remember {
         mutableStateOf(false)
     }
+    var isEditDateTime by remember {
+        mutableStateOf(false)
+    }
     var openDrawingScreen by remember {
         mutableStateOf(false)
     }
+    var shouldShowDialogDateTime by remember {
+        mutableStateOf(false)
+    }
 
-    // Makes sure that the items are updated when the note is updated
+    // Makes sure that the title is updated when the note is updated
     LaunchedEffect(note.title) {
         title = note.title
     }
@@ -195,6 +212,29 @@ fun AddEditScreen(
                         dateTime = note.dateTime
                     )
 
+                    note.reminderDateTime?.let {
+                        ElevatedAssistChip(leadingIcon = {
+                            Icon(imageVector = Icons.Default.AccessTime, contentDescription = "")
+                        }, onClick = {
+                            isEditDateTime = !isEditDateTime
+                        }, label = {
+                            Text(
+                                text = it.formatReminderDateTime(),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                textDecoration = if (note.isReminded) TextDecoration.LineThrough else null
+                            )
+                        }, trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "",
+                                modifier = Modifier.clickable {
+                                    onUpdateReminderDateTime(null)
+                                }
+                            )
+                        }, modifier = Modifier)
+                    }
+
                     NoteChecklist(
                         checklist = checklist,
                         showAddTodo = showAddTodo,
@@ -244,6 +284,9 @@ fun AddEditScreen(
                     onSpeechRecognized = {
                         description += " $it"
                     },
+                    onReminderDateTime = {
+                        shouldShowDialogDateTime = true
+                    },
                     addTodo = {
                         showAddTodo = true
                     }
@@ -285,6 +328,15 @@ fun AddEditScreen(
             cancelDialogState.value = false
         }
     )
+
+    DateTimeDialog(isOpen = shouldShowDialogDateTime, isEdit = isEditDateTime, onDateTimeUpdated = {
+        onUpdateReminderDateTime(it)
+        shouldShowDialogDateTime = false
+    }, onConfirmCallback = {
+    }) {
+        shouldShowDialogDateTime = false
+        isEditDateTime = false
+    }
 }
 
 @Preview(showBackground = true)
@@ -300,6 +352,7 @@ private fun AddEditScreenPreview() = NotifyTheme {
         isNew = true,
         navigateBack = {},
         saveNote = { _, _, _, _ -> },
-        deleteNote = {}
+        deleteNote = {},
+        onUpdateReminderDateTime = {}
     )
 }

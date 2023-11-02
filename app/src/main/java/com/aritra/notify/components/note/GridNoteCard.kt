@@ -137,6 +137,7 @@ fun GridNoteCard(
                         )
                     }
                 }
+
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = notesModel.note,
@@ -152,6 +153,9 @@ fun GridNoteCard(
                     fontFamily = FontFamily(Font(R.font.poppins_medium)),
                     color = Color.Gray
                 )
+                notesModel.reminderDateTime?.let {
+                    ReminderSection(dateTime = it, notesModel.isReminded)
+                }
             }
         }
     }

@@ -84,7 +84,7 @@ fun NoteScreen(
     val viewModel = hiltViewModel<NoteScreenViewModel>()
 
     val addEditViewModel = hiltViewModel<AddEditViewModel>()
-    val listOfAllNotes by viewModel.listOfNotes.observeAsState(listOf())
+    val listOfAllNotes by viewModel.listOfNotes.observeAsState(emptyList())
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var isGridView by rememberSaveable { mutableStateOf(false) }
 
@@ -302,7 +302,9 @@ fun NoteScreen(
                                 items(
                                     listOfAllNotes.filter { note ->
                                         note.title.contains(searchQuery, true)
-                                    }
+                                    },
+                                    key = { it.id },
+                                    contentType = { it.id }
                                 ) { notesModel ->
 
                                     val isSelected = selectedNoteIds.contains(notesModel.id)

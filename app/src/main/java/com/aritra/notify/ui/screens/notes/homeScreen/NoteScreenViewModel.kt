@@ -6,6 +6,8 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.aritra.notify.core.DispatcherProvider
+import com.aritra.notify.core.alarm.AlarmInfo
+import com.aritra.notify.core.alarm.AlarmScheduler
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.models.TrashNote
 import com.aritra.notify.domain.repository.NoteRepository
@@ -22,6 +24,7 @@ class NoteScreenViewModel @Inject constructor(
     private val homeRepository: NoteRepository,
     private val trashNote: TrashNoteRepo,
     private val dispatcherProvider: DispatcherProvider,
+    private val alarmScheduler: AlarmScheduler,
 ) : AndroidViewModel(application) {
 
     var listOfNotes = homeRepository.getAllNotesFromRoom().asLiveData().map { notes ->
@@ -41,6 +44,10 @@ class NoteScreenViewModel @Inject constructor(
 
     private suspend fun moveToTrash(noteId: Int) {
         trashNote.upsertTrashNote(TrashNote(noteId, LocalDateTime.now()))
+        val getNoteById = homeRepository.getNoteById(noteId) ?: return
+        if (getNoteById.reminderDateTime != null) {
+            alarmScheduler.cancelAlarm(AlarmInfo(getNoteById.id, 0))
+        }
     }
 
     fun deleteListOfNote(noteList: List<Note>) {

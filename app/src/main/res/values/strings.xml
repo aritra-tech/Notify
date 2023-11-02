@@ -58,4 +58,5 @@
     <string name="secure_screen">Secure Screen</string>
     <string name="trash">Trash</string>
     <string name="format_deleted_note">%s left</string>
+    <string name="set_reminder">Set Reminder</string>
 </resources>

@@ -6,6 +6,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
+import java.time.LocalDateTime
 import java.util.Date
 
 @Parcelize
@@ -20,4 +21,11 @@ data class Note(
     var checklist: List<Todo> = emptyList(),
     @ColumnInfo(defaultValue = "false")
     var isMovedToTrash: Boolean = false,
+    var reminderDateTime: LocalDateTime? = null,
+    var isReminded: Boolean = false,
 ) : Parcelable
+
+data class ReminderDateTimeInfo(
+    val dateTime: LocalDateTime,
+    val isReminded: Boolean,
+)
