@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import com.aritra.notify.domain.models.Todo
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
 import java.time.LocalDateTime
 
@@ -38,13 +39,14 @@ fun AddEditRoute(
             navController.popBackStack()
         }
     }
-    val saveNote: (String, String, List<Uri>) -> Unit = remember(note, isNew) {
-        { title, description, images ->
+    val saveNote: (String, String, List<Uri>, List<Todo>) -> Unit = remember(note, isNew) {
+        { title, description, images, checklist ->
             if (isNew) {
                 viewModel.insertNote(
                     title = title,
                     description = description,
                     images = images,
+                    checklist = checklist,
                     onSuccess = {
                         navigateBack()
                         Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()
@@ -55,12 +57,11 @@ fun AddEditRoute(
                     title = title,
                     description = description,
                     images = images,
+                    checklist = checklist,
                     onSuccess = { updated ->
+                        navigateBack()
                         if (updated) {
-                            navigateBack()
                             Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
-                        } else {
-                            navigateBack()
                         }
                     }
                 )

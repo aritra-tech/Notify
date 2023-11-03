@@ -50,16 +50,14 @@ fun AddEditTopBar(
         {
             if (isNew) {
                 onBackPress()
+            } else if (description.isBlank()) {
+                Toast.makeText(
+                    context,
+                    "Your note cannot be blank",
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
-                if (description.isBlank()) {
-                    Toast.makeText(
-                        context,
-                        "Your note cannot be blank",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    saveNote()
-                }
+                saveNote()
             }
         }
     }

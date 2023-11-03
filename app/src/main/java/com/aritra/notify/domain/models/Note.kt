@@ -18,6 +18,7 @@ data class Note(
     var note: String = "",
     var dateTime: Date? = null,
     var image: List<Uri?> = emptyList(),
+    var checklist: List<Todo> = emptyList(),
     @ColumnInfo(defaultValue = "false")
     var isMovedToTrash: Boolean = false,
     var reminderDateTime: LocalDateTime? = null,

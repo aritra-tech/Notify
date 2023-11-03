@@ -44,6 +44,7 @@ fun AddEditBottomBar(
     showDrawingScreen: () -> Unit,
     showCameraSheet: () -> Unit,
     onReminderDateTime: () -> Unit,
+    addTodo: () -> Unit,
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
@@ -142,6 +143,14 @@ fun AddEditBottomBar(
                                         } else {
                                             microphonePermissionState.launchPermissionRequest()
                                         }
+                                        showSheet = false
+                                    }
+                                )
+                                BottomSheetOptions(
+                                    text = stringResource(R.string.add_todo),
+                                    icon = painterResource(id = R.drawable.add_box_icon),
+                                    onClick = {
+                                        addTodo()
                                         showSheet = false
                                     }
                                 )

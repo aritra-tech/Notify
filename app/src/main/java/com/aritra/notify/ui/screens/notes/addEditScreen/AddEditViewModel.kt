@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.aritra.notify.domain.models.Note
+import com.aritra.notify.domain.models.Todo
 import com.aritra.notify.domain.repository.NoteRepository
 import com.aritra.notify.domain.usecase.SaveSelectedImageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -70,12 +71,14 @@ class AddEditViewModel @Inject constructor(
         title: String,
         description: String,
         images: List<Uri>,
+        checklist: List<Todo>,
         onSuccess: () -> Unit,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             val note = _note.value.copy(
                 title = title,
-                note = description
+                note = description,
+                checklist = checklist
             )
 
             val id: Int = noteRepository.insertNoteToRoom(note).toInt()
@@ -101,18 +104,12 @@ class AddEditViewModel @Inject constructor(
             }
         }
     }
-    fun updateReminderDateTime(dateTime: LocalDateTime?) {
-        _note.update {
-            it.copy(
-                reminderDateTime = dateTime,
-                isReminded = false
-            )
-        }
-    }
+
     fun updateNote(
         title: String,
         description: String,
         images: List<Uri>,
+        checklist: List<Todo>,
         onSuccess: (updated: Boolean) -> Unit,
     ) = viewModelScope.launch(Dispatchers.IO) {
         val newNote = note.value
@@ -120,7 +117,11 @@ class AddEditViewModel @Inject constructor(
         val oldNote = noteRepository.getNoteById(newNote.id) ?: return@launch
 
         // exit the method if the note has not been modified
-        if (oldNote.title == title && oldNote.note == description && oldNote.image == images &&
+        if (
+            oldNote.title == title &&
+            oldNote.note == description &&
+            oldNote.image == images &&
+            checklist == oldNote.checklist &&
             oldNote.reminderDateTime == newNote.reminderDateTime
         ) {
             // Note has not been modified
@@ -134,7 +135,8 @@ class AddEditViewModel @Inject constructor(
             newNote.copy(
                 title = title,
                 note = description,
-                dateTime = Date()
+                dateTime = Date(),
+                checklist = checklist
                 // if the image has not been modified, use the old image uri
 //                image = if (oldNote.image == newNote.image) {
 //                    oldNote.image
@@ -153,6 +155,15 @@ class AddEditViewModel @Inject constructor(
 
         withContext(Dispatchers.Main) {
             onSuccess(true)
+        }
+    }
+
+    fun updateReminderDateTime(dateTime: LocalDateTime?) {
+        _note.update {
+            it.copy(
+                reminderDateTime = dateTime,
+                isReminded = false
+            )
         }
     }
 }

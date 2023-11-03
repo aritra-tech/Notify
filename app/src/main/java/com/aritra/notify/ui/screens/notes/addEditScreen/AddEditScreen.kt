@@ -1,7 +1,6 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,6 +52,7 @@ import com.aritra.notify.components.dialog.DateTimeDialog
 import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.drawing.DrawingScreen
 import com.aritra.notify.domain.models.Note
+import com.aritra.notify.domain.models.Todo
 import com.aritra.notify.ui.theme.NotifyTheme
 import com.aritra.notify.utils.formatReminderDateTime
 import java.time.LocalDateTime
@@ -64,7 +64,7 @@ fun AddEditScreen(
     isNew: Boolean,
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
-    saveNote: (String, String, List<Uri>) -> Unit,
+    saveNote: (String, String, List<Uri>, List<Todo>) -> Unit,
     deleteNote: (() -> Unit) -> Unit,
     onUpdateReminderDateTime: (LocalDateTime?) -> Unit,
 ) {
@@ -76,8 +76,14 @@ fun AddEditScreen(
     var description by remember {
         mutableStateOf(note.note)
     }
+    var showAddTodo by remember {
+        mutableStateOf(false)
+    }
     val images = remember {
-        mutableStateListOf(*note.image.filterNotNull().toTypedArray())
+        mutableStateListOf<Uri>()
+    }
+    val checklist = remember {
+        mutableStateListOf<Todo>()
     }
     val cancelDialogState = remember {
         mutableStateOf(false)
@@ -91,18 +97,24 @@ fun AddEditScreen(
     var openDrawingScreen by remember {
         mutableStateOf(false)
     }
-
     var shouldShowDialogDateTime by remember {
         mutableStateOf(false)
     }
+
     // Makes sure that the title is updated when the note is updated
     LaunchedEffect(note.title) {
         title = note.title
     }
-
-    // Makes sure that the description is updated when the note is updated
     LaunchedEffect(note.note) {
         description = note.note
+    }
+    LaunchedEffect(note.image) {
+        images.clear()
+        images.addAll(note.image.filterNotNull())
+    }
+    LaunchedEffect(note.checklist) {
+        checklist.clear()
+        checklist.addAll(note.checklist.sortedBy { it.isChecked })
     }
 
     Scaffold(
@@ -118,9 +130,7 @@ fun AddEditScreen(
                     navigateBack
                 },
                 saveNote = {
-                    Log.e("AddEditScreen app bar", title)
-                    Log.e("AddEditScreen app bar", description)
-                    saveNote(title, description, images)
+                    saveNote(title, description, images, checklist)
                 },
                 deleteNote = deleteNote
             )
@@ -225,6 +235,27 @@ fun AddEditScreen(
                         }, modifier = Modifier)
                     }
 
+                    NoteChecklist(
+                        checklist = checklist,
+                        showAddTodo = showAddTodo,
+                        onAdd = {
+                            checklist.add(Todo(title = it))
+                        },
+                        onDelete = {
+                            checklist.removeAt(it)
+                        },
+                        onUpdate = { index, newTitle ->
+                            checklist[index] = checklist[index].copy(title = newTitle)
+                        },
+                        onToggle = { index ->
+                            checklist[index] = checklist[index].copy(isChecked = !checklist[index].isChecked)
+                            checklist.sortBy { it.isChecked }
+                        },
+                        hideAddTodo = {
+                            showAddTodo = false
+                        }
+                    )
+
                     DescriptionTextField(
                         scrollOffset = descriptionScrollOffset,
                         contentSize = contentSize,
@@ -255,6 +286,9 @@ fun AddEditScreen(
                     },
                     onReminderDateTime = {
                         shouldShowDialogDateTime = true
+                    },
+                    addTodo = {
+                        showAddTodo = true
                     }
                 )
             }
@@ -283,6 +317,7 @@ fun AddEditScreen(
             }
         )
     }
+
     TextDialog(
         title = stringResource(R.string.are_you_sure),
         description = stringResource(R.string.the_text_change_will_not_be_saved),
@@ -316,7 +351,7 @@ private fun AddEditScreenPreview() = NotifyTheme {
         ),
         isNew = true,
         navigateBack = {},
-        saveNote = { _, _, _ -> },
+        saveNote = { _, _, _, _ -> },
         deleteNote = {},
         onUpdateReminderDateTime = {}
     )
