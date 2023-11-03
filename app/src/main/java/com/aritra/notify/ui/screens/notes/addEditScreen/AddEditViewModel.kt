@@ -104,14 +104,7 @@ class AddEditViewModel @Inject constructor(
             }
         }
     }
-    fun updateReminderDateTime(dateTime: LocalDateTime?) {
-        _note.update {
-            it.copy(
-                reminderDateTime = dateTime,
-                isReminded = false
-            )
-        }
-    }
+
     fun updateNote(
         title: String,
         description: String,
@@ -142,7 +135,8 @@ class AddEditViewModel @Inject constructor(
             newNote.copy(
                 title = title,
                 note = description,
-                dateTime = Date()
+                dateTime = Date(),
+                checklist = checklist
                 // if the image has not been modified, use the old image uri
 //                image = if (oldNote.image == newNote.image) {
 //                    oldNote.image
@@ -161,6 +155,15 @@ class AddEditViewModel @Inject constructor(
 
         withContext(Dispatchers.Main) {
             onSuccess(true)
+        }
+    }
+
+    fun updateReminderDateTime(dateTime: LocalDateTime?) {
+        _note.update {
+            it.copy(
+                reminderDateTime = dateTime,
+                isReminded = false
+            )
         }
     }
 }
