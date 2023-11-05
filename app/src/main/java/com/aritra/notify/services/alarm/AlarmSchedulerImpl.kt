@@ -1,4 +1,4 @@
-package com.aritra.notify.core.alarm
+package com.aritra.notify.services.alarm
 
 import android.app.AlarmManager
 import android.app.PendingIntent

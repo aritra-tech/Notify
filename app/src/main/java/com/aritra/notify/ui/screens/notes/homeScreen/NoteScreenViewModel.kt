@@ -5,9 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import com.aritra.notify.core.DispatcherProvider
-import com.aritra.notify.core.alarm.AlarmInfo
-import com.aritra.notify.core.alarm.AlarmScheduler
+import com.aritra.notify.services.DispatcherProvider
+import com.aritra.notify.services.alarm.AlarmInfo
+import com.aritra.notify.services.alarm.AlarmScheduler
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.models.TrashNote
 import com.aritra.notify.domain.repository.NoteRepository

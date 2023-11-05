@@ -1,11 +1,11 @@
-package com.aritra.notify.reciever
+package com.aritra.notify.services.reciever
 
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.aritra.notify.domain.repository.NoteRepository
-import com.aritra.notify.exception.NoteNotFoundException
+import com.aritra.notify.services.exception.NoteNotFoundException
 import com.aritra.notify.utils.Const
 import com.aritra.notify.utils.sendReminderNote
 import dagger.hilt.android.AndroidEntryPoint

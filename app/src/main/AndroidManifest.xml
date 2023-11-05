@@ -44,7 +44,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".reciever.ReminderNoteNotificationBroadcast" />
+        <receiver android:name=".services.reciever.ReminderNoteNotificationBroadcast" />
     </application>
 
 </manifest>

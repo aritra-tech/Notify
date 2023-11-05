@@ -1,4 +1,4 @@
-package com.aritra.notify.core.notification
+package com.aritra.notify.services.notification
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

@@ -1,8 +1,8 @@
 package com.aritra.notify.domain.repository
 
 import android.app.Application
-import com.aritra.notify.core.alarm.AlarmInfo
-import com.aritra.notify.core.alarm.AlarmScheduler
+import com.aritra.notify.services.alarm.AlarmInfo
+import com.aritra.notify.services.alarm.AlarmScheduler
 import com.aritra.notify.data.dao.NoteDao
 import com.aritra.notify.data.db.NoteDatabase
 import com.aritra.notify.domain.models.Note

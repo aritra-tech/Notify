@@ -3,7 +3,7 @@ package com.aritra.notify.utils
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import com.aritra.notify.reciever.ReminderNoteNotificationBroadcast
+import com.aritra.notify.services.reciever.ReminderNoteNotificationBroadcast
 
 fun getNoteAlarmPendingIntent(
     context: Context,

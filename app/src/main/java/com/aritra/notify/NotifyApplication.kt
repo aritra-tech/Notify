@@ -1,7 +1,7 @@
 package com.aritra.notify
 
 import android.app.Application
-import com.aritra.notify.core.notification.createNotificationChannel
+import com.aritra.notify.services.notification.createNotificationChannel
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp

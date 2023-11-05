@@ -1,4 +1,4 @@
-package com.aritra.notify.core.alarm
+package com.aritra.notify.services.alarm
 
 interface AlarmScheduler {
     fun scheduleAlarm(alarmInfo: AlarmInfo)
