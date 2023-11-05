@@ -69,7 +69,7 @@ import com.aritra.notify.components.actions.BackPressHandler
 import com.aritra.notify.components.actions.LayoutToggleButton
 import com.aritra.notify.components.note.GridNoteCard
 import com.aritra.notify.components.note.NotesCard
-import com.aritra.notify.components.topbar.SelectionModeTopAppBar
+import com.aritra.notify.components.appbar.SelectionModeTopAppBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
 import kotlinx.coroutines.launch
@@ -84,7 +84,7 @@ fun NoteScreen(
     val viewModel = hiltViewModel<NoteScreenViewModel>()
 
     val addEditViewModel = hiltViewModel<AddEditViewModel>()
-    val listOfAllNotes by viewModel.listOfNotes.observeAsState(listOf())
+    val listOfAllNotes by viewModel.listOfNotes.observeAsState(emptyList())
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var isGridView by rememberSaveable { mutableStateOf(false) }
 
@@ -302,7 +302,9 @@ fun NoteScreen(
                                 items(
                                     listOfAllNotes.filter { note ->
                                         note.title.contains(searchQuery, true)
-                                    }
+                                    },
+                                    key = { it.id },
+                                    contentType = { it.id }
                                 ) { notesModel ->
 
                                     val isSelected = selectedNoteIds.contains(notesModel.id)

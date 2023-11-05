@@ -8,6 +8,7 @@
     <string name="the_text_change_will_not_be_saved">The text change will not be saved</string>
     <string name="notes">Notes</string>
     <string name="title">Title</string>
+    <string name="add_todo">Add Todo</string>
     <string name="share_note_as_text">Share as Text</string>
     <string name="share_note_as_picture">Share as Image</string>
     <string name="cancel">Cancel</string>
@@ -46,7 +47,7 @@
     <string name="speech_to_text">Speech to Text</string>
     <string name="drawing">Drawing</string>
     <string name="add_image">Add image</string>
-    <string name="take_image">Capture a Photo</string>
+    <string name="take_image">Take Photo</string>
     <string name="add_box">Add Box</string>
     <string name="default_notification_channel_id">notify</string>
     <string name="request_notification_permission">Request permission</string>
@@ -57,4 +58,5 @@
     <string name="secure_screen">Secure Screen</string>
     <string name="trash">Trash</string>
     <string name="format_deleted_note">%s left</string>
+    <string name="set_reminder">Set Reminder</string>
 </resources>

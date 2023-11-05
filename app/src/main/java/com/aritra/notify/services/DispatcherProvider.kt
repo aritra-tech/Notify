@@ -1,4 +1,4 @@
-package com.aritra.notify.core
+package com.aritra.notify.services
 
 import kotlinx.coroutines.CoroutineDispatcher
 

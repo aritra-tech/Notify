@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aritra.notify.components.biometric.AppBioMetricManager
 import com.aritra.notify.components.biometric.BiometricAuthListener
-import com.aritra.notify.core.DispatcherProvider
+import com.aritra.notify.services.DispatcherProvider
 import com.aritra.notify.di.DataStoreUtil
 import com.aritra.notify.domain.repository.NoteRepository
 import com.aritra.notify.domain.repository.trash.TrashNoteRepo
@@ -51,6 +51,9 @@ class MainViewModel @Inject constructor(
                     _loading.emit(false)
                 }
             }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            noteRepository.checkAlarms()
         }
     }
 

@@ -7,6 +7,4 @@ sealed class NotifyScreens(val name: String) {
     data object TodoHome : NotifyScreens("todo_home")
     data object Settings : NotifyScreens("setting")
     data object TrashNoteScreen : NotifyScreens("trash_note_route")
-
-    data object Drawing : NotifyScreens("drawing")
 }

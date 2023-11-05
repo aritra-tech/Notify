@@ -46,7 +46,7 @@ class BackupRepository(
                     // write the headers to the csv file
                     csvWriter.writeNext(arrayOf("Id", "Title", "Content", "Date", "Image"))
                     // write the notes to the csv file
-                    provider.noteDao().getAllNotes().first().forEach { note ->
+                    provider.noteDao().getAllNotesFlow().first().forEach { note ->
                         // write the image to the backup directory if it exists
                         val images = note.image.filterNotNull().mapIndexed { index, image ->
                             val imageName = "image_${note.id}_($index).webp"

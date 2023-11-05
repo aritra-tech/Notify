@@ -13,4 +13,6 @@ object Const {
     const val PRIVACY_POLICY = "https://www.freeprivacypolicy.com/live/e4342ac0-aedf-4b36-9a7c-95900bf66074"
     const val PLAY_STORE = "https://play.google.com/store/apps/details?id=com.aritra.notify"
     const val ROADMAP = "https://github.com/users/aritra-tech/projects/4/views/1"
+
+    const val NOTE_ID_EXTRA = "Note id"
 }

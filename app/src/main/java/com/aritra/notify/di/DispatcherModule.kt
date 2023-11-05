@@ -1,7 +1,9 @@
 package com.aritra.notify.di
 
-import com.aritra.notify.core.DispatcherProvider
-import com.aritra.notify.core.DispatcherProviderImpl
+import com.aritra.notify.services.DispatcherProvider
+import com.aritra.notify.services.DispatcherProviderImpl
+import com.aritra.notify.services.alarm.AlarmScheduler
+import com.aritra.notify.services.alarm.AlarmSchedulerImpl
 import com.aritra.notify.domain.repository.trash.TrashNoteRepoImpl
 import com.aritra.notify.domain.repository.trash.TrashNoteRepo
 import dagger.Binds
@@ -22,4 +24,9 @@ abstract class DispatcherModule {
     abstract fun bindTrashRepo(
         trashNoteRepository: TrashNoteRepoImpl,
     ): TrashNoteRepo
+
+    @Binds
+    abstract fun bindAlarm(
+        trashNoteRepository: AlarmSchedulerImpl,
+    ): AlarmScheduler
 }

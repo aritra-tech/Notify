@@ -3,7 +3,7 @@ import TrashNoteInfo
 import TrashNoteState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aritra.notify.core.DispatcherProvider
+import com.aritra.notify.services.DispatcherProvider
 import com.aritra.notify.domain.repository.NoteRepository
 import com.aritra.notify.domain.repository.trash.TrashNoteRepo
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -18,8 +18,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedAssistChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -35,6 +38,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,7 +48,9 @@ import coil.request.ImageRequest
 import com.aritra.notify.R
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.utils.Const
+import com.aritra.notify.utils.formatReminderDateTime
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.Locale
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -137,13 +144,18 @@ fun NotesCard(
                         ).format(it)
                     }
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    formattedDateTime?.let {
-                        Text(
-                            text = formattedDateTime,
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_light)),
-                            color = Color.Gray
-                        )
+                    Column {
+                        formattedDateTime?.let {
+                            Text(
+                                text = formattedDateTime,
+                                fontSize = 16.sp,
+                                fontFamily = FontFamily(Font(R.font.poppins_light)),
+                                color = Color.Gray
+                            )
+                        }
+                        noteModel.reminderDateTime?.let {
+                            ReminderSection(it, noteModel.isReminded)
+                        }
                     }
                     dateTimeDeleted?.let {
                         Text(
@@ -157,4 +169,22 @@ fun NotesCard(
             }
         }
     }
+}
+
+@Composable
+fun ReminderSection(
+    dateTime: LocalDateTime,
+    isReminded: Boolean = false,
+) {
+    ElevatedAssistChip(elevation = AssistChipDefaults.elevatedAssistChipElevation(4.dp), leadingIcon = {
+        Icon(imageVector = Icons.Default.AccessTime, contentDescription = "")
+    }, onClick = { /*TODO*/ }, label = {
+        Text(
+            text = dateTime.formatReminderDateTime(),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
+            textDecoration = if (isReminded) TextDecoration.LineThrough else null,
+            maxLines = 1
+        )
+    }, modifier = Modifier)
 }

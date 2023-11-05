@@ -1,6 +1,5 @@
 package com.aritra.notify.navigation
 
-import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -16,7 +15,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType.Companion.IntType
@@ -37,9 +34,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aritra.notify.R
-import com.aritra.notify.components.drawing.DrawingScreen
-import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditScreen
-import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
+import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditRoute
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
 import com.aritra.notify.ui.screens.notes.trash.trashNoteDest
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
@@ -49,8 +44,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
     val bottomNavItem = getBottomNavItems()
     val screensWithHiddenNavBar = listOf(
         "${NotifyScreens.AddEditNotes.name}/{noteId}",
-        NotifyScreens.TrashNoteScreen.name,
-        NotifyScreens.Drawing.name
+        NotifyScreens.TrashNoteScreen.name
     )
     val backStackEntry = navController.currentBackStackEntryAsState()
 
@@ -73,11 +67,11 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                 )
             }
         }
-    ) {
+    ) { scaffoldPadding ->
         NavHost(
             navController = navController,
             startDestination = NotifyScreens.Notes.name,
-            modifier = Modifier.padding(it),
+            modifier = Modifier.padding(scaffoldPadding),
             enterTransition = {
                 fadeIn(
                     animationSpec = tween(220, delayMillis = 90)
@@ -118,20 +112,9 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                 route = "${NotifyScreens.AddEditNotes.name}/{noteId}",
                 arguments = listOf(navArgument("noteId") { type = IntType })
             ) { backStack ->
-                val noteId = backStack.arguments?.getInt("noteId") ?: 0
-                val viewModel = hiltViewModel<AddEditViewModel>()
-                val drawing = backStack.savedStateHandle.get<Uri?>("drawing")
-
-                LaunchedEffect(drawing) {
-                    if (drawing != null) {
-                        viewModel.addImages(drawing)
-                    }
-                }
-
-                AddEditScreen(
-                    noteId = if (noteId < 0) null else noteId,
-                    navigateBack = { navController.popBackStack() },
-                    showDrawingScreen = { navController.navigate(NotifyScreens.Drawing.name) }
+                AddEditRoute(
+                    navController = navController,
+                    backStack = backStack
                 )
             }
 
@@ -141,20 +124,6 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                 SettingsScreen(controller = navController)
             }
             trashNoteDest(navController)
-
-            composable(
-                route = NotifyScreens.Drawing.name
-            ) {
-                DrawingScreen(
-                    onBack = {
-                        navController.popBackStack()
-                    },
-                    onSave = { drawing ->
-                        navController.popBackStack()
-                        navController.currentBackStackEntry?.savedStateHandle?.set("drawing", drawing)
-                    }
-                )
-            }
         }
     }
 }
