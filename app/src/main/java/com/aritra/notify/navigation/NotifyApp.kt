@@ -154,7 +154,6 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             composable(
                 route = NotifyScreens.TrashNoteScreen.name
             ) {
-
                 TrashNoteScreen(trashNoteState = state, onEvent = trashViewModel::onEvent)
             }
         }
