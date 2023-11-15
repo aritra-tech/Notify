@@ -1,7 +1,7 @@
 [versions]
 accompanistPermissions = "0.32.0"
 accompanistSystemuicontroller = "0.32.0"
-activity-compose = "1.8.0"
+activity-compose = "1.8.1"
 androidx-junit = "1.1.5"
 appUpdate = "2.1.0"
 biometric = "1.2.0-alpha05"
