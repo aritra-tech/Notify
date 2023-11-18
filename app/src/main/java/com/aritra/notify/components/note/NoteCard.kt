@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedAssistChip
@@ -28,8 +29,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,7 +63,7 @@ fun NotesCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
-    val painter = rememberSaveable { mutableStateOf(noteModel.image) }
+    val painter by rememberUpdatedState(newValue = noteModel.image)
     val context = LocalContext.current
 
     OutlinedCard(
@@ -86,21 +87,34 @@ fun NotesCard(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            if (isSelected) {
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.TopEnd)
-                )
+            Row(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+            ) {
+                if (noteModel.isPinned) {
+                    Icon(
+                        imageVector = Icons.Default.PushPin,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier
+                            .size(24.dp)
+                    )
+                }
+                if (isSelected) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier
+                            .size(24.dp)
+                    )
+                }
             }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                if (painter.value.isNotEmpty()) {
+                if (painter.isNotEmpty()) {
                     Row(
                         modifier = Modifier
                             .height(80.dp)
@@ -108,7 +122,7 @@ fun NotesCard(
                             .horizontalScroll(rememberScrollState()),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        painter.value.forEach {
+                        painter.forEach {
                             AsyncImage(
                                 model = ImageRequest.Builder(context)
                                     .data(it ?: "")

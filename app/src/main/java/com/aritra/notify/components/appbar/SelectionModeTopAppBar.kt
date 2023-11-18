@@ -3,7 +3,6 @@ package com.aritra.notify.components.appbar
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,13 +38,5 @@ fun SelectionModeTopAppBar(selectedItems: List<Int>, onDeleteClick: () -> Unit, 
                 fontFamily = FontFamily(Font(R.font.poppins_medium))
             )
         )
-    }, actions = {
-        IconButton(onDeleteClick) {
-            Icon(
-                imageVector = Icons.Outlined.DeleteOutline,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        }
     })
 }

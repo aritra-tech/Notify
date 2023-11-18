@@ -13,6 +13,7 @@ import com.aritra.notify.domain.models.TrashNote
 import com.aritra.notify.domain.repository.NoteRepository
 import com.aritra.notify.domain.repository.trash.TrashNoteRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
@@ -56,6 +57,15 @@ class NoteScreenViewModel @Inject constructor(
                 moveToTrash(it.id)
                 homeRepository.updateNoteInRoom(it.copy(isMovedToTrash = true))
             }
+        }
+    }
+
+    fun updateNote(note:Note, onSuccess: (updated: Boolean) -> Unit) = viewModelScope.launch(Dispatchers.IO){
+        homeRepository.updateNoteInRoom(
+            note
+        )
+        withContext(Dispatchers.Main) {
+            onSuccess(true)
         }
     }
 }

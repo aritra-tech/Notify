@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -84,16 +85,28 @@ fun GridNoteCard(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            if (isSelected) {
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.TopEnd)
-
-                )
+            Row(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+            ) {
+                if (notesModel.isPinned) {
+                    Icon(
+                        imageVector = Icons.Default.PushPin,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier
+                            .size(24.dp)
+                    )
+                }
+                if (isSelected) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier
+                            .size(24.dp)
+                    )
+                }
             }
 
             Column(
