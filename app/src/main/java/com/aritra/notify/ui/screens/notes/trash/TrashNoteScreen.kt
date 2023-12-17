@@ -1,7 +1,6 @@
 package com.aritra.notify.ui.screens.notes.trash
 
 import TrashNoteState
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,47 +19,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import com.aritra.notify.components.note.NotesCard
-import com.aritra.notify.navigation.NotifyScreens
-
-fun NavGraphBuilder.trashNoteDest(controller: NavController) {
-    composable(NotifyScreens.TrashNoteScreen.name) {
-        val trashViewModel = hiltViewModel<TrashNoteViewModel>()
-        val state by trashViewModel.state.collectAsState()
-        val effect by trashViewModel.effect.collectAsState()
-        val context = LocalContext.current
-        LaunchedEffect(key1 = effect) {
-            effect?.let {
-                when (it) {
-                    TrashNoteEffect.Close -> {
-                        controller.popBackStack()
-                        trashViewModel.resetEffect()
-                    }
-
-                    is TrashNoteEffect.Message -> {
-                        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
-                        trashViewModel.closePage()
-                    }
-
-                    else -> {}
-                }
-            }
-        }
-        TrashNoteScreen(trashNoteState = state, trashViewModel::onEvent)
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

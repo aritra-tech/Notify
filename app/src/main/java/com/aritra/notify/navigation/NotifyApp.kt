@@ -1,5 +1,6 @@
 package com.aritra.notify.navigation
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -15,16 +16,20 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType.Companion.IntType
@@ -36,7 +41,9 @@ import androidx.navigation.navArgument
 import com.aritra.notify.R
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditRoute
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
-import com.aritra.notify.ui.screens.notes.trash.trashNoteDest
+import com.aritra.notify.ui.screens.notes.trash.TrashNoteEffect
+import com.aritra.notify.ui.screens.notes.trash.TrashNoteScreen
+import com.aritra.notify.ui.screens.notes.trash.TrashNoteViewModel
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
 
 @Composable
@@ -50,6 +57,26 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
 
     var shouldHideBottomBar: Boolean by remember {
         mutableStateOf(true)
+    }
+    val trashViewModel = hiltViewModel<TrashNoteViewModel>()
+    val state by trashViewModel.state.collectAsState()
+    val effect by trashViewModel.effect.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = effect) {
+        effect?.let {
+            when (it) {
+                TrashNoteEffect.Close -> {
+                    navController.popBackStack()
+                    trashViewModel.resetEffect()
+                }
+
+                is TrashNoteEffect.Message -> {
+                    Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                    trashViewModel.closePage()
+                }
+            }
+        }
     }
 
     Scaffold(
@@ -123,7 +150,12 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             ) {
                 SettingsScreen(controller = navController)
             }
-            trashNoteDest(navController)
+
+            composable(
+                route = NotifyScreens.TrashNoteScreen.name
+            ) {
+                TrashNoteScreen(trashNoteState = state, onEvent = trashViewModel::onEvent)
+            }
         }
     }
 }
