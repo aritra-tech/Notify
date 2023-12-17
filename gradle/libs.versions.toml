@@ -34,7 +34,7 @@ dagger-hilt-android = "2.48.1"
 devtools-ksp = "1.9.20-1.0.14"
 zoomable = "0.6.2"
 zoomableImageCoil = "0.6.2"
-ktlint = "11.6.1"
+ktlint = "12.0.3"
 camerax_version = "1.4.0-alpha01"
 
 [libraries]
