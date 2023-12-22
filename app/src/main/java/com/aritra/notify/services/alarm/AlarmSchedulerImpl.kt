@@ -42,7 +42,9 @@ class AlarmSchedulerImpl @Inject constructor(private val context: Context) : Ala
             if (alarmManager.canScheduleExactAlarms()) {
                 // NO OP for now
             } else {
-                context.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                    .apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+                context.startActivity(intent)
             }
         } else {
             // NO OP for now
