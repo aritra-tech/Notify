@@ -45,7 +45,7 @@ androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "b
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
 android-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "bom" }
 android-kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlinBom" }
-compose-ui = "androidx.compose.ui:ui:1.6.0-alpha03"
+compose-ui = "androidx.compose.ui:ui:1.6.2"
 compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
