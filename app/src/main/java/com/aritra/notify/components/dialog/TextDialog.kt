@@ -38,8 +38,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
-import com.aritra.notify.domain.models.ReminderDateTimeModel
-import com.aritra.notify.domain.models.formatToLocalDateTime
+import com.aritra.notify.utils.ReminderDateTimeModel
+import com.aritra.notify.utils.formatToLocalDateTime
 import com.aritra.notify.utils.Const
 import com.aritra.notify.utils.checkDateIsNotOld
 import com.aritra.notify.utils.checkTimeIsNotOld

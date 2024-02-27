@@ -1,6 +1,6 @@
 package com.aritra.notify.domain.repository.trash
 
-import com.aritra.notify.data.relations.TrashNoteWithNotes
+import com.aritra.notify.domain.models.TrashNoteWithNotes
 import com.aritra.notify.domain.models.TrashNote
 import java.time.LocalDateTime
 

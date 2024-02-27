@@ -1,8 +1,8 @@
-package com.aritra.notify.domain.models
+package com.aritra.notify.utils
 
 import java.time.LocalDateTime
 
-enum class ReminderDateTimeModel() {
+enum class ReminderDateTimeModel {
     AFTER_30_MINUTES,
     AFTER_1_HOUR,
     TOMORROW_MORNING_7,
