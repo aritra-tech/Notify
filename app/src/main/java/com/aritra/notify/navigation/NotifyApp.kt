@@ -1,8 +1,6 @@
 package com.aritra.notify.navigation
 
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -20,9 +18,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -53,11 +48,8 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
         "${NotifyScreens.AddEditNotes.name}/{noteId}",
         NotifyScreens.TrashNoteScreen.name
     )
-    val backStackEntry = navController.currentBackStackEntryAsState()
 
-    var shouldHideBottomBar: Boolean by remember {
-        mutableStateOf(true)
-    }
+    val backStackEntry = navController.currentBackStackEntryAsState()
     val trashViewModel = hiltViewModel<TrashNoteViewModel>()
     val state by trashViewModel.state.collectAsState()
     val effect by trashViewModel.effect.collectAsState()
@@ -81,18 +73,12 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
 
     Scaffold(
         bottomBar = {
-            AnimatedVisibility(
-                visible = shouldHideBottomBar,
-                enter = fadeIn(animationSpec = tween(delayMillis = 500, easing = LinearOutSlowInEasing)),
-                exit = fadeOut(animationSpec = tween(delayMillis = 500, easing = LinearOutSlowInEasing))
-            ) {
-                BottomNavigationBar(
-                    backStackEntry,
-                    bottomNavItem,
-                    screensWithHiddenNavBar,
-                    navController
-                )
-            }
+            BottomNavigationBar(
+                backStackEntry,
+                bottomNavItem,
+                screensWithHiddenNavBar,
+                navController
+            )
         }
     ) { scaffoldPadding ->
         NavHost(
@@ -130,9 +116,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                     navigateToUpdateNoteScreen = { noteId ->
                         navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
                     }
-                ) { shouldHide ->
-                    shouldHideBottomBar = shouldHide
-                }
+                )
             }
 
             composable(

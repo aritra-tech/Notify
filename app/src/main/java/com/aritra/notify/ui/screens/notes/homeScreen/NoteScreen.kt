@@ -2,11 +2,6 @@
 
 package com.aritra.notify.ui.screens.notes.homeScreen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,7 +39,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
@@ -53,7 +47,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -78,8 +71,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun NoteScreen(
     onFabClicked: () -> Unit,
-    navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
-    shouldHideBottomBar: (Boolean) -> Unit,
+    navigateToUpdateNoteScreen: (noteId: Int) -> Unit
 ) {
     val viewModel = hiltViewModel<NoteScreenViewModel>()
 
@@ -87,43 +79,19 @@ fun NoteScreen(
     val listOfAllNotes by viewModel.listOfNotes.observeAsState(emptyList())
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var isGridView by rememberSaveable { mutableStateOf(false) }
-
-    var isInSelectionMode by remember {
-        mutableStateOf(false)
-    }
-    val selectedNoteIds = remember {
-        mutableStateListOf<Int>()
-    }
-
-    val deletedNotes = remember {
-        mutableStateListOf<Note>()
-    }
-
+    var isInSelectionMode by remember { mutableStateOf(false) }
+    val selectedNoteIds = remember { mutableStateListOf<Int>() }
+    val deletedNotes = remember { mutableStateListOf<Note>() }
     val scope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
-
     val resetSelectionMode = {
         isInSelectionMode = false
         selectedNoteIds.clear()
     }
 
     val listState: LazyListState = rememberLazyListState()
-    val shouldHideSearchBarForList by remember(listState) {
-        derivedStateOf {
-            listState.firstVisibleItemIndex == 0
-        }
-    }
 
     val staggeredGState: LazyStaggeredGridState = rememberLazyStaggeredGridState()
-    val shouldHideSearchBarForGrid by remember(staggeredGState) {
-        derivedStateOf {
-            staggeredGState.firstVisibleItemIndex == 0
-        }
-    }
-
-    var shouldHideSearchBar by remember {
-        mutableStateOf(true)
-    }
 
     BackPressHandler(isInSelectionMode, resetSelectionMode)
 
@@ -134,25 +102,6 @@ fun NoteScreen(
         if (isInSelectionMode && selectedNoteIds.isEmpty()) {
             isInSelectionMode = false
         }
-    }
-
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo }
-            .collect {
-                if (it.visibleItemsInfo.isNotEmpty()) {
-                    shouldHideBottomBar.invoke(shouldHideSearchBarForList)
-                    shouldHideSearchBar = shouldHideSearchBarForList
-                }
-            }
-    }
-    LaunchedEffect(staggeredGState) {
-        snapshotFlow { staggeredGState.layoutInfo }
-            .collect {
-                if (it.visibleItemsInfo.isNotEmpty()) {
-                    shouldHideBottomBar.invoke(shouldHideSearchBarForGrid)
-                    shouldHideSearchBar = shouldHideSearchBarForGrid
-                }
-            }
     }
 
     Scaffold(
@@ -205,43 +154,37 @@ fun NoteScreen(
                     resetSelectionMode = resetSelectionMode
                 )
             } else {
-                AnimatedVisibility(
-                    visible = shouldHideSearchBar,
-                    enter = fadeIn(animationSpec = tween(delayMillis = 500, easing = LinearOutSlowInEasing)),
-                    exit = fadeOut(animationSpec = tween(delayMillis = 500, easing = LinearOutSlowInEasing))
-                ) {
-                    SearchBar(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        query = searchQuery,
-                        onQueryChange = { search ->
-                            searchQuery = search
-                        },
-                        onSearch = {},
-                        active = false,
-                        onActiveChange = {},
-                        placeholder = { Text(stringResource(R.string.search_your_notes)) },
-                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                        trailingIcon = {
-                            if (searchQuery.isNotEmpty()) {
-                                Icon(
-                                    modifier = Modifier.clickable { searchQuery = "" },
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Close"
-                                )
-                            } else {
-                                LayoutToggleButton(
-                                    isGridView = isGridView,
-                                    onToggleClick = { isGridView = !isGridView }
-                                )
-                            }
+                SearchBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    query = searchQuery,
+                    onQueryChange = { search ->
+                        searchQuery = search
+                    },
+                    onSearch = {},
+                    active = false,
+                    onActiveChange = {},
+                    placeholder = { Text(stringResource(R.string.search_your_notes)) },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            Icon(
+                                modifier = Modifier.clickable { searchQuery = "" },
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Close"
+                            )
+                        } else {
+                            LayoutToggleButton(
+                                isGridView = isGridView,
+                                onToggleClick = { isGridView = !isGridView }
+                            )
                         }
-                    ) {}
-                }
+                    }
+                ) {}
             }
         },
-        content = {
+        content = { it ->
             Surface(
                 modifier = Modifier.padding(it)
             ) {
