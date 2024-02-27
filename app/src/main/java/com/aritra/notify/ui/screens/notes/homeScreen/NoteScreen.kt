@@ -71,7 +71,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun NoteScreen(
     onFabClicked: () -> Unit,
-    navigateToUpdateNoteScreen: (noteId: Int) -> Unit
+    navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
 ) {
     val viewModel = hiltViewModel<NoteScreenViewModel>()
 
