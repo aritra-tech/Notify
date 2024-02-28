@@ -1,12 +1,6 @@
 package com.aritra.notify.navigation
 
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -20,17 +14,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType.Companion.IntType
 import androidx.navigation.compose.NavHost
@@ -39,31 +32,29 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aritra.notify.R
-import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditRoute
+import com.aritra.notify.ui.screens.notes.addEditScreen.route.AddEditRoute
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
 import com.aritra.notify.ui.screens.notes.trash.TrashNoteEffect
 import com.aritra.notify.ui.screens.notes.trash.TrashNoteScreen
 import com.aritra.notify.ui.screens.notes.trash.TrashNoteViewModel
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
+import com.aritra.notify.ui.theme.FadeIn
+import com.aritra.notify.ui.theme.FadeOut
 
 @Composable
 fun NotifyApp(navController: NavHostController = rememberNavController()) {
-    val bottomNavItem = getBottomNavItems()
     val screensWithHiddenNavBar = listOf(
         "${NotifyScreens.AddEditNotes.name}/{noteId}",
         NotifyScreens.TrashNoteScreen.name
     )
-    val backStackEntry = navController.currentBackStackEntryAsState()
 
-    var shouldHideBottomBar: Boolean by remember {
-        mutableStateOf(true)
-    }
+    val backStackEntry = navController.currentBackStackEntryAsState()
     val trashViewModel = hiltViewModel<TrashNoteViewModel>()
     val state by trashViewModel.state.collectAsState()
     val effect by trashViewModel.effect.collectAsState()
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = effect) {
+    LaunchedEffect(effect) {
         effect?.let {
             when (it) {
                 TrashNoteEffect.Close -> {
@@ -81,46 +72,21 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
 
     Scaffold(
         bottomBar = {
-            AnimatedVisibility(
-                visible = shouldHideBottomBar,
-                enter = fadeIn(animationSpec = tween(delayMillis = 500, easing = LinearOutSlowInEasing)),
-                exit = fadeOut(animationSpec = tween(delayMillis = 500, easing = LinearOutSlowInEasing))
-            ) {
-                BottomNavigationBar(
-                    backStackEntry,
-                    bottomNavItem,
-                    screensWithHiddenNavBar,
-                    navController
-                )
-            }
+            BottomNavigationBar(
+                backStackEntry,
+                screensWithHiddenNavBar,
+                navController
+            )
         }
     ) { scaffoldPadding ->
         NavHost(
             navController = navController,
             startDestination = NotifyScreens.Notes.name,
             modifier = Modifier.padding(scaffoldPadding),
-            enterTransition = {
-                fadeIn(
-                    animationSpec = tween(220, delayMillis = 90)
-                ) + scaleIn(
-                    initialScale = 0.92f,
-                    animationSpec = tween(220, delayMillis = 90)
-                )
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(90))
-            },
-            popEnterTransition = {
-                fadeIn(
-                    animationSpec = tween(220, delayMillis = 90)
-                ) + scaleIn(
-                    initialScale = 0.92f,
-                    animationSpec = tween(220, delayMillis = 90)
-                )
-            },
-            popExitTransition = {
-                fadeOut(animationSpec = tween(90))
-            }
+            enterTransition = { FadeIn },
+            exitTransition = { FadeOut },
+            popEnterTransition = { FadeIn },
+            popExitTransition = { FadeOut }
         ) {
             composable(
                 route = NotifyScreens.Notes.name
@@ -130,9 +96,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                     navigateToUpdateNoteScreen = { noteId ->
                         navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
                     }
-                ) { shouldHide ->
-                    shouldHideBottomBar = shouldHide
-                }
+                )
             }
 
             composable(
@@ -163,18 +127,33 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
 @Composable
 fun BottomNavigationBar(
     backStackEntry: State<NavBackStackEntry?>,
-    bottomNavItem: List<BottomNavItem>,
     screensWithHiddenNavBar: List<String>,
     navController: NavHostController,
 ) {
     if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
-        NavigationBar(containerColor = Color.Transparent, modifier = Modifier.height(75.dp)) {
+        NavigationBar(
+            containerColor = Color.Transparent,
+            modifier = Modifier.height(75.dp)
+        ) {
+            val bottomNavItem = listOf(
+                BottomNavItem(
+                    name = "Notes",
+                    route = NotifyScreens.Notes.name,
+                    icon = ImageVector.vectorResource(R.drawable.note_outline)
+                ),
+                BottomNavItem(
+                    name = "Settings",
+                    route = NotifyScreens.Settings.name,
+                    icon = ImageVector.vectorResource(R.drawable.settings_outline)
+                )
+            )
+
             bottomNavItem.forEach { item ->
                 NavigationBarItem(
                     alwaysShowLabel = true,
                     icon = {
                         Icon(
-                            painter = painterResource(id = item.icon),
+                            imageVector = item.icon,
                             contentDescription = item.name,
                             tint = if (backStackEntry.value?.destination?.route == item.route) {
                                 MaterialTheme.colorScheme.onSurface
@@ -192,7 +171,7 @@ fun BottomNavigationBar(
                                 MaterialTheme.colorScheme.secondary
                             },
                             fontWeight = if (backStackEntry.value?.destination?.route == item.route) {
-                                FontWeight.Bold
+                                FontWeight.SemiBold
                             } else {
                                 FontWeight.Normal
                             }
@@ -203,8 +182,13 @@ fun BottomNavigationBar(
                         val currentDestination = navController.currentBackStackEntry?.destination?.route
                         if (item.route != currentDestination) {
                             navController.navigate(item.route) {
-                                popUpTo(navController.graph.startDestinationId)
+                                navController.graph.findStartDestination().let { route ->
+                                    popUpTo(route.id) {
+                                        saveState = true
+                                    }
+                                }
                                 launchSingleTop = true
+                                restoreState = true
                             }
                         }
                     }
@@ -212,19 +196,4 @@ fun BottomNavigationBar(
             }
         }
     }
-}
-
-fun getBottomNavItems(): List<BottomNavItem> {
-    return listOf(
-        BottomNavItem(
-            name = "Notes",
-            route = NotifyScreens.Notes.name,
-            icon = R.drawable.note_outline
-        ),
-        BottomNavItem(
-            name = "Settings",
-            route = NotifyScreens.Settings.name,
-            icon = R.drawable.settings_outline
-        )
-    )
 }

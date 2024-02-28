@@ -1,4 +1,4 @@
-package com.aritra.notify.ui.screens.notes.addEditScreen
+package com.aritra.notify.ui.screens.notes.addEditScreen.components
 
 import android.net.Uri
 import androidx.compose.foundation.horizontalScroll

@@ -24,8 +24,3 @@ data class Note(
     var reminderDateTime: LocalDateTime? = null,
     var isReminded: Boolean = false,
 ) : Parcelable
-
-data class ReminderDateTimeInfo(
-    val dateTime: LocalDateTime,
-    val isReminded: Boolean,
-)

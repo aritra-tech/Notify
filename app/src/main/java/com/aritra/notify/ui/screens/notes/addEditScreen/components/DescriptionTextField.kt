@@ -1,4 +1,4 @@
-package com.aritra.notify.ui.screens.notes.addEditScreen
+package com.aritra.notify.ui.screens.notes.addEditScreen.components
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring

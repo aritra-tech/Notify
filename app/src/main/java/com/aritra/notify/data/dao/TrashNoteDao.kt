@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-import com.aritra.notify.data.relations.TrashNoteWithNotes
+import com.aritra.notify.domain.models.TrashNoteWithNotes
 import com.aritra.notify.domain.models.TrashNote
 
 @Dao

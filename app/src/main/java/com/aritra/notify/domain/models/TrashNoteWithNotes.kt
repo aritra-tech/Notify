@@ -1,9 +1,7 @@
-package com.aritra.notify.data.relations
+package com.aritra.notify.domain.models
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.aritra.notify.domain.models.Note
-import com.aritra.notify.domain.models.TrashNote
 
 data class TrashNoteWithNotes(
     @Embedded val trashNote: TrashNote,
