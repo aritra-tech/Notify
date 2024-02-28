@@ -32,7 +32,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aritra.notify.R
-import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditRoute
+import com.aritra.notify.ui.screens.notes.addEditScreen.route.AddEditRoute
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
 import com.aritra.notify.ui.screens.notes.trash.TrashNoteEffect
 import com.aritra.notify.ui.screens.notes.trash.TrashNoteScreen

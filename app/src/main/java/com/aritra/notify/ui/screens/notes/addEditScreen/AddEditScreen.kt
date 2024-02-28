@@ -53,6 +53,10 @@ import com.aritra.notify.components.dialog.TextDialog
 import com.aritra.notify.components.drawing.DrawingScreen
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.models.Todo
+import com.aritra.notify.ui.screens.notes.addEditScreen.components.DescriptionTextField
+import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteChecklist
+import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteImages
+import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteStats
 import com.aritra.notify.ui.theme.NotifyTheme
 import com.aritra.notify.utils.formatReminderDateTime
 import java.time.LocalDateTime

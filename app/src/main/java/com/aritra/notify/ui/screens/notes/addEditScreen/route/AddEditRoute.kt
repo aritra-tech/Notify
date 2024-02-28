@@ -1,4 +1,4 @@
-package com.aritra.notify.ui.screens.notes.addEditScreen
+package com.aritra.notify.ui.screens.notes.addEditScreen.route
 
 import android.net.Uri
 import android.widget.Toast
@@ -13,6 +13,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.aritra.notify.domain.models.Todo
+import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditScreen
+import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
 import java.time.LocalDateTime
 
@@ -79,7 +81,7 @@ fun AddEditRoute(
         }
     }
 
-    var rememberUpdateDateTime = remember {
+    val rememberUpdateDateTime = remember {
         { localDateTime: LocalDateTime? ->
             viewModel.updateReminderDateTime(localDateTime)
         }

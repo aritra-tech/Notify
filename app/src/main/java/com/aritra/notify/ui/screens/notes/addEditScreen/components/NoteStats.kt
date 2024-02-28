@@ -1,4 +1,4 @@
-package com.aritra.notify.ui.screens.notes.addEditScreen
+package com.aritra.notify.ui.screens.notes.addEditScreen.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
