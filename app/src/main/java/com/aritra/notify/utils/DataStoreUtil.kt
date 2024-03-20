@@ -1,4 +1,4 @@
-package com.aritra.notify.di
+package com.aritra.notify.utils
 
 import android.content.Context
 import androidx.datastore.core.DataStore

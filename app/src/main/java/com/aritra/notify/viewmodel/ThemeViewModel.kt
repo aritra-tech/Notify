@@ -3,10 +3,10 @@ package com.aritra.notify.viewmodel
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aritra.notify.di.DataStoreUtil
-import com.aritra.notify.di.DataStoreUtil.Companion.IS_DARK_MODE_KEY
-import com.aritra.notify.di.DataStoreUtil.Companion.IS_SECURE_ENV_KEY
-import com.aritra.notify.di.ThemeState
+import com.aritra.notify.utils.DataStoreUtil
+import com.aritra.notify.utils.DataStoreUtil.Companion.IS_DARK_MODE_KEY
+import com.aritra.notify.utils.DataStoreUtil.Companion.IS_SECURE_ENV_KEY
+import com.aritra.notify.domain.models.ThemeState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
