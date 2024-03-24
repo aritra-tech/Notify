@@ -55,8 +55,9 @@
     <string name="notification_permission_description">The notification permission is important for this app. Please grant the permission.</string>
     <string name="notification_permission_settings">The notification permission is important for this app. Please navigate to your device settings and enable notifications for Make it So.</string>
     <string name="ok">OK</string>
-    <string name="secure_screen">Secure Screen</string>
+    <string name="block_ss">Block screenshots</string>
     <string name="trash">Trash</string>
     <string name="format_deleted_note">%s left</string>
     <string name="set_reminder">Set Reminder</string>
+    <string name="general">General</string>
 </resources>

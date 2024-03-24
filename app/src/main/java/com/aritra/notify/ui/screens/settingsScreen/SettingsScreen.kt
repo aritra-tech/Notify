@@ -68,7 +68,7 @@ fun SettingsScreen(controller: NavController) {
         Column {
 
             Text(
-                text = "General",
+                text = stringResource(R.string.general),
                 style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium)
             )
             SettingsSwitchCard(
