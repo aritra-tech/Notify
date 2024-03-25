@@ -23,10 +23,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.aritra.notify.BuildConfig
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.SettingsComponent
 import com.aritra.notify.components.actions.SettingsSwitchCard
@@ -64,12 +66,22 @@ fun SettingsScreen(controller: NavController) {
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Column {
+            Text(
+                text = "Settings",
+                style = TextStyle(
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Light,
+                    fontFamily = FontFamily(Font(R.font.poppins_light))
+                )
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
 
             Text(
+                modifier = Modifier.padding(bottom = 10.dp),
                 text = stringResource(R.string.general),
-                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium)
             )
             SettingsSwitchCard(
                 text = stringResource(id = R.string.dark_mode),
@@ -91,8 +103,9 @@ fun SettingsScreen(controller: NavController) {
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
+                modifier = Modifier.padding(bottom = 10.dp),
                 text = stringResource(R.string.security),
-                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium)
             )
             SettingsSwitchCard(
                 text = stringResource(id = R.string.block_ss),
@@ -115,13 +128,13 @@ fun SettingsScreen(controller: NavController) {
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
+                modifier = Modifier.padding(bottom = 10.dp),
                 text = stringResource(R.string.import_export),
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.poppins_medium))
             )
-
             SettingsComponent(
-                onClick =  {
+                onClick = {
                     exportLauncher.launch(Const.DATABASE_FILE_NAME)
                 },
                 itemName = stringResource(R.string.backup_data),
@@ -139,8 +152,9 @@ fun SettingsScreen(controller: NavController) {
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
+                modifier = Modifier.padding(bottom = 10.dp),
                 text = stringResource(R.string.others),
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.poppins_medium))
             )
 
@@ -182,5 +196,18 @@ fun SettingsScreen(controller: NavController) {
                 context.startActivity(intent)
             }
         }
+
+        Text(
+            modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
+            text = "Version: ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
+            style = TextStyle(fontSize = 14.sp, fontFamily = FontFamily(Font(R.font.poppins_light))),
+            textAlign = TextAlign.Center
+        )
+
+        Text(
+            text = stringResource(R.string.by_aritra_das),
+            style = TextStyle(fontSize = 14.sp, fontFamily = FontFamily(Font(R.font.poppins_light))),
+            textAlign = TextAlign.Center
+        )
     }
 }
