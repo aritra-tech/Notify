@@ -124,7 +124,7 @@ fun SettingsScreen(controller: NavController) {
                 )
                 SettingsSwitchCard(
                     text = stringResource(id = R.string.block_ss),
-                    icon = R.drawable.phonelink_lock,
+                    icon = R.drawable.block_ss,
                     isChecked = themeState.isSecureEnv,
                     onCheckedChange = {
                         themeViewModel.toggleSecureEnv()
