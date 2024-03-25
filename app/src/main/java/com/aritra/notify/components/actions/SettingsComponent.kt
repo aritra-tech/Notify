@@ -27,7 +27,6 @@ fun SettingsComponent(
     iconId: Int,
     onClick: () -> Unit,
 ) {
-
     Row(
         modifier = modifier
             .fillMaxWidth()
