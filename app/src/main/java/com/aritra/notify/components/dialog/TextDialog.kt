@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -117,7 +118,6 @@ fun DateTimeDialog(
     isOpen: Boolean = false,
     isEdit: Boolean = false,
     onDateTimeUpdated: (LocalDateTime) -> Unit,
-    onConfirmCallback: () -> Unit,
     onDismissCallback: () -> Unit,
 ) {
     var shouldShowDatePicker by remember {
@@ -208,7 +208,7 @@ fun DateTimeDialog(
         }
     }
     if (isOpen && !isEdit) {
-        AlertDialog(onDismissRequest = onDismissCallback) {
+        BasicAlertDialog(onDismissRequest = onDismissCallback) {
             Surface(
                 color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(8.dp),
@@ -236,7 +236,7 @@ fun DateTimeDialog(
                         modifier = Modifier.padding(bottom = 24.dp),
                         maxItemsInEachRow = 1
                     ) {
-                        ReminderDateTimeModel.values().forEach {
+                        ReminderDateTimeModel.entries.forEach {
                             AssistChip(leadingIcon = {
                                 Icon(imageVector = Icons.Default.AccessTime, contentDescription = "")
                             }, onClick = {
@@ -259,17 +259,6 @@ fun DateTimeDialog(
                             })
                         }
                     }
-//                    TextButton(
-//                        onClick = { onConfirmCallback() },
-//                        shape = RoundedCornerShape(8.dp),
-//                        modifier = Modifier.align(End)
-//                    ) {
-//                        Text(
-//                            text = stringResource(R.string.confirm),
-//                            fontSize = 16.sp,
-//                            fontWeight = FontWeight.SemiBold
-//                        )
-//                    }
                 }
             }
         }
