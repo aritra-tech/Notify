@@ -59,6 +59,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.foundation.android)
     implementation(libs.androidx.core.ktx)
     implementation(platform(libs.android.kotlin.bom))
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -68,6 +69,8 @@ dependencies {
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
+    implementation(libs.androidx.animation.core)
+    implementation(libs.androidx.animation)
 
     // Test Dependencies
     testImplementation(libs.junit)

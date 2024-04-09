@@ -3,6 +3,7 @@ accompanistPermissions = "0.32.0"
 accompanistSystemuicontroller = "0.32.0"
 activity-compose = "1.8.2"
 androidx-junit = "1.1.5"
+animationCore = "1.7.0-SNAPSHOT"
 appUpdate = "2.1.0"
 biometric = "1.2.0-alpha05"
 coilCompose = "2.4.0"
@@ -11,6 +12,7 @@ coreSplashscreen = "1.0.1"
 datastorePreferences = "1.0.0"
 desugar_jdk_libs = "2.0.3"
 espresso-core = "3.5.1"
+foundationAndroid = "1.6.5"
 google-gson = "2.10.1"
 gradle = "8.1.2"
 hiltAndroid = "2.48.1"
@@ -41,11 +43,14 @@ camerax_version = "1.4.0-alpha01"
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
+androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animationCore" }
+androidx-animation-core = { module = "androidx.compose.animation:animation-core", version.ref = "animationCore" }
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
 android-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "bom" }
 android-kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlinBom" }
-compose-ui = "androidx.compose.ui:ui:1.6.0-alpha03"
+androidx-foundation-android = { module = "androidx.compose.foundation:foundation-android", version.ref = "foundationAndroid" }
+compose-ui = { module = "androidx.compose.ui:ui", version.ref = "animationCore" }
 compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
