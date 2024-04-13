@@ -1,4 +1,5 @@
 package com.aritra.notify.ui.screens.notes.trash
+
 import TrashNoteInfo
 import TrashNoteState
 import androidx.lifecycle.ViewModel
@@ -103,8 +104,6 @@ class TrashNoteViewModel @Inject constructor(
                     )
                 }
             }
-
-            else -> {}
         }
     }
 
@@ -122,13 +121,13 @@ class TrashNoteViewModel @Inject constructor(
 }
 
 sealed class TrashNoteEffect {
-    object Close : TrashNoteEffect()
+    data object Close : TrashNoteEffect()
     class Message(val message: String) : TrashNoteEffect()
 }
 
 sealed class TrashNoteEvent {
-    object RestoreNote : TrashNoteEvent()
-    object DeleteNote : TrashNoteEvent()
-    object UpdateSelectionMode : TrashNoteEvent()
+    data object RestoreNote : TrashNoteEvent()
+    data object DeleteNote : TrashNoteEvent()
+    data object UpdateSelectionMode : TrashNoteEvent()
     class AddSelectedIds(val id: Int) : TrashNoteEvent()
 }

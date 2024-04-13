@@ -1,7 +1,6 @@
 package com.aritra.notify.ui.screens.notes.homeScreen
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
@@ -20,12 +19,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NoteScreenViewModel @Inject constructor(
-    application: Application,
     private val homeRepository: NoteRepository,
     private val trashNote: TrashNoteRepo,
     private val dispatcherProvider: DispatcherProvider,
     private val alarmScheduler: AlarmScheduler,
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     var listOfNotes = homeRepository.getAllNotesFromRoom().asLiveData().map { notes ->
         notes.filterNot { it.isMovedToTrash }

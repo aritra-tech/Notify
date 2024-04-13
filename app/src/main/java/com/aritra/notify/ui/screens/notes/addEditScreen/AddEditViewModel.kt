@@ -137,19 +137,6 @@ class AddEditViewModel @Inject constructor(
                 note = description,
                 dateTime = Date(),
                 checklist = checklist
-                // if the image has not been modified, use the old image uri
-//                image = if (oldNote.image == newNote.image) {
-//                    oldNote.image
-//                } else if (newNote.image.filterNotNull().isNotEmpty()) {
-//                    // if the image has been modified, save the new image uri
-//                    SaveSelectedImageUseCase(
-//                        getApplication(),
-//                        newNote.image.filterNotNull(),
-//                        newNote.id
-//                    )
-//                } else {
-//                    emptyList()
-//                }
             )
         )
 
