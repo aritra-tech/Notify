@@ -1,23 +1,18 @@
 package com.aritra.notify.components.actions
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -30,41 +25,35 @@ import com.aritra.notify.R
 @Composable
 fun SettingsSwitchCard(
     text: String,
-    icon: Painter,
+    icon: Int,
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    Card(
+    Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(10.dp))
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(5.dp)
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
+        Icon(
+            painter = painterResource(id = icon),
+            contentDescription = stringResource(R.string.icon),
+            modifier = Modifier.size(25.dp)
+        )
+        Text(
+            text = text,
+            fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.poppins_light))
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Switch(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = icon,
-                contentDescription = stringResource(R.string.icon),
-                modifier = Modifier.size(25.dp)
-            )
-            Text(
-                modifier = Modifier.padding(start = 10.dp),
-                text = text,
-                fontSize = 18.sp,
-                fontFamily = FontFamily(Font(R.font.poppins_semibold))
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Switch(
-                modifier = Modifier
-                    .semantics { contentDescription = "Theme Switch" },
-                checked = isChecked,
-                onCheckedChange = onCheckedChange
-            )
-        }
+                .semantics { contentDescription = "Theme Switch" },
+            checked = isChecked,
+            onCheckedChange = onCheckedChange
+        )
     }
 }

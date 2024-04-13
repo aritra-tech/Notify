@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.content.Context
 import androidx.room.Room
 import com.aritra.notify.data.db.NoteDatabase
+import com.aritra.notify.utils.DataStoreUtil
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

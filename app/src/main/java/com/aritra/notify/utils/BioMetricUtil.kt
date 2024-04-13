@@ -1,4 +1,4 @@
-package com.aritra.notify.di
+package com.aritra.notify.utils
 
 import android.content.Context
 import com.aritra.notify.components.biometric.AppBioMetricManager

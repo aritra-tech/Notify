@@ -14,7 +14,7 @@ import com.aritra.notify.data.db.NoteDatabase
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.repository.BackupRepository
 import com.aritra.notify.domain.repository.NoteRepository
-import com.aritra.notify.di.DataStoreUtil
+import com.aritra.notify.utils.DataStoreUtil
 import com.aritra.notify.ui.screens.MainActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

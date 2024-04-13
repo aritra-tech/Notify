@@ -2,12 +2,19 @@ package com.aritra.notify.components.appbar
 
 import android.Manifest
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -35,7 +42,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun AddEditBottomBar(
     modifier: Modifier = Modifier,
@@ -49,6 +56,8 @@ fun AddEditBottomBar(
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
 
+    val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val imeIsVisible = WindowInsets.isImeVisible
     val microphonePermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
@@ -96,10 +105,13 @@ fun AddEditBottomBar(
                     onDismissRequest = { showSheet = false },
                     sheetState = sheetState,
                     dragHandle = { BottomSheetDefaults.DragHandle() },
+                    windowInsets = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) WindowInsets.ime
+                    else WindowInsets(0,0,0,0),
                     content = {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .padding(bottom = if (imeIsVisible) 0.dp else bottomPadding)
                                 .padding(16.dp),
                             content = {
                                 BottomSheetOptions(

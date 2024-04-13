@@ -73,37 +73,16 @@ fun AddEditScreen(
     onUpdateReminderDateTime: (LocalDateTime?) -> Unit,
 ) {
     val focus = LocalFocusManager.current
-
-    var title by remember {
-        mutableStateOf(note.title)
-    }
-    var description by remember {
-        mutableStateOf(note.note)
-    }
-    var showAddTodo by remember {
-        mutableStateOf(false)
-    }
-    val images = remember {
-        mutableStateListOf<Uri>()
-    }
-    val checklist = remember {
-        mutableStateListOf<Todo>()
-    }
-    val cancelDialogState = remember {
-        mutableStateOf(false)
-    }
-    var openCameraPreview by remember {
-        mutableStateOf(false)
-    }
-    var isEditDateTime by remember {
-        mutableStateOf(false)
-    }
-    var openDrawingScreen by remember {
-        mutableStateOf(false)
-    }
-    var shouldShowDialogDateTime by remember {
-        mutableStateOf(false)
-    }
+    var title by remember { mutableStateOf(note.title) }
+    var description by remember { mutableStateOf(note.note) }
+    var showAddTodo by remember { mutableStateOf(false) }
+    val images = remember { mutableStateListOf<Uri>() }
+    val checklist = remember { mutableStateListOf<Todo>() }
+    val cancelDialogState = remember { mutableStateOf(false) }
+    var openCameraPreview by remember { mutableStateOf(false) }
+    var isEditDateTime by remember { mutableStateOf(false) }
+    var openDrawingScreen by remember { mutableStateOf(false) }
+    var shouldShowDialogDateTime by remember { mutableStateOf(false) }
 
     // Makes sure that the title is updated when the note is updated
     LaunchedEffect(note.title) {
@@ -333,11 +312,13 @@ fun AddEditScreen(
         }
     )
 
-    DateTimeDialog(isOpen = shouldShowDialogDateTime, isEdit = isEditDateTime, onDateTimeUpdated = {
-        onUpdateReminderDateTime(it)
-        shouldShowDialogDateTime = false
-    }, onConfirmCallback = {
-    }) {
+    DateTimeDialog(
+        isOpen = shouldShowDialogDateTime, isEdit = isEditDateTime,
+        onDateTimeUpdated = {
+            onUpdateReminderDateTime(it)
+            shouldShowDialogDateTime = false
+        },
+    ) {
         shouldShowDialogDateTime = false
         isEditDateTime = false
     }
