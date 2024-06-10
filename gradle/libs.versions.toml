@@ -35,7 +35,7 @@ devtools-ksp = "1.9.22-1.0.16"
 zoomable = "0.6.2"
 zoomableImageCoil = "0.6.2"
 ktlint = "11.6.1"
-camerax_version = "1.4.0-alpha01"
+camerax_version = "1.4.0-beta01"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
