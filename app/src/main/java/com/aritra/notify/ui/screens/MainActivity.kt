@@ -58,7 +58,6 @@ class MainActivity : FragmentActivity() {
             }
         }
         setContent {
-
             navController = rememberNavController()
 
             NotifyTheme {
@@ -68,7 +67,6 @@ class MainActivity : FragmentActivity() {
 
         setObservers()
     }
-
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)

@@ -91,7 +91,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             popExitTransition = { FadeOut }
         ) {
             composable(
-                route = NotifyScreens.Notes.name,
+                route = NotifyScreens.Notes.name
             ) {
                 NoteScreen(
                     onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name + "/-1") },
@@ -106,14 +106,14 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                 arguments = listOf(
                     navArgument("noteId") {
                         type = IntType
-                    },
+                    }
                 ),
                 deepLinks = listOf(
                     navDeepLink {
                         uriPattern = NavDeepLinks.addNotesUriPattern
                         action = Intent.ACTION_VIEW
-                    },
-                ),
+                    }
+                )
             ) { backStack ->
                 AddEditRoute(
                     navController = navController,
@@ -133,7 +133,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                     navDeepLink {
                         uriPattern = NavDeepLinks.addNotesUriPattern
                         action = Intent.ACTION_VIEW
-                    },
+                    }
                 )
             ) {
                 TrashNoteScreen(trashNoteState = state, onEvent = trashViewModel::onEvent)

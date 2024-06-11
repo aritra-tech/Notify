@@ -11,7 +11,7 @@ class NotifyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        //creates the notification channel
+        // creates the notification channel
         createNotificationChannel(this)
 
         // Adds the shortcuts
