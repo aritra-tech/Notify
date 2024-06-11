@@ -61,4 +61,6 @@
     <string name="set_reminder">Set Reminder</string>
     <string name="general">General</string>
     <string name="by_aritra_das">By Aritra Das 💙</string>
+    <string name="add_new_note_shortcut_label">Add New Note</string>
+    <string name="open_trash_shortcut_label">Show trash</string>
 </resources>

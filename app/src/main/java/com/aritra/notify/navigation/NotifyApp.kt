@@ -1,5 +1,6 @@
 package com.aritra.notify.navigation
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,6 +32,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.aritra.notify.R
 import com.aritra.notify.ui.screens.notes.addEditScreen.route.AddEditRoute
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
@@ -89,7 +91,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             popExitTransition = { FadeOut }
         ) {
             composable(
-                route = NotifyScreens.Notes.name
+                route = NotifyScreens.Notes.name,
             ) {
                 NoteScreen(
                     onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name + "/-1") },
@@ -101,7 +103,17 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
 
             composable(
                 route = "${NotifyScreens.AddEditNotes.name}/{noteId}",
-                arguments = listOf(navArgument("noteId") { type = IntType })
+                arguments = listOf(
+                    navArgument("noteId") {
+                        type = IntType
+                    },
+                ),
+                deepLinks = listOf(
+                    navDeepLink {
+                        uriPattern = NavDeepLinks.addNotesUriPattern
+                        action = Intent.ACTION_VIEW
+                    },
+                ),
             ) { backStack ->
                 AddEditRoute(
                     navController = navController,
@@ -116,7 +128,13 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             }
 
             composable(
-                route = NotifyScreens.TrashNoteScreen.name
+                route = NotifyScreens.TrashNoteScreen.name,
+                deepLinks = listOf(
+                    navDeepLink {
+                        uriPattern = NavDeepLinks.addNotesUriPattern
+                        action = Intent.ACTION_VIEW
+                    },
+                )
             ) {
                 TrashNoteScreen(trashNoteState = state, onEvent = trashViewModel::onEvent)
             }
