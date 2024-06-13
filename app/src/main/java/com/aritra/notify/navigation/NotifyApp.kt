@@ -25,12 +25,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType.Companion.IntType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.aritra.notify.R
 import com.aritra.notify.ui.screens.notes.addEditScreen.route.AddEditRoute
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
@@ -40,6 +39,7 @@ import com.aritra.notify.ui.screens.notes.trash.TrashNoteViewModel
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
 import com.aritra.notify.ui.theme.FadeIn
 import com.aritra.notify.ui.theme.FadeOut
+import kotlinx.serialization.Serializable
 
 @Composable
 fun NotifyApp(navController: NavHostController = rememberNavController()) {
@@ -81,43 +81,35 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
     ) { scaffoldPadding ->
         NavHost(
             navController = navController,
-            startDestination = NotifyScreens.Notes.name,
+            startDestination = Notes,
             modifier = Modifier.padding(scaffoldPadding),
             enterTransition = { FadeIn },
             exitTransition = { FadeOut },
             popEnterTransition = { FadeIn },
             popExitTransition = { FadeOut }
         ) {
-            composable(
-                route = NotifyScreens.Notes.name
-            ) {
+            composable<Notes> {
                 NoteScreen(
-                    onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name + "/-1") },
+                    onFabClicked = { navController.navigate(AddEditNotes) },
                     navigateToUpdateNoteScreen = { noteId ->
-                        navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
+                        navController.navigate("${AddEditNotes}/$noteId")
                     }
                 )
             }
 
-            composable(
-                route = "${NotifyScreens.AddEditNotes.name}/{noteId}",
-                arguments = listOf(navArgument("noteId") { type = IntType })
-            ) { backStack ->
+            composable<AddEditNotes> {
+                val args = it.toRoute<AddEditNotes>()
                 AddEditRoute(
                     navController = navController,
-                    backStack = backStack
+                    arguments = args
                 )
             }
 
-            composable(
-                route = NotifyScreens.Settings.name
-            ) {
+            composable<Settings> {
                 SettingsScreen(controller = navController)
             }
 
-            composable(
-                route = NotifyScreens.TrashNoteScreen.name
-            ) {
+            composable<TrashNoteScreen> {
                 TrashNoteScreen(trashNoteState = state, onEvent = trashViewModel::onEvent)
             }
         }
@@ -197,3 +189,17 @@ fun BottomNavigationBar(
         }
     }
 }
+
+@Serializable
+object Notes
+
+@Serializable
+data class AddEditNotes(
+    val noteId: Int
+)
+
+@Serializable
+object TrashNoteScreen
+
+@Serializable
+object Settings
