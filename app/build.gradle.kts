@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -139,6 +140,9 @@ dependencies {
     // Leak Canary
     debugImplementation(libs.leakcanary.android)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    implementation(libs.kotlinx.serialization.json)
+
 }
 
 ktlint {

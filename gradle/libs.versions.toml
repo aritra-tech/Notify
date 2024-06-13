@@ -21,7 +21,7 @@ lifecycleExtensions = "2.2.0"
 lifecycleVersion = "2.6.2"
 material3 = "1.2.1"
 materialIconsExtended = "1.6.7"
-navVersion = "2.7.7"
+navVersion = "2.8.0-alpha08"
 roomVersion = "2.6.1"
 runtimeLivedata = "1.5.3"
 bom = "2024.05.00"
@@ -35,6 +35,7 @@ zoomable = "0.6.2"
 zoomableImageCoil = "0.6.2"
 ktlint = "11.6.1"
 camerax_version = "1.4.0-alpha01"
+serialization = "1.6.3"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -43,7 +44,7 @@ androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "b
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
 android-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "bom" }
 android-kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlinBom" }
-compose-ui = "androidx.compose.ui:ui:1.6.7"
+compose-ui = "androidx.compose.ui:ui:1.6.8"
 compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
@@ -87,6 +88,7 @@ camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = 
 camera-video = { module = "androidx.camera:camera-video", version.ref = "camerax_version" }
 camera-view = { module = "androidx.camera:camera-view", version.ref = "camerax_version" }
 camera-extensions = { module = "androidx.camera:camera-extensions", version.ref = "camerax_version" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 
 
 [plugins]
@@ -97,3 +99,4 @@ dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "da
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "devtools-ksp" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin-android" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-android" }
