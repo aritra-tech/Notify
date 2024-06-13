@@ -10,9 +10,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.aritra.notify.domain.models.Todo
+import com.aritra.notify.navigation.Routes
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditScreen
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
@@ -21,11 +21,11 @@ import java.time.LocalDateTime
 @Composable
 fun AddEditRoute(
     navController: NavController,
-    backStack: NavBackStackEntry,
     modifier: Modifier = Modifier,
+    arguments: Routes.AddEditNotes,
 ) {
     val context = LocalContext.current
-    val noteId = (backStack.arguments?.getInt("noteId") ?: 0).let {
+    val noteId = arguments.noteId.let {
         if (it < 0) null else it
     }
     val viewModel = hiltViewModel<AddEditViewModel>()
