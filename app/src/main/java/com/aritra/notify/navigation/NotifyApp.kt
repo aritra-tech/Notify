@@ -128,13 +128,7 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             }
 
             composable(
-                route = NotifyScreens.TrashNoteScreen.name,
-                deepLinks = listOf(
-                    navDeepLink {
-                        uriPattern = NavDeepLinks.addNotesUriPattern
-                        action = Intent.ACTION_VIEW
-                    }
-                )
+                route = NotifyScreens.TrashNoteScreen.name
             ) {
                 TrashNoteScreen(trashNoteState = state, onEvent = trashViewModel::onEvent)
             }

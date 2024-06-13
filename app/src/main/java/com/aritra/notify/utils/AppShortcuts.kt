@@ -18,21 +18,8 @@ object AppShortcuts {
             .setIcon(IconCompat.createWithResource(context, R.drawable.shortcut_add_icon))
             .setIntent(
                 Intent(context, MainActivity::class.java).apply {
-                    // opens create screen
+                    // opens create note screen
                     data = NavDeepLinks.addNotesUri
-                    action = Intent.ACTION_VIEW
-                }
-            )
-            .build()
-
-    private fun openTrashShortCut(context: Context): ShortcutInfoCompat =
-        ShortcutInfoCompat.Builder(context, "open_trash")
-            .setShortLabel(context.getString(R.string.open_trash_shortcut_label))
-            .setIcon(IconCompat.createWithResource(context, R.drawable.shortcut_delete_icon))
-            .setIntent(
-                Intent(context, MainActivity::class.java).apply {
-                    // opens create screen
-                    data = NavDeepLinks.trashNoteUri
                     action = Intent.ACTION_VIEW
                 }
             )
@@ -40,9 +27,8 @@ object AppShortcuts {
 
     fun showShortCuts(context: Context) {
         val shortcut1 = createNoteShortCut(context)
-        val shortcut2 = openTrashShortCut(context)
         try {
-            val isSuccess = ShortcutManagerCompat.addDynamicShortcuts(context, listOf(shortcut1, shortcut2))
+            val isSuccess = ShortcutManagerCompat.addDynamicShortcuts(context, listOf(shortcut1))
             Log.d("SHORTCUTS", "CREATED $isSuccess")
         } catch (e: Exception) {
             Log.e("SHORTCUTS", "ERROR IN LAYING SHORTCUTS", e)
