@@ -313,11 +313,12 @@ fun AddEditScreen(
     )
 
     DateTimeDialog(
-        isOpen = shouldShowDialogDateTime, isEdit = isEditDateTime,
+        isOpen = shouldShowDialogDateTime,
+        isEdit = isEditDateTime,
         onDateTimeUpdated = {
             onUpdateReminderDateTime(it)
             shouldShowDialogDateTime = false
-        },
+        }
     ) {
         shouldShowDialogDateTime = false
         isEditDateTime = false

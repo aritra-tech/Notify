@@ -10,6 +10,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.aritra.notify.components.biometric.AppBioMetricManager
 import com.aritra.notify.navigation.NotifyApp
 import com.aritra.notify.ui.theme.NotifyTheme
@@ -35,6 +37,8 @@ class MainActivity : FragmentActivity() {
     private lateinit var appUpdateManager: AppUpdateManager
     private val updateType = AppUpdateType.IMMEDIATE
 
+    private lateinit var navController: NavHostController
+
     @Inject
     lateinit var appBioMetricManager: AppBioMetricManager
 
@@ -54,12 +58,20 @@ class MainActivity : FragmentActivity() {
             }
         }
         setContent {
+            navController = rememberNavController()
+
             NotifyTheme {
-                NotifyApp()
+                NotifyApp(navController = navController)
             }
         }
 
         setObservers()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        // handle deeplinks
+        navController.handleDeepLink(intent)
     }
 
     private val installStateUpdatedListener = InstallStateUpdatedListener { state ->

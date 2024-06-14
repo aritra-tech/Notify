@@ -105,8 +105,11 @@ fun AddEditBottomBar(
                     onDismissRequest = { showSheet = false },
                     sheetState = sheetState,
                     dragHandle = { BottomSheetDefaults.DragHandle() },
-                    windowInsets = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) WindowInsets.ime
-                    else WindowInsets(0,0,0,0),
+                    windowInsets = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                        WindowInsets.ime
+                    } else {
+                        WindowInsets(0, 0, 0, 0)
+                    },
                     content = {
                         Column(
                             modifier = Modifier
