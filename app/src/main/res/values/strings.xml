@@ -42,14 +42,12 @@
     <string name="rate_us_on_google_play">Rate us on Google Play</string>
     <string name="on_share_message">https://play.google.com/store/apps/details?id=com.aritra.notify</string>
     <string name="image">Image</string>
-    <string name="no_clicked_photos">No Clicked Photos</string>
     <string name="clear_image">Clear Image</string>
     <string name="speech_to_text">Speech to Text</string>
     <string name="drawing">Drawing</string>
     <string name="add_image">Add image</string>
     <string name="take_image">Take Photo</string>
     <string name="add_box">Add Box</string>
-    <string name="default_notification_channel_id">notify</string>
     <string name="request_notification_permission">Request permission</string>
     <string name="notification_permission_title">Notification permission</string>
     <string name="notification_permission_description">The notification permission is important for this app. Please grant the permission.</string>
@@ -61,4 +59,5 @@
     <string name="set_reminder">Set Reminder</string>
     <string name="general">General</string>
     <string name="by_aritra_das">By Aritra Das 💙</string>
+    <string name="add_new_note_shortcut_label">Add New Note</string>
 </resources>

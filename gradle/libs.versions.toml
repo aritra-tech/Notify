@@ -1,18 +1,17 @@
 [versions]
 accompanistPermissions = "0.32.0"
-accompanistSystemuicontroller = "0.32.0"
-activity-compose = "1.8.2"
+activity-compose = "1.9.0"
 androidx-junit = "1.1.5"
 appUpdate = "2.1.0"
 biometric = "1.2.0-alpha05"
-coilCompose = "2.4.0"
-core-ktx = "1.12.0"
+coilCompose = "2.6.0"
+core-ktx = "1.13.1"
 coreSplashscreen = "1.0.1"
 datastorePreferences = "1.0.0"
 desugar_jdk_libs = "2.0.3"
 espresso-core = "3.5.1"
 google-gson = "2.10.1"
-gradle = "8.1.2"
+gradle = "8.1.4"
 hiltAndroid = "2.48.1"
 hiltNavigationCompose = "1.0.0"
 junit = "4.13.2"
@@ -20,18 +19,18 @@ leakcanaryAndroid = "2.12"
 lifecycle-runtime-ktx = "2.6.2"
 lifecycleExtensions = "2.2.0"
 lifecycleVersion = "2.6.2"
-material3 = "1.2.0"
-materialIconsExtended = "1.6.2"
+material3 = "1.2.1"
+materialIconsExtended = "1.6.7"
 navVersion = "2.7.7"
 roomVersion = "2.6.1"
 runtimeLivedata = "1.5.3"
-bom = "2024.02.01"
+bom = "2024.05.00"
 kotlinBom = "1.9.20"
-material3windowsize = "1.1.2"
-android-application = "8.1.2"
-kotlin-android = "1.9.20"
+material3windowsize = "1.2.1"
+android-application = "8.1.4"
+kotlin-android = "2.0.0"
 dagger-hilt-android = "2.48.1"
-devtools-ksp = "1.9.22-1.0.16"
+devtools-ksp = "2.0.0-1.0.21"
 zoomable = "0.6.2"
 zoomableImageCoil = "0.6.2"
 ktlint = "11.6.1"
@@ -39,13 +38,12 @@ camerax_version = "1.4.0-alpha01"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
-accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
 android-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "bom" }
 android-kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlinBom" }
-compose-ui = "androidx.compose.ui:ui:1.6.0-alpha03"
+compose-ui = "androidx.compose.ui:ui:1.6.7"
 compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
@@ -87,7 +85,6 @@ camera-core = { module = "androidx.camera:camera-core", version.ref = "camerax_v
 camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax_version" }
 camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax_version" }
 camera-video = { module = "androidx.camera:camera-video", version.ref = "camerax_version" }
-camera-mlkit-vision = { module = "androidx.camera:camera-mlkit-vision", version.ref = "camerax_version" }
 camera-view = { module = "androidx.camera:camera-view", version.ref = "camerax_version" }
 camera-extensions = { module = "androidx.camera:camera-extensions", version.ref = "camerax_version" }
 
@@ -99,3 +96,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-an
 dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt-android" }
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "devtools-ksp" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin-android" }
