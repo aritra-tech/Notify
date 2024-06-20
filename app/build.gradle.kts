@@ -18,8 +18,8 @@ android {
         applicationId = "com.aritra.notify"
         minSdk = 24
         targetSdk = 34
-        versionCode = 14
-        versionName = "1.9.3"
+        versionCode = 15
+        versionName = "1.10.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
