@@ -139,6 +139,8 @@ dependencies {
     // Leak Canary
     debugImplementation(libs.leakcanary.android)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    implementation(libs.androidx.compose.animation)
 }
 
 ktlint {

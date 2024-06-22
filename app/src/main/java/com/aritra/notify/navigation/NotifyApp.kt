@@ -2,6 +2,9 @@ package com.aritra.notify.navigation
 
 import android.content.Intent
 import android.widget.Toast
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -43,6 +46,7 @@ import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
 import com.aritra.notify.ui.theme.FadeIn
 import com.aritra.notify.ui.theme.FadeOut
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun NotifyApp(navController: NavHostController = rememberNavController()) {
     val screensWithHiddenNavBar = listOf(
@@ -81,56 +85,60 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
             )
         }
     ) { scaffoldPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = NotifyScreens.Notes.name,
-            modifier = Modifier.padding(scaffoldPadding),
-            enterTransition = { FadeIn },
-            exitTransition = { FadeOut },
-            popEnterTransition = { FadeIn },
-            popExitTransition = { FadeOut }
-        ) {
-            composable(
-                route = NotifyScreens.Notes.name
+        SharedTransitionLayout {
+            NavHost(
+                navController = navController,
+                startDestination = NotifyScreens.Notes.name,
+                modifier = Modifier.padding(scaffoldPadding),
+                enterTransition = { FadeIn },
+                exitTransition = { FadeOut },
+                popEnterTransition = { FadeIn },
+                popExitTransition = { FadeOut }
             ) {
-                NoteScreen(
-                    onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name + "/-1") },
-                    navigateToUpdateNoteScreen = { noteId ->
-                        navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
-                    }
-                )
-            }
+                composable(
+                    route = NotifyScreens.Notes.name
+                ) {
+                    NoteScreen(
+                        onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name + "/-1") },
+                        navigateToUpdateNoteScreen = { noteId ->
+                            navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
+                        },
+                        animatedVisibilityScope = this
+                    )
+                }
 
-            composable(
-                route = "${NotifyScreens.AddEditNotes.name}/{noteId}",
-                arguments = listOf(
-                    navArgument("noteId") {
-                        type = IntType
-                    }
-                ),
-                deepLinks = listOf(
-                    navDeepLink {
-                        uriPattern = NavDeepLinks.addNotesUriPattern
-                        action = Intent.ACTION_VIEW
-                    }
-                )
-            ) { backStack ->
-                AddEditRoute(
-                    navController = navController,
-                    backStack = backStack
-                )
-            }
+                composable(
+                    route = "${NotifyScreens.AddEditNotes.name}/{noteId}",
+                    arguments = listOf(
+                        navArgument("noteId") {
+                            type = IntType
+                        }
+                    ),
+                    deepLinks = listOf(
+                        navDeepLink {
+                            uriPattern = NavDeepLinks.addNotesUriPattern
+                            action = Intent.ACTION_VIEW
+                        }
+                    )
+                ) { backStack ->
+                    AddEditRoute(
+                        navController = navController,
+                        backStack = backStack,
+                        animatedVisibilityScope = this
+                    )
+                }
 
-            composable(
-                route = NotifyScreens.Settings.name
-            ) {
-                SettingsScreen(controller = navController)
-            }
+                composable(
+                    route = NotifyScreens.Settings.name
+                ) {
+                    SettingsScreen(controller = navController)
+                }
 
-            composable(
-                route = NotifyScreens.TrashNoteScreen.name
-            ) {
-                TrashNoteScreen(trashNoteState = state, onEvent = trashViewModel::onEvent)
+                composable(
+                    route = NotifyScreens.TrashNoteScreen.name
+                ) {
+                    TrashNoteScreen(trashNoteState = state, onEvent = trashViewModel::onEvent, animatedVisibilityScope = this)
+                }
             }
         }
     }

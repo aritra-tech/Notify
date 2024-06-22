@@ -1,6 +1,10 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -62,11 +66,13 @@ import com.aritra.notify.utils.formatReminderDateTime
 import java.time.LocalDateTime
 import java.util.Date
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun AddEditScreen(
+fun SharedTransitionScope.AddEditScreen(
     note: Note,
     isNew: Boolean,
     modifier: Modifier = Modifier,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     navigateBack: () -> Unit,
     saveNote: (String, String, List<Uri>, List<Todo>) -> Unit,
     deleteNote: (() -> Unit) -> Unit,
@@ -148,7 +154,14 @@ fun AddEditScreen(
                             )
 
                             TextField(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth()
+                                    .sharedElement(
+                                        state = rememberSharedContentState(key = "title-${title}"),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                        boundsTransform = { _, _ ->
+                                            tween(durationMillis = 1000)
+                                        },
+                                    ),
                                 value = title,
                                 onValueChange = { newTitle ->
                                     title = newTitle
@@ -325,20 +338,4 @@ fun AddEditScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun AddEditScreenPreview() = NotifyTheme {
-    AddEditScreen(
-        note = Note(
-            title = "Title",
-            note = "Description",
-            image = listOf(),
-            dateTime = Date()
-        ),
-        isNew = true,
-        navigateBack = {},
-        saveNote = { _, _, _, _ -> },
-        deleteNote = {},
-        onUpdateReminderDateTime = {}
-    )
-}
+

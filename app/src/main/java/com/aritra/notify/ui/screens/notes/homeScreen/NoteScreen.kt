@@ -2,6 +2,10 @@
 
 package com.aritra.notify.ui.screens.notes.homeScreen
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -69,11 +73,12 @@ import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun NoteScreen(
+fun SharedTransitionScope.NoteScreen(
     onFabClicked: () -> Unit,
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val viewModel = hiltViewModel<NoteScreenViewModel>()
 
@@ -170,10 +175,12 @@ fun NoteScreen(
                     placeholder = {
                         Row {
                             Text("Search for ")
-                            TypewriterText(texts = listOf(
-                                "Notes",
-                                "Reminders"
-                            ))
+                            TypewriterText(
+                                texts = listOf(
+                                    "Notes",
+                                    "Reminders"
+                                )
+                            )
                         }
                     },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
@@ -266,6 +273,7 @@ fun NoteScreen(
                                         NotesCard(
                                             noteModel = notesModel,
                                             isSelected = isSelected,
+                                            animatedVisibilityScope = animatedVisibilityScope,
                                             onClick = {
                                                 if (isInSelectionMode) {
                                                     if (isSelected) {
