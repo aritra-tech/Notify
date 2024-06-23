@@ -2,6 +2,9 @@ package com.aritra.notify.ui.screens.notes.trash
 
 import TrashNoteState
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,10 +28,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.aritra.notify.components.note.NotesCard
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun TrashNoteScreen(
+fun SharedTransitionScope.TrashNoteScreen(
     trashNoteState: TrashNoteState,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onEvent: (TrashNoteEvent) -> Unit,
 ) {
     Scaffold(topBar = {
@@ -59,6 +63,7 @@ fun TrashNoteScreen(
                             it.note.id
                         ),
                         dateTimeDeleted = it,
+                        animatedVisibilityScope = animatedVisibilityScope,
                         onClick = {
                             if (trashNoteState.isSelectionMode) {
                                 onEvent(TrashNoteEvent.AddSelectedIds(it.note.id))

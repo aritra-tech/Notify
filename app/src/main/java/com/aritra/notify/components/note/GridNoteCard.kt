@@ -1,5 +1,9 @@
 package com.aritra.notify.components.note
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
@@ -45,11 +49,12 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun GridNoteCard(
+fun SharedTransitionScope.GridNoteCard(
     notesModel: Note,
     isSelected: Boolean,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
@@ -128,7 +133,14 @@ fun GridNoteCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            modifier = Modifier.padding(top = 10.dp),
+                            modifier = Modifier.padding(top = 10.dp)
+                                .sharedElement(
+                                    state = rememberSharedContentState(key = "title-${notesModel.title}"),
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    boundsTransform = { _, _ ->
+                                        tween(durationMillis = 1000)
+                                    }
+                                ),
                             text = notesModel.title,
                             fontSize = 20.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_semibold)),
@@ -139,7 +151,16 @@ fun GridNoteCard(
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
+
                 Text(
+                    modifier = Modifier
+                        .sharedElement(
+                            state = rememberSharedContentState(key = "title-${notesModel.note}"),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 1000)
+                            }
+                        ),
                     text = notesModel.note,
                     fontSize = 18.sp,
                     fontFamily = FontFamily(Font(R.font.poppins_light)),

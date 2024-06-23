@@ -1,6 +1,10 @@
 package com.aritra.notify.components.note
 
 import TrashNoteInfo
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
@@ -53,12 +57,14 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.Locale
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun NotesCard(
+fun SharedTransitionScope.NotesCard(
+    modifier: Modifier = Modifier,
     noteModel: Note,
     isSelected: Boolean,
     dateTimeDeleted: TrashNoteInfo? = null,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
@@ -67,7 +73,7 @@ fun NotesCard(
 
     OutlinedCard(
         border = CardDefaults.outlinedCardBorder().copy(0.dp),
-        modifier = Modifier
+        modifier = modifier
             .padding(10.dp)
             .fillMaxHeight()
             .clip(RoundedCornerShape(15.dp))
@@ -121,6 +127,14 @@ fun NotesCard(
                     Spacer(modifier = Modifier.height(10.dp))
                 }
                 Text(
+                    modifier = Modifier
+                        .sharedElement(
+                            state = rememberSharedContentState(key = "title-${noteModel.title}"),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 1000)
+                            }
+                        ),
                     text = noteModel.title,
                     fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.poppins_medium)),
@@ -129,6 +143,14 @@ fun NotesCard(
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
+                    modifier = Modifier
+                        .sharedElement(
+                            state = rememberSharedContentState(key = "note-${noteModel.note}"),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 1000)
+                            }
+                        ),
                     text = noteModel.note,
                     fontSize = 18.sp,
                     fontFamily = FontFamily(Font(R.font.poppins_light)),

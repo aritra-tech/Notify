@@ -1,6 +1,10 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,7 +46,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
 import com.aritra.notify.components.appbar.AddEditBottomBar
@@ -57,16 +60,16 @@ import com.aritra.notify.ui.screens.notes.addEditScreen.components.DescriptionTe
 import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteChecklist
 import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteImages
 import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteStats
-import com.aritra.notify.ui.theme.NotifyTheme
 import com.aritra.notify.utils.formatReminderDateTime
 import java.time.LocalDateTime
-import java.util.Date
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun AddEditScreen(
+fun SharedTransitionScope.AddEditScreen(
     note: Note,
     isNew: Boolean,
     modifier: Modifier = Modifier,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     navigateBack: () -> Unit,
     saveNote: (String, String, List<Uri>, List<Todo>) -> Unit,
     deleteNote: (() -> Unit) -> Unit,
@@ -148,7 +151,14 @@ fun AddEditScreen(
                             )
 
                             TextField(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth()
+                                    .sharedElement(
+                                        state = rememberSharedContentState(key = "title-$title"),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                        boundsTransform = { _, _ ->
+                                            tween(durationMillis = 1000)
+                                        }
+                                    ),
                                 value = title,
                                 onValueChange = { newTitle ->
                                     title = newTitle
@@ -245,6 +255,7 @@ fun AddEditScreen(
                         description = description,
                         parentScrollState = scrollState,
                         isNewNote = isNew,
+                        animatedVisibilityScope = animatedVisibilityScope,
                         onDescriptionChange = { newDescription ->
                             description = newDescription
                         }
@@ -323,22 +334,4 @@ fun AddEditScreen(
         shouldShowDialogDateTime = false
         isEditDateTime = false
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun AddEditScreenPreview() = NotifyTheme {
-    AddEditScreen(
-        note = Note(
-            title = "Title",
-            note = "Description",
-            image = listOf(),
-            dateTime = Date()
-        ),
-        isNew = true,
-        navigateBack = {},
-        saveNote = { _, _, _, _ -> },
-        deleteNote = {},
-        onUpdateReminderDateTime = {}
-    )
 }

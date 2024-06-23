@@ -2,12 +2,16 @@
 
 package com.aritra.notify.ui.screens.notes.homeScreen
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -58,20 +62,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
+import com.aritra.notify.components.TypewriterText
 import com.aritra.notify.components.actions.BackPressHandler
 import com.aritra.notify.components.actions.LayoutToggleButton
+import com.aritra.notify.components.appbar.SelectionModeTopAppBar
 import com.aritra.notify.components.note.GridNoteCard
 import com.aritra.notify.components.note.NotesCard
-import com.aritra.notify.components.appbar.SelectionModeTopAppBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun NoteScreen(
+fun SharedTransitionScope.NoteScreen(
     onFabClicked: () -> Unit,
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     val viewModel = hiltViewModel<NoteScreenViewModel>()
 
@@ -165,7 +171,17 @@ fun NoteScreen(
                     onSearch = {},
                     active = false,
                     onActiveChange = {},
-                    placeholder = { Text(stringResource(R.string.search_your_notes)) },
+                    placeholder = {
+                        Row {
+                            Text("Search for ")
+                            TypewriterText(
+                                texts = listOf(
+                                    "Notes",
+                                    "Reminders"
+                                )
+                            )
+                        }
+                    },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                     trailingIcon = {
                         if (searchQuery.isNotEmpty()) {
@@ -209,6 +225,7 @@ fun NoteScreen(
                                     GridNoteCard(
                                         notesModel,
                                         isSelected,
+                                        animatedVisibilityScope = animatedVisibilityScope,
                                         {
                                             if (isInSelectionMode) {
                                                 if (isSelected) {
@@ -256,6 +273,7 @@ fun NoteScreen(
                                         NotesCard(
                                             noteModel = notesModel,
                                             isSelected = isSelected,
+                                            animatedVisibilityScope = animatedVisibilityScope,
                                             onClick = {
                                                 if (isInSelectionMode) {
                                                     if (isSelected) {
