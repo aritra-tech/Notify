@@ -129,11 +129,11 @@ fun SharedTransitionScope.NotesCard(
                 Text(
                     modifier = Modifier
                         .sharedElement(
-                            state = rememberSharedContentState(key = "title-${noteModel.id}"),
+                            state = rememberSharedContentState(key = "title-${noteModel.title}"),
                             animatedVisibilityScope = animatedVisibilityScope,
                             boundsTransform = { _, _ ->
                                 tween(durationMillis = 1000)
-                            },
+                            }
                         ),
                     text = noteModel.title,
                     fontSize = 22.sp,
@@ -145,11 +145,11 @@ fun SharedTransitionScope.NotesCard(
                 Text(
                     modifier = Modifier
                         .sharedElement(
-                            state = rememberSharedContentState(key = "note-${noteModel.id}"),
+                            state = rememberSharedContentState(key = "note-${noteModel.note}"),
                             animatedVisibilityScope = animatedVisibilityScope,
                             boundsTransform = { _, _ ->
                                 tween(durationMillis = 1000)
-                            },
+                            }
                         ),
                     text = noteModel.note,
                     fontSize = 18.sp,

@@ -29,16 +29,14 @@ fun TypewriterText(
         }
     }
 
-    LaunchedEffect(
-        key1 = texts,
-    ) {
+    LaunchedEffect(key1 = texts) {
         while (textIndex < textCharsList.size) {
             textCharsList[textIndex].forEachIndexed { charIndex, _ ->
                 textToDisplay = textCharsList[textIndex]
                     .take(
-                        n = charIndex + 1,
+                        n = charIndex + 1
                     ).joinToString(
-                        separator = "",
+                        separator = ""
                     )
                 delay(160)
             }
@@ -49,7 +47,7 @@ fun TypewriterText(
 
     Text(
         modifier = modifier,
-        text = textToDisplay,
+        text = textToDisplay
     )
 }
 

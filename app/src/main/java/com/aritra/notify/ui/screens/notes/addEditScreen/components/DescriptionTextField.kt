@@ -1,7 +1,11 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen.components
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -39,14 +43,15 @@ import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun DescriptionTextField(
+fun SharedTransitionScope.DescriptionTextField(
     modifier: Modifier = Modifier,
     scrollOffset: Int,
     contentSize: Int,
     description: String,
     parentScrollState: ScrollState,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     isNewNote: Boolean = false,
     onDescriptionChange: (String) -> Unit,
 ) {
@@ -102,6 +107,13 @@ fun DescriptionTextField(
     BasicTextField(
         modifier = modifier
             .fillMaxSize()
+            .sharedElement(
+                state = rememberSharedContentState(key = "note-$description"),
+                animatedVisibilityScope = animatedVisibilityScope,
+                boundsTransform = { _, _ ->
+                    tween(durationMillis = 1000)
+                }
+            )
             .focusRequester(focusRequester),
         value = descriptionFieldValue,
         onValueChange = { newDescription ->

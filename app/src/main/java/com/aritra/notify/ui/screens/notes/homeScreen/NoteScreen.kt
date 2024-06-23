@@ -5,7 +5,6 @@ package com.aritra.notify.ui.screens.notes.homeScreen
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -66,9 +65,9 @@ import com.aritra.notify.R
 import com.aritra.notify.components.TypewriterText
 import com.aritra.notify.components.actions.BackPressHandler
 import com.aritra.notify.components.actions.LayoutToggleButton
+import com.aritra.notify.components.appbar.SelectionModeTopAppBar
 import com.aritra.notify.components.note.GridNoteCard
 import com.aritra.notify.components.note.NotesCard
-import com.aritra.notify.components.appbar.SelectionModeTopAppBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
 import kotlinx.coroutines.launch
@@ -78,7 +77,7 @@ import kotlinx.coroutines.launch
 fun SharedTransitionScope.NoteScreen(
     onFabClicked: () -> Unit,
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     val viewModel = hiltViewModel<NoteScreenViewModel>()
 
@@ -226,6 +225,7 @@ fun SharedTransitionScope.NoteScreen(
                                     GridNoteCard(
                                         notesModel,
                                         isSelected,
+                                        animatedVisibilityScope = animatedVisibilityScope,
                                         {
                                             if (isInSelectionMode) {
                                                 if (isSelected) {

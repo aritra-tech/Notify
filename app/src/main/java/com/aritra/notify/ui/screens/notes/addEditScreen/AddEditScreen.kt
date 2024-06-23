@@ -46,7 +46,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
 import com.aritra.notify.components.appbar.AddEditBottomBar
@@ -61,10 +60,8 @@ import com.aritra.notify.ui.screens.notes.addEditScreen.components.DescriptionTe
 import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteChecklist
 import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteImages
 import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteStats
-import com.aritra.notify.ui.theme.NotifyTheme
 import com.aritra.notify.utils.formatReminderDateTime
 import java.time.LocalDateTime
-import java.util.Date
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -156,11 +153,11 @@ fun SharedTransitionScope.AddEditScreen(
                             TextField(
                                 modifier = Modifier.fillMaxWidth()
                                     .sharedElement(
-                                        state = rememberSharedContentState(key = "title-${title}"),
+                                        state = rememberSharedContentState(key = "title-$title"),
                                         animatedVisibilityScope = animatedVisibilityScope,
                                         boundsTransform = { _, _ ->
                                             tween(durationMillis = 1000)
-                                        },
+                                        }
                                     ),
                                 value = title,
                                 onValueChange = { newTitle ->
@@ -258,6 +255,7 @@ fun SharedTransitionScope.AddEditScreen(
                         description = description,
                         parentScrollState = scrollState,
                         isNewNote = isNew,
+                        animatedVisibilityScope = animatedVisibilityScope,
                         onDescriptionChange = { newDescription ->
                             description = newDescription
                         }
@@ -337,5 +335,3 @@ fun SharedTransitionScope.AddEditScreen(
         isEditDateTime = false
     }
 }
-
-
