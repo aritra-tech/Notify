@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
+import com.aritra.notify.ui.theme.OnPrimaryContainerLight
 
 @Composable
 fun SettingsSwitchCard(
@@ -37,13 +39,15 @@ fun SettingsSwitchCard(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
+            modifier = Modifier.size(25.dp),
             painter = painterResource(id = icon),
             contentDescription = stringResource(R.string.icon),
-            modifier = Modifier.size(25.dp)
+            tint = Color.Unspecified
         )
         Text(
             text = text,
             fontSize = 16.sp,
+            color = OnPrimaryContainerLight,
             fontFamily = FontFamily(Font(R.font.poppins_light))
         )
 
