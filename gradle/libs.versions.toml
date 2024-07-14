@@ -32,7 +32,7 @@ kotlin-android = "2.0.0"
 dagger-hilt-android = "2.48.1"
 devtools-ksp = "2.0.0-1.0.21"
 zoomable = "0.6.2"
-zoomableImageCoil = "0.6.2"
+zoomableImageCoil = "0.12.0"
 ktlint = "11.6.1"
 camerax_version = "1.4.0-alpha01"
 
