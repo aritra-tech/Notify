@@ -59,4 +59,5 @@
     <string name="general">General</string>
     <string name="by_aritra_das">By Aritra Das 💙</string>
     <string name="add_new_note_shortcut_label">Add New Note</string>
+    <string name="pin_note">Pin</string>
 </resources>

@@ -60,6 +60,10 @@ fun NotifyApp(
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
+    var shouldShowNavBar by rememberSaveable { mutableStateOf(true) }
+    val hideNavBar = { shouldShowNavBar = false }
+    val showNavBar = { shouldShowNavBar = true }
+
     LaunchedEffect(effect) {
         when (val currentEffect = effect) {
             TrashNoteEffect.Close -> {
@@ -76,7 +80,7 @@ fun NotifyApp(
 
     Scaffold(
         bottomBar = {
-            if (currentRoute !in routesWithoutBottomBar) {
+            if (currentRoute !in routesWithoutBottomBar && shouldShowNavBar) {
                 NavigationBar {
                     bottomNavItems.forEachIndexed { index, item ->
                         NavigationBarItem(
@@ -113,7 +117,9 @@ fun NotifyApp(
                         navigateToUpdateNoteScreen = { noteId ->
                             navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
                         },
-                        animatedVisibilityScope = this
+                        animatedVisibilityScope = this,
+                        hideNavBar = hideNavBar,
+                        showNavBar = showNavBar,
                     )
                 }
 

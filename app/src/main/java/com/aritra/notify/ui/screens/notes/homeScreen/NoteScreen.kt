@@ -2,9 +2,12 @@
 
 package com.aritra.notify.ui.screens.notes.homeScreen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -65,6 +68,7 @@ import com.aritra.notify.R
 import com.aritra.notify.components.TypewriterText
 import com.aritra.notify.components.actions.BackPressHandler
 import com.aritra.notify.components.actions.LayoutToggleButton
+import com.aritra.notify.components.appbar.SelectionModeBottomBar
 import com.aritra.notify.components.appbar.SelectionModeTopAppBar
 import com.aritra.notify.components.note.GridNoteCard
 import com.aritra.notify.components.note.NotesCard
@@ -78,6 +82,8 @@ fun SharedTransitionScope.NoteScreen(
     onFabClicked: () -> Unit,
     navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    hideNavBar: () -> Unit,
+    showNavBar: () -> Unit,
 ) {
     val viewModel = hiltViewModel<NoteScreenViewModel>()
 
@@ -107,6 +113,12 @@ fun SharedTransitionScope.NoteScreen(
     ) {
         if (isInSelectionMode && selectedNoteIds.isEmpty()) {
             isInSelectionMode = false
+            showNavBar()
+        }else if(!isInSelectionMode){
+            showNavBar()
+        }
+        else{
+            hideNavBar()
         }
     }
 
@@ -115,15 +127,17 @@ fun SharedTransitionScope.NoteScreen(
             SnackbarHost(hostState = snackBarHostState)
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onFabClicked() }
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Edit,
-                    contentDescription = "Add Notes"
-                )
+            if(!isInSelectionMode) {
+                FloatingActionButton(
+                    onClick = { onFabClicked() }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = "Add Notes"
+                    )
+                }
             }
-        },
+                               },
 
         topBar = {
             if (isInSelectionMode) {
@@ -200,6 +214,15 @@ fun SharedTransitionScope.NoteScreen(
                 ) {}
             }
         },
+        bottomBar = {
+            AnimatedVisibility(
+                visible = isInSelectionMode,
+                enter = slideInVertically(animationSpec = tween(delayMillis = 100), initialOffsetY = { it }),
+                ){
+                SelectionModeBottomBar(
+                    onPinClick = {}) {}
+            }
+                    },
         content = { it ->
             Surface(
                 modifier = Modifier.padding(it)
