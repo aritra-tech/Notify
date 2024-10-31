@@ -129,7 +129,7 @@ fun SharedTransitionScope.NoteScreen(
             if (isInSelectionMode) {
                 SelectionModeTopAppBar(
                     selectedItems = selectedNoteIds,
-                    onDeleteClick = {
+                    onSelectAllClick = {
                         val selectedNotes =
                             listOfAllNotes.filter { note -> note.id in selectedNoteIds }
 
