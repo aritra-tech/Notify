@@ -144,33 +144,14 @@ fun SharedTransitionScope.NoteScreen(
                 SelectionModeTopAppBar(
                     selectedItems = selectedNoteIds,
                     onSelectAllClick = {
-                        val selectedNotes =
-                            listOfAllNotes.filter { note -> note.id in selectedNoteIds }
-
-                        viewModel.deleteListOfNote(selectedNotes)
-
-                        deletedNotes.addAll(selectedNotes)
-                        resetSelectionMode()
-
-                        scope.launch {
-                            val snackBarResult = snackBarHostState.showSnackbar(
-                                message = "Notes moved to trash",
-                                actionLabel = "Undo",
-                                duration = SnackbarDuration.Short,
-                                withDismissAction = false
-                            )
-
-                            when (snackBarResult) {
-                                SnackbarResult.ActionPerformed -> {
-                                    addEditViewModel.insertListOfNote(deletedNotes) {}
-                                }
-
-                                SnackbarResult.Dismissed -> {
-                                }
+                        listOfAllNotes.forEach{ note ->
+                            if(!selectedNoteIds.contains(note.id)){
+                                selectedNoteIds.clear()
+                                selectedNoteIds.addAll(listOfAllNotes.map{it.id})
+                                return@forEach
                             }
                         }
                     },
-
                     resetSelectionMode = resetSelectionMode
                 )
             } else {
@@ -220,7 +201,34 @@ fun SharedTransitionScope.NoteScreen(
                 enter = slideInVertically(animationSpec = tween(delayMillis = 100), initialOffsetY = { it }),
                 ){
                 SelectionModeBottomBar(
-                    onPinClick = {}) {}
+                    onPinClick = {},
+                    onDeleteClick = {
+                        val selectedNotes =
+                            listOfAllNotes.filter { note -> note.id in selectedNoteIds }
+
+                        viewModel.deleteListOfNote(selectedNotes)
+
+                        deletedNotes.addAll(selectedNotes)
+                        resetSelectionMode()
+
+                        scope.launch {
+                            val snackBarResult = snackBarHostState.showSnackbar(
+                                message = "Notes moved to trash",
+                                actionLabel = "Undo",
+                                duration = SnackbarDuration.Short,
+                                withDismissAction = false
+                            )
+
+                            when (snackBarResult) {
+                                SnackbarResult.ActionPerformed -> {
+                                    addEditViewModel.insertListOfNote(deletedNotes) {}
+                                }
+
+                                SnackbarResult.Dismissed -> {
+                                }
+                            }
+                        }
+                    })
             }
                     },
         content = { it ->
@@ -249,7 +257,7 @@ fun SharedTransitionScope.NoteScreen(
                                         notesModel,
                                         isSelected,
                                         animatedVisibilityScope = animatedVisibilityScope,
-                                        {
+                                        onClick = {
                                             if (isInSelectionMode) {
                                                 if (isSelected) {
                                                     selectedNoteIds.remove(notesModel.id)
