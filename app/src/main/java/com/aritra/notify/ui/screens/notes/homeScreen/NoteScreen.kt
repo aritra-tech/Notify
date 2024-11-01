@@ -200,11 +200,20 @@ fun SharedTransitionScope.NoteScreen(
                 visible = isInSelectionMode,
                 enter = slideInVertically(animationSpec = tween(delayMillis = 100), initialOffsetY = { it }),
                 ){
+                val selectedNotes = listOfAllNotes.filter{it.id in selectedNoteIds}
+                var shouldShowPinIcon = true
+                selectedNotes.forEach{ note ->
+                    if(note.isPinned){
+                        if(note == selectedNotes.last())
+                            shouldShowPinIcon = false
+                    }else{ return@forEach }
+                }
+
                 SelectionModeBottomBar(
+                    shouldShowPinIcon = shouldShowPinIcon,
                     onPinClick = {},
+                    onUnpinClick = {},
                     onDeleteClick = {
-                        val selectedNotes =
-                            listOfAllNotes.filter { note -> note.id in selectedNoteIds }
 
                         viewModel.deleteListOfNote(selectedNotes)
 

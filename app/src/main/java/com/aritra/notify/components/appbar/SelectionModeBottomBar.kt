@@ -18,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -28,15 +30,25 @@ import com.aritra.notify.R
 @Composable
 fun SelectionModeBottomBar(
     modifier: Modifier = Modifier,
+    shouldShowPinIcon: Boolean = true,
     onPinClick: () -> Unit,
+    onUnpinClick: () -> Unit,
     onDeleteClick: () -> Unit,
 ){
     val items = listOf(
-        SelectionModeBottomBarItem(
-            name = stringResource(id = R.string.pin_note),
-            icon = Icons.Outlined.PushPin,
-            onClick = onPinClick
-        ),
+        if(shouldShowPinIcon){
+            SelectionModeBottomBarItem(
+                name = stringResource(id = R.string.pin_note),
+                icon = Icons.Outlined.PushPin,
+                onClick = onPinClick
+            )
+        }else{
+            SelectionModeBottomBarItem(
+                name = stringResource(id = R.string.unpin_note),
+                icon = ImageVector.vectorResource(R.drawable.unpin_icon),
+                onClick = onUnpinClick
+            )
+        },
         SelectionModeBottomBarItem(
             name = stringResource(id = R.string.trash),
             icon = Icons.Outlined.DeleteOutline,
