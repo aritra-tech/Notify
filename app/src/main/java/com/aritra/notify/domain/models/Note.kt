@@ -23,4 +23,6 @@ data class Note(
     var isMovedToTrash: Boolean = false,
     var reminderDateTime: LocalDateTime? = null,
     var isReminded: Boolean = false,
+    @ColumnInfo(defaultValue = "false")
+    var isPinned: Boolean = false,
 ) : Parcelable
