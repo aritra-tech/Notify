@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aritra.notify.services.DispatcherProvider
 import com.aritra.notify.services.alarm.AlarmInfo
 import com.aritra.notify.services.alarm.AlarmScheduler
@@ -53,6 +54,28 @@ class NoteScreenViewModel @Inject constructor(
             noteList.forEach {
                 moveToTrash(it.id)
                 homeRepository.updateNoteInRoom(it.copy(isMovedToTrash = true))
+            }
+        }
+    }
+
+    fun pinNotes(noteList: List<Note>, onSuccess: () -> Unit){
+        viewModelScope.launch(dispatcherProvider.io){
+            noteList.forEach{
+                homeRepository.updateNoteInRoom(it.copy(isPinned = true))
+            }
+            withContext(dispatcherProvider.main) {
+                onSuccess()
+            }
+        }
+    }
+
+    fun unpinNotes(noteList: List<Note>, onSuccess: () -> Unit){
+        viewModelScope.launch(dispatcherProvider.io){
+            noteList.forEach{
+                homeRepository.updateNoteInRoom(it.copy(isPinned = false))
+            }
+            withContext(dispatcherProvider.main) {
+                onSuccess()
             }
         }
     }

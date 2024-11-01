@@ -2,6 +2,7 @@
 
 package com.aritra.notify.ui.screens.notes.homeScreen
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -211,10 +212,29 @@ fun SharedTransitionScope.NoteScreen(
 
                 SelectionModeBottomBar(
                     shouldShowPinIcon = shouldShowPinIcon,
-                    onPinClick = {},
-                    onUnpinClick = {},
+                    onPinClick = {
+                        viewModel.pinNotes(selectedNotes){
+                            resetSelectionMode()
+                            scope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = "Notes pinned",
+                                    duration = SnackbarDuration.Short,
+                                )
+                            }
+                        }
+                    },
+                    onUnpinClick = {
+                        viewModel.unpinNotes(selectedNotes){
+                            resetSelectionMode()
+                            scope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = "Notes unpinned",
+                                    duration = SnackbarDuration.Short,
+                                )
+                            }
+                        }
+                    },
                     onDeleteClick = {
-
                         viewModel.deleteListOfNote(selectedNotes)
 
                         deletedNotes.addAll(selectedNotes)
