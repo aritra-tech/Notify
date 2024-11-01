@@ -62,6 +62,7 @@ fun SharedTransitionScope.TrashNoteScreen(
                         isSelected = trashNoteState.selectedIds.contains(
                             it.note.id
                         ),
+                        isPinned = it.note.isPinned,
                         dateTimeDeleted = it,
                         animatedVisibilityScope = animatedVisibilityScope,
                         onClick = {

@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedAssistChip
@@ -37,6 +38,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -63,6 +65,7 @@ fun SharedTransitionScope.NotesCard(
     modifier: Modifier = Modifier,
     noteModel: Note,
     isSelected: Boolean,
+    isPinned: Boolean,
     dateTimeDeleted: TrashNoteInfo? = null,
     animatedVisibilityScope: AnimatedVisibilityScope,
     onClick: () -> Unit,
@@ -100,6 +103,16 @@ fun SharedTransitionScope.NotesCard(
                     modifier = Modifier
                         .size(24.dp)
                         .align(Alignment.TopEnd)
+                )
+            }else if (isPinned){
+                Icon(
+                    imageVector = Icons.Filled.PushPin,
+                    contentDescription = stringResource(R.string.pin_note),
+                    modifier = Modifier
+                        .size(24.dp)
+                        .rotate(45f)
+                        .align(Alignment.TopEnd),
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
             Column(

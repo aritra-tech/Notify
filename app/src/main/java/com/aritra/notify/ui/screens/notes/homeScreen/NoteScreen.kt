@@ -281,10 +281,12 @@ fun SharedTransitionScope.NoteScreen(
                                     }
                                 ) { _, notesModel ->
                                     val isSelected = selectedNoteIds.contains(notesModel.id)
+                                    val isPinned = notesModel.isPinned
 
                                     GridNoteCard(
                                         notesModel,
                                         isSelected,
+                                        isPinned,
                                         animatedVisibilityScope = animatedVisibilityScope,
                                         onClick = {
                                             if (isInSelectionMode) {
@@ -328,11 +330,13 @@ fun SharedTransitionScope.NoteScreen(
                                 ) { notesModel ->
 
                                     val isSelected = selectedNoteIds.contains(notesModel.id)
+                                    val isPinned = notesModel.isPinned
 
                                     Box {
                                         NotesCard(
                                             noteModel = notesModel,
                                             isSelected = isSelected,
+                                            isPinned = isPinned,
                                             animatedVisibilityScope = animatedVisibilityScope,
                                             onClick = {
                                                 if (isInSelectionMode) {
