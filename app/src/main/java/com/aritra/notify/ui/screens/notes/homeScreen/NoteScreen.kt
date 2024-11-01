@@ -2,7 +2,6 @@
 
 package com.aritra.notify.ui.screens.notes.homeScreen
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -76,14 +75,13 @@ import com.aritra.notify.components.note.GridNoteCard
 import com.aritra.notify.components.note.NotesCard
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.NoteScreen(
     onFabClicked: () -> Unit,
-    navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
+    navigateToUpdateNoteScreen: (noteId: Int, isPinned: Boolean) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     hideNavBar: () -> Unit,
     showNavBar: () -> Unit,
@@ -305,7 +303,7 @@ fun SharedTransitionScope.NoteScreen(
                                                     selectedNoteIds.add(notesModel.id)
                                                 }
                                             } else {
-                                                navigateToUpdateNoteScreen(notesModel.id)
+                                                navigateToUpdateNoteScreen(notesModel.id, notesModel.isPinned)
                                             }
                                         }
                                     ) {
@@ -355,7 +353,7 @@ fun SharedTransitionScope.NoteScreen(
                                                         selectedNoteIds.add(notesModel.id)
                                                     }
                                                 } else {
-                                                    navigateToUpdateNoteScreen(notesModel.id)
+                                                    navigateToUpdateNoteScreen(notesModel.id, notesModel.isPinned)
                                                 }
                                             }
                                         ) {

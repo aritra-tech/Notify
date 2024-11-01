@@ -113,9 +113,9 @@ fun NotifyApp(
             ) {
                 composable(NotifyScreens.Notes.name) {
                     NoteScreen(
-                        onFabClicked = { navController.navigate("${NotifyScreens.AddEditNotes.name}/-1") },
-                        navigateToUpdateNoteScreen = { noteId ->
-                            navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
+                        onFabClicked = { navController.navigate("${NotifyScreens.AddEditNotes.name}/-1/false") },
+                        navigateToUpdateNoteScreen = { noteId, pinned ->
+                            navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId/$pinned")
                         },
                         animatedVisibilityScope = this,
                         hideNavBar = hideNavBar,
@@ -124,8 +124,11 @@ fun NotifyApp(
                 }
 
                 composable(
-                    route = "${NotifyScreens.AddEditNotes.name}/{noteId}",
-                    arguments = listOf(navArgument("noteId") { type = NavType.IntType }),
+                    route = "${NotifyScreens.AddEditNotes.name}/{noteId}/{isPinned}",
+                    arguments = listOf(
+                        navArgument("noteId") { type = NavType.IntType },
+                        navArgument("isPinned"){ type = NavType.BoolType }
+                    ),
                     deepLinks = listOf(
                         navDeepLink {
                             uriPattern = NavDeepLinks.addNotesUriPattern

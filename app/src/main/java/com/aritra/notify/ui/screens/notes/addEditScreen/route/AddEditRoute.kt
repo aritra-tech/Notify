@@ -41,6 +41,7 @@ fun SharedTransitionScope.AddEditRoute(
     val isNew = remember(noteId) {
         noteId == null
     }
+    val isPinned = (backStack.arguments?.getBoolean("isPinned") ?: false)
     val navigateBack: () -> Unit = remember {
         {
             navController.popBackStack()
@@ -99,6 +100,7 @@ fun SharedTransitionScope.AddEditRoute(
         modifier = modifier,
         note = note,
         isNew = isNew,
+        isPinned = isPinned,
         navigateBack = navigateBack,
         saveNote = saveNote,
         deleteNote = deleteNote,
