@@ -20,9 +20,9 @@ import com.aritra.notify.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectionModeTopAppBar(selectedItems: List<Int>, onSelectAllClick: () -> Unit, resetSelectionMode: () -> Unit) {
-    val text = if(selectedItems.size == 1){
+    val text = if (selectedItems.size == 1) {
         "${selectedItems.size} item selected"
-    }else{
+    } else {
         "${selectedItems.size} items selected"
     }
 

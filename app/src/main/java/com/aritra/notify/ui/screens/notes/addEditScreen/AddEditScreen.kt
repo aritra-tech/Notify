@@ -92,7 +92,7 @@ fun SharedTransitionScope.AddEditScreen(
     var isEditDateTime by remember { mutableStateOf(false) }
     var openDrawingScreen by remember { mutableStateOf(false) }
     var shouldShowDialogDateTime by remember { mutableStateOf(false) }
-    val snackBarHostState = remember{ SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
     // Makes sure that the title is updated when the note is updated
@@ -112,7 +112,7 @@ fun SharedTransitionScope.AddEditScreen(
     }
 
     Scaffold(
-        snackbarHost = {SnackbarHost(hostState = snackBarHostState)},
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         modifier = modifier,
         topBar = {
             AddEditTopBar(
@@ -127,22 +127,22 @@ fun SharedTransitionScope.AddEditScreen(
                 },
                 pinNote = {
                     note.isPinned = true
-                    scope.launch{
+                    scope.launch {
                         snackBarHostState.showSnackbar(
                             message = "Note pinned",
                             duration = SnackbarDuration.Short
                         )
                     }
-                          },
+                },
                 unpinNote = {
                     note.isPinned = false
-                    scope.launch{
+                    scope.launch {
                         snackBarHostState.showSnackbar(
                             message = "Note unpinned",
                             duration = SnackbarDuration.Short
                         )
                     }
-                            },
+                },
                 saveNote = {
                     saveNote(title, description, images, checklist)
                 },

@@ -115,10 +115,9 @@ fun SharedTransitionScope.NoteScreen(
         if (isInSelectionMode && selectedNoteIds.isEmpty()) {
             isInSelectionMode = false
             showNavBar()
-        }else if(!isInSelectionMode){
+        } else if (!isInSelectionMode) {
             showNavBar()
-        }
-        else{
+        } else {
             hideNavBar()
         }
     }
@@ -128,7 +127,7 @@ fun SharedTransitionScope.NoteScreen(
             SnackbarHost(hostState = snackBarHostState)
         },
         floatingActionButton = {
-            if(!isInSelectionMode) {
+            if (!isInSelectionMode) {
                 FloatingActionButton(
                     onClick = { onFabClicked() }
                 ) {
@@ -138,21 +137,21 @@ fun SharedTransitionScope.NoteScreen(
                     )
                 }
             }
-                               },
+        },
         topBar = {
             if (isInSelectionMode) {
                 SelectionModeTopAppBar(
                     selectedItems = selectedNoteIds,
                     onSelectAllClick = {
-                        if(selectedNoteIds.size != listOfAllNotes.size){
-                        listOfAllNotes.forEach{ note ->
-                            if(!selectedNoteIds.contains(note.id)){
-                                selectedNoteIds.clear()
-                                selectedNoteIds.addAll(listOfAllNotes.map{it.id})
-                                return@forEach
+                        if (selectedNoteIds.size != listOfAllNotes.size) {
+                            listOfAllNotes.forEach { note ->
+                                if (!selectedNoteIds.contains(note.id)) {
+                                    selectedNoteIds.clear()
+                                    selectedNoteIds.addAll(listOfAllNotes.map { it.id })
+                                    return@forEach
+                                }
                             }
-                        }
-                        }else{
+                        } else {
                             resetSelectionMode()
                         }
                     },
@@ -204,38 +203,41 @@ fun SharedTransitionScope.NoteScreen(
                 visible = isInSelectionMode,
                 enter = slideInVertically(animationSpec = tween(delayMillis = 100), initialOffsetY = { it }),
                 exit = shrinkOut(shrinkTowards = Alignment.BottomCenter)
-                ){
-                val selectedNotes = listOfAllNotes.filter{it.id in selectedNoteIds}
+            ) {
+                val selectedNotes = listOfAllNotes.filter { it.id in selectedNoteIds }
                 var shouldShowPinIcon = true
-                selectedNotes.forEach{ note ->
-                    if(note.isPinned){
-                        if(note == selectedNotes.last())
+                selectedNotes.forEach { note ->
+                    if (note.isPinned) {
+                        if (note == selectedNotes.last()) {
                             shouldShowPinIcon = false
-                    }else{ return@forEach }
+                        }
+                    } else {
+                        return@forEach
+                    }
                 }
 
                 SelectionModeBottomBar(
                     shouldShowPinIcon = shouldShowPinIcon,
                     onPinClick = {
-                        viewModel.pinNotes(selectedNotes){
-                            val message = if(selectedNotes.size == 1)"Note pinned" else "Notes pinned"
+                        viewModel.pinNotes(selectedNotes) {
+                            val message = if (selectedNotes.size == 1)"Note pinned" else "Notes pinned"
                             resetSelectionMode()
                             scope.launch {
                                 snackBarHostState.showSnackbar(
                                     message = message,
-                                    duration = SnackbarDuration.Short,
+                                    duration = SnackbarDuration.Short
                                 )
                             }
                         }
                     },
                     onUnpinClick = {
-                        viewModel.unpinNotes(selectedNotes){
-                            val message = if(selectedNotes.size == 1)"Note unpinned" else "Notes unpinned"
+                        viewModel.unpinNotes(selectedNotes) {
+                            val message = if (selectedNotes.size == 1)"Note unpinned" else "Notes unpinned"
                             resetSelectionMode()
                             scope.launch {
                                 snackBarHostState.showSnackbar(
                                     message = message,
-                                    duration = SnackbarDuration.Short,
+                                    duration = SnackbarDuration.Short
                                 )
                             }
                         }
@@ -244,7 +246,7 @@ fun SharedTransitionScope.NoteScreen(
                         viewModel.deleteListOfNote(selectedNotes)
 
                         deletedNotes.addAll(selectedNotes)
-                        val message = if(selectedNotes.size == 1)"Note moved to trash" else "Notes moved to trash"
+                        val message = if (selectedNotes.size == 1)"Note moved to trash" else "Notes moved to trash"
                         resetSelectionMode()
 
                         scope.launch {
@@ -264,9 +266,10 @@ fun SharedTransitionScope.NoteScreen(
                                 }
                             }
                         }
-                    })
+                    }
+                )
             }
-                    },
+        },
         content = { it ->
             Surface(
                 modifier = Modifier.padding(it)

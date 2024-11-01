@@ -102,7 +102,7 @@ fun SharedTransitionScope.GridNoteCard(
                         .align(Alignment.TopEnd)
 
                 )
-            } else if (isPinned){
+            } else if (isPinned) {
                 Icon(
                     imageVector = Icons.Filled.PushPin,
                     contentDescription = null,

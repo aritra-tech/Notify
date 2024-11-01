@@ -50,7 +50,7 @@ fun AddEditTopBar(
 ) {
     val context = LocalContext.current
     val deleteDialogVisible = remember { mutableStateOf(false) }
-    var pinned by remember{mutableStateOf(isPinned)}
+    var pinned by remember { mutableStateOf(isPinned) }
 
     val onBack = remember(description) {
         {
@@ -88,19 +88,25 @@ fun AddEditTopBar(
         },
         actions = {
             if (!isNew) {
-                if(!pinned){
+                if (!pinned) {
                     IconButton(
-                        onClick = { pinned = true; pinNote() }
-                    ){
+                        onClick = {
+                            pinned = true
+                            pinNote()
+                        }
+                    ) {
                         Icon(
                             imageVector = Icons.Outlined.PushPin,
                             contentDescription = stringResource(R.string.pin_note)
                         )
                     }
-                }else{
+                } else {
                     IconButton(
-                        onClick = { pinned = false; unpinNote() }
-                    ){
+                        onClick = {
+                            pinned = false
+                            unpinNote()
+                        }
+                    ) {
                         Icon(
                             painter = painterResource(R.drawable.unpin_icon),
                             contentDescription = stringResource(R.string.unpin_note)

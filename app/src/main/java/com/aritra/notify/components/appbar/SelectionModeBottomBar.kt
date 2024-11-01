@@ -34,15 +34,15 @@ fun SelectionModeBottomBar(
     onPinClick: () -> Unit,
     onUnpinClick: () -> Unit,
     onDeleteClick: () -> Unit,
-){
+) {
     val items = listOf(
-        if(shouldShowPinIcon){
+        if (shouldShowPinIcon) {
             SelectionModeBottomBarItem(
                 name = stringResource(id = R.string.pin_note),
                 icon = Icons.Outlined.PushPin,
                 onClick = onPinClick
             )
-        }else{
+        } else {
             SelectionModeBottomBarItem(
                 name = stringResource(id = R.string.unpin_note),
                 icon = ImageVector.vectorResource(R.drawable.unpin_icon),
@@ -56,33 +56,34 @@ fun SelectionModeBottomBar(
         )
     )
 
-    BottomAppBar (
+    BottomAppBar(
         modifier = modifier
             .navigationBarsPadding()
             .imePadding(),
-        containerColor = Color.Transparent,
-        ){
-        Row(modifier = Modifier.fillMaxWidth(),
+        containerColor = Color.Transparent
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround
-            ) {
-            items.forEach{
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ){
-                IconButton(onClick = { it.onClick() }) {
-                    Icon(
-                        imageVector = it.icon,
-                        contentDescription = it.name
+        ) {
+            items.forEach {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    IconButton(onClick = { it.onClick() }) {
+                        Icon(
+                            imageVector = it.icon,
+                            contentDescription = it.name
+                        )
+                    }
+                    Text(
+                        text = it.name,
+                        modifier = Modifier.offset(y = -(10.dp)),
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_medium))
                     )
                 }
-                Text(
-                    text = it.name,
-                    modifier = Modifier.offset(y = -(10.dp)),
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(R.font.poppins_medium)),
-                )
-            }
             }
         }
     }

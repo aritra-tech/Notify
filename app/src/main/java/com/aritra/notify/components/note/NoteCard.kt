@@ -104,7 +104,7 @@ fun SharedTransitionScope.NotesCard(
                         .size(24.dp)
                         .align(Alignment.TopEnd)
                 )
-            }else if (isPinned){
+            } else if (isPinned) {
                 Icon(
                     imageVector = Icons.Filled.PushPin,
                     contentDescription = stringResource(R.string.pin_note),
