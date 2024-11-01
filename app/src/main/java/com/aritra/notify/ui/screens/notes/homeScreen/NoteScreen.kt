@@ -8,6 +8,7 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -75,6 +76,7 @@ import com.aritra.notify.components.note.GridNoteCard
 import com.aritra.notify.components.note.NotesCard
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -139,18 +141,21 @@ fun SharedTransitionScope.NoteScreen(
                 }
             }
                                },
-
         topBar = {
             if (isInSelectionMode) {
                 SelectionModeTopAppBar(
                     selectedItems = selectedNoteIds,
                     onSelectAllClick = {
+                        if(selectedNoteIds.size != listOfAllNotes.size){
                         listOfAllNotes.forEach{ note ->
                             if(!selectedNoteIds.contains(note.id)){
                                 selectedNoteIds.clear()
                                 selectedNoteIds.addAll(listOfAllNotes.map{it.id})
                                 return@forEach
                             }
+                        }
+                        }else{
+                            resetSelectionMode()
                         }
                     },
                     resetSelectionMode = resetSelectionMode
@@ -200,6 +205,7 @@ fun SharedTransitionScope.NoteScreen(
             AnimatedVisibility(
                 visible = isInSelectionMode,
                 enter = slideInVertically(animationSpec = tween(delayMillis = 100), initialOffsetY = { it }),
+                exit = shrinkOut(shrinkTowards = Alignment.BottomCenter)
                 ){
                 val selectedNotes = listOfAllNotes.filter{it.id in selectedNoteIds}
                 var shouldShowPinIcon = true
@@ -214,10 +220,11 @@ fun SharedTransitionScope.NoteScreen(
                     shouldShowPinIcon = shouldShowPinIcon,
                     onPinClick = {
                         viewModel.pinNotes(selectedNotes){
+                            val message = if(selectedNotes.size == 1)"Note pinned" else "Notes pinned"
                             resetSelectionMode()
                             scope.launch {
                                 snackBarHostState.showSnackbar(
-                                    message = "Notes pinned",
+                                    message = message,
                                     duration = SnackbarDuration.Short,
                                 )
                             }
@@ -225,10 +232,11 @@ fun SharedTransitionScope.NoteScreen(
                     },
                     onUnpinClick = {
                         viewModel.unpinNotes(selectedNotes){
+                            val message = if(selectedNotes.size == 1)"Note unpinned" else "Notes unpinned"
                             resetSelectionMode()
                             scope.launch {
                                 snackBarHostState.showSnackbar(
-                                    message = "Notes unpinned",
+                                    message = message,
                                     duration = SnackbarDuration.Short,
                                 )
                             }
@@ -238,11 +246,12 @@ fun SharedTransitionScope.NoteScreen(
                         viewModel.deleteListOfNote(selectedNotes)
 
                         deletedNotes.addAll(selectedNotes)
+                        val message = if(selectedNotes.size == 1)"Note moved to trash" else "Notes moved to trash"
                         resetSelectionMode()
 
                         scope.launch {
                             val snackBarResult = snackBarHostState.showSnackbar(
-                                message = "Notes moved to trash",
+                                message = message,
                                 actionLabel = "Undo",
                                 duration = SnackbarDuration.Short,
                                 withDismissAction = false
