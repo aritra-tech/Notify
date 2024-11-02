@@ -21,6 +21,9 @@ import androidx.compose.material3.ElevatedAssistChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -31,6 +34,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -61,6 +65,7 @@ import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteChecklist
 import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteImages
 import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteStats
 import com.aritra.notify.utils.formatReminderDateTime
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -68,6 +73,7 @@ import java.time.LocalDateTime
 fun SharedTransitionScope.AddEditScreen(
     note: Note,
     isNew: Boolean,
+    isPinned: Boolean,
     modifier: Modifier = Modifier,
     animatedVisibilityScope: AnimatedVisibilityScope,
     navigateBack: () -> Unit,
@@ -86,6 +92,8 @@ fun SharedTransitionScope.AddEditScreen(
     var isEditDateTime by remember { mutableStateOf(false) }
     var openDrawingScreen by remember { mutableStateOf(false) }
     var shouldShowDialogDateTime by remember { mutableStateOf(false) }
+    val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     // Makes sure that the title is updated when the note is updated
     LaunchedEffect(note.title) {
@@ -104,16 +112,36 @@ fun SharedTransitionScope.AddEditScreen(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         modifier = modifier,
         topBar = {
             AddEditTopBar(
                 title = title,
                 description = description,
                 isNew = isNew,
+                isPinned = isPinned,
                 onBackPress = if (isNew) {
                     { cancelDialogState.value = true }
                 } else {
                     navigateBack
+                },
+                pinNote = {
+                    note.isPinned = true
+                    scope.launch {
+                        snackBarHostState.showSnackbar(
+                            message = "Note pinned",
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                },
+                unpinNote = {
+                    note.isPinned = false
+                    scope.launch {
+                        snackBarHostState.showSnackbar(
+                            message = "Note unpinned",
+                            duration = SnackbarDuration.Short
+                        )
+                    }
                 },
                 saveNote = {
                     saveNote(title, description, images, checklist)
@@ -151,7 +179,8 @@ fun SharedTransitionScope.AddEditScreen(
                             )
 
                             TextField(
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier
+                                    .fillMaxWidth()
                                     .sharedElement(
                                         state = rememberSharedContentState(key = "title-$title"),
                                         animatedVisibilityScope = animatedVisibilityScope,

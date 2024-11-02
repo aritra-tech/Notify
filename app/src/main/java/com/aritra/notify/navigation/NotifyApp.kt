@@ -10,14 +10,31 @@ import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.*
-import androidx.navigation.compose.*
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.aritra.notify.ui.screens.notes.addEditScreen.route.AddEditRoute
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
 import com.aritra.notify.ui.screens.notes.trash.TrashNoteEffect
@@ -28,7 +45,7 @@ import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun NotifyApp(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
 ) {
     val trashViewModel: TrashNoteViewModel = hiltViewModel()
     val state by trashViewModel.state.collectAsState()
@@ -60,6 +77,10 @@ fun NotifyApp(
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
+    var shouldShowNavBar by rememberSaveable { mutableStateOf(true) }
+    val hideNavBar = { shouldShowNavBar = false }
+    val showNavBar = { shouldShowNavBar = true }
+
     LaunchedEffect(effect) {
         when (val currentEffect = effect) {
             TrashNoteEffect.Close -> {
@@ -76,7 +97,7 @@ fun NotifyApp(
 
     Scaffold(
         bottomBar = {
-            if (currentRoute !in routesWithoutBottomBar) {
+            if (currentRoute !in routesWithoutBottomBar && shouldShowNavBar) {
                 NavigationBar {
                     bottomNavItems.forEachIndexed { index, item ->
                         NavigationBarItem(
@@ -91,7 +112,12 @@ fun NotifyApp(
                             label = { Text(text = item.name) },
                             icon = {
                                 Icon(
-                                    imageVector = if (index == selectedItemIndex) item.selectedIcon else item.unselectedIcon,
+                                    imageVector =
+                                    if (index == selectedItemIndex) {
+                                        item.selectedIcon
+                                    } else {
+                                        item.unselectedIcon
+                                    },
                                     contentDescription = item.name
                                 )
                             }
@@ -109,17 +135,22 @@ fun NotifyApp(
             ) {
                 composable(NotifyScreens.Notes.name) {
                     NoteScreen(
-                        onFabClicked = { navController.navigate("${NotifyScreens.AddEditNotes.name}/-1") },
-                        navigateToUpdateNoteScreen = { noteId ->
-                            navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
+                        onFabClicked = { navController.navigate("${NotifyScreens.AddEditNotes.name}/-1/false") },
+                        navigateToUpdateNoteScreen = { noteId, pinned ->
+                            navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId/$pinned")
                         },
-                        animatedVisibilityScope = this
+                        animatedVisibilityScope = this,
+                        hideNavBar = hideNavBar,
+                        showNavBar = showNavBar
                     )
                 }
 
                 composable(
-                    route = "${NotifyScreens.AddEditNotes.name}/{noteId}",
-                    arguments = listOf(navArgument("noteId") { type = NavType.IntType }),
+                    route = "${NotifyScreens.AddEditNotes.name}/{noteId}/{isPinned}",
+                    arguments = listOf(
+                        navArgument("noteId") { type = NavType.IntType },
+                        navArgument("isPinned") { type = NavType.BoolType }
+                    ),
                     deepLinks = listOf(
                         navDeepLink {
                             uriPattern = NavDeepLinks.addNotesUriPattern

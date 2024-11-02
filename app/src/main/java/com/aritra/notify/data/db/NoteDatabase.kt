@@ -14,7 +14,7 @@ import com.aritra.notify.data.dao.TrashNoteDao
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.domain.models.TrashNote
 
-@Database(entities = [Note::class, TrashNote::class], version = 6)
+@Database(entities = [Note::class, TrashNote::class], version = 7)
 @TypeConverters(
     DateTypeConverter::class,
     UriConverter::class,
