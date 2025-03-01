@@ -2,209 +2,180 @@ package com.aritra.notify.navigation
 
 import android.content.Intent
 import android.widget.Toast
-import androidx.compose.foundation.layout.height
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType.Companion.IntType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import com.aritra.notify.R
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.aritra.notify.ui.screens.notes.addEditScreen.route.AddEditRoute
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
 import com.aritra.notify.ui.screens.notes.trash.TrashNoteEffect
 import com.aritra.notify.ui.screens.notes.trash.TrashNoteScreen
 import com.aritra.notify.ui.screens.notes.trash.TrashNoteViewModel
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
-import com.aritra.notify.ui.theme.FadeIn
-import com.aritra.notify.ui.theme.FadeOut
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun NotifyApp(navController: NavHostController = rememberNavController()) {
-    val screensWithHiddenNavBar = listOf(
-        "${NotifyScreens.AddEditNotes.name}/{noteId}",
-        NotifyScreens.TrashNoteScreen.name
-    )
-
-    val backStackEntry = navController.currentBackStackEntryAsState()
-    val trashViewModel = hiltViewModel<TrashNoteViewModel>()
+fun NotifyApp(
+    navController: NavHostController = rememberNavController(),
+) {
+    val trashViewModel: TrashNoteViewModel = hiltViewModel()
     val state by trashViewModel.state.collectAsState()
     val effect by trashViewModel.effect.collectAsState()
     val context = LocalContext.current
 
-    LaunchedEffect(effect) {
-        effect?.let {
-            when (it) {
-                TrashNoteEffect.Close -> {
-                    navController.popBackStack()
-                    trashViewModel.resetEffect()
-                }
+    val bottomNavItems = remember {
+        listOf(
+            BottomNavItem(
+                name = "Notes",
+                route = NotifyScreens.Notes.name,
+                selectedIcon = Icons.Filled.Lightbulb,
+                unselectedIcon = Icons.Outlined.Lightbulb
+            ),
+            BottomNavItem(
+                name = "Settings",
+                route = NotifyScreens.Settings.name,
+                selectedIcon = Icons.Filled.Settings,
+                unselectedIcon = Icons.Outlined.Settings
+            )
+        )
+    }
 
-                is TrashNoteEffect.Message -> {
-                    Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
-                    trashViewModel.closePage()
-                }
+    var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
+
+    val routesWithoutBottomBar = remember {
+        setOf("${NotifyScreens.AddEditNotes.name}/{noteId}", NotifyScreens.TrashNoteScreen.name)
+    }
+
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    var shouldShowNavBar by rememberSaveable { mutableStateOf(true) }
+    val hideNavBar = { shouldShowNavBar = false }
+    val showNavBar = { shouldShowNavBar = true }
+
+    LaunchedEffect(effect) {
+        when (val currentEffect = effect) {
+            TrashNoteEffect.Close -> {
+                navController.popBackStack()
+                trashViewModel.resetEffect()
             }
+            is TrashNoteEffect.Message -> {
+                Toast.makeText(context, currentEffect.message, Toast.LENGTH_SHORT).show()
+                trashViewModel.closePage()
+            }
+            null -> {}
         }
     }
 
     Scaffold(
         bottomBar = {
-            BottomNavigationBar(
-                backStackEntry,
-                screensWithHiddenNavBar,
-                navController
-            )
+            if (currentRoute !in routesWithoutBottomBar && shouldShowNavBar) {
+                NavigationBar {
+                    bottomNavItems.forEachIndexed { index, item ->
+                        NavigationBarItem(
+                            selected = selectedItemIndex == index,
+                            onClick = {
+                                selectedItemIndex = index
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.startDestinationId)
+                                    launchSingleTop = true
+                                }
+                            },
+                            label = { Text(text = item.name) },
+                            icon = {
+                                Icon(
+                                    imageVector =
+                                    if (index == selectedItemIndex) {
+                                        item.selectedIcon
+                                    } else {
+                                        item.unselectedIcon
+                                    },
+                                    contentDescription = item.name
+                                )
+                            }
+                        )
+                    }
+                }
+            }
         }
     ) { scaffoldPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = NotifyScreens.Notes.name,
-            modifier = Modifier.padding(scaffoldPadding),
-            enterTransition = { FadeIn },
-            exitTransition = { FadeOut },
-            popEnterTransition = { FadeIn },
-            popExitTransition = { FadeOut }
-        ) {
-            composable(
-                route = NotifyScreens.Notes.name
+        SharedTransitionLayout {
+            NavHost(
+                navController = navController,
+                startDestination = NotifyScreens.Notes.name,
+                modifier = Modifier.padding(scaffoldPadding)
             ) {
-                NoteScreen(
-                    onFabClicked = { navController.navigate(NotifyScreens.AddEditNotes.name + "/-1") },
-                    navigateToUpdateNoteScreen = { noteId ->
-                        navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId")
-                    }
-                )
-            }
+                composable(NotifyScreens.Notes.name) {
+                    NoteScreen(
+                        onFabClicked = { navController.navigate("${NotifyScreens.AddEditNotes.name}/-1/false") },
+                        navigateToUpdateNoteScreen = { noteId, pinned ->
+                            navController.navigate("${NotifyScreens.AddEditNotes.name}/$noteId/$pinned")
+                        },
+                        animatedVisibilityScope = this,
+                        hideNavBar = hideNavBar,
+                        showNavBar = showNavBar
+                    )
+                }
 
-            composable(
-                route = "${NotifyScreens.AddEditNotes.name}/{noteId}",
-                arguments = listOf(
-                    navArgument("noteId") {
-                        type = IntType
-                    }
-                ),
-                deepLinks = listOf(
-                    navDeepLink {
-                        uriPattern = NavDeepLinks.addNotesUriPattern
-                        action = Intent.ACTION_VIEW
-                    }
-                )
-            ) { backStack ->
-                AddEditRoute(
-                    navController = navController,
-                    backStack = backStack
-                )
-            }
-
-            composable(
-                route = NotifyScreens.Settings.name
-            ) {
-                SettingsScreen(controller = navController)
-            }
-
-            composable(
-                route = NotifyScreens.TrashNoteScreen.name
-            ) {
-                TrashNoteScreen(trashNoteState = state, onEvent = trashViewModel::onEvent)
-            }
-        }
-    }
-}
-
-@Composable
-fun BottomNavigationBar(
-    backStackEntry: State<NavBackStackEntry?>,
-    screensWithHiddenNavBar: List<String>,
-    navController: NavHostController,
-) {
-    if (backStackEntry.value?.destination?.route !in screensWithHiddenNavBar) {
-        NavigationBar(
-            containerColor = Color.Transparent,
-            modifier = Modifier.height(75.dp)
-        ) {
-            val bottomNavItem = listOf(
-                BottomNavItem(
-                    name = "Notes",
-                    route = NotifyScreens.Notes.name,
-                    icon = ImageVector.vectorResource(R.drawable.note_outline)
-                ),
-                BottomNavItem(
-                    name = "Settings",
-                    route = NotifyScreens.Settings.name,
-                    icon = ImageVector.vectorResource(R.drawable.settings_outline)
-                )
-            )
-
-            bottomNavItem.forEach { item ->
-                NavigationBarItem(
-                    alwaysShowLabel = true,
-                    icon = {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.name,
-                            tint = if (backStackEntry.value?.destination?.route == item.route) {
-                                MaterialTheme.colorScheme.onSurface
-                            } else {
-                                MaterialTheme.colorScheme.secondary
-                            }
-                        )
-                    },
-                    label = {
-                        Text(
-                            text = item.name,
-                            color = if (backStackEntry.value?.destination?.route == item.route) {
-                                MaterialTheme.colorScheme.onSurface
-                            } else {
-                                MaterialTheme.colorScheme.secondary
-                            },
-                            fontWeight = if (backStackEntry.value?.destination?.route == item.route) {
-                                FontWeight.SemiBold
-                            } else {
-                                FontWeight.Normal
-                            }
-                        )
-                    },
-                    selected = backStackEntry.value?.destination?.route == item.route,
-                    onClick = {
-                        val currentDestination = navController.currentBackStackEntry?.destination?.route
-                        if (item.route != currentDestination) {
-                            navController.navigate(item.route) {
-                                navController.graph.findStartDestination().let { route ->
-                                    popUpTo(route.id) {
-                                        saveState = true
-                                    }
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
+                composable(
+                    route = "${NotifyScreens.AddEditNotes.name}/{noteId}/{isPinned}",
+                    arguments = listOf(
+                        navArgument("noteId") { type = NavType.IntType },
+                        navArgument("isPinned") { type = NavType.BoolType }
+                    ),
+                    deepLinks = listOf(
+                        navDeepLink {
+                            uriPattern = NavDeepLinks.addNotesUriPattern
+                            action = Intent.ACTION_VIEW
                         }
-                    }
-                )
+                    )
+                ) { backStack ->
+                    AddEditRoute(
+                        navController = navController,
+                        backStack = backStack,
+                        animatedVisibilityScope = this
+                    )
+                }
+
+                composable(NotifyScreens.Settings.name) {
+                    SettingsScreen(controller = navController)
+                }
+
+                composable(NotifyScreens.TrashNoteScreen.name) {
+                    TrashNoteScreen(
+                        trashNoteState = state,
+                        onEvent = trashViewModel::onEvent,
+                        animatedVisibilityScope = this
+                    )
+                }
             }
         }
     }

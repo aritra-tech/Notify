@@ -41,6 +41,7 @@ import com.aritra.notify.components.actions.SettingsComponent
 import com.aritra.notify.components.actions.SettingsSwitchCard
 import com.aritra.notify.navigation.NotifyScreens
 import com.aritra.notify.ui.screens.MainActivity
+import com.aritra.notify.ui.theme.OnPrimaryContainerLight
 import com.aritra.notify.ui.theme.PrimaryContainerLight
 import com.aritra.notify.utils.Const
 import com.aritra.notify.utils.shareApp
@@ -93,6 +94,7 @@ fun SettingsScreen(controller: NavController) {
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp),
                     text = stringResource(R.string.general),
+                    color = OnPrimaryContainerLight,
                     style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium)
                 )
                 SettingsSwitchCard(
@@ -120,6 +122,7 @@ fun SettingsScreen(controller: NavController) {
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp),
                     text = stringResource(R.string.security),
+                    color = OnPrimaryContainerLight,
                     style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium)
                 )
                 SettingsSwitchCard(
@@ -149,6 +152,7 @@ fun SettingsScreen(controller: NavController) {
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp),
                     text = stringResource(R.string.import_export),
+                    color = OnPrimaryContainerLight,
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.poppins_medium))
                 )
@@ -177,6 +181,7 @@ fun SettingsScreen(controller: NavController) {
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp),
                     text = stringResource(R.string.others),
+                    color = OnPrimaryContainerLight,
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.poppins_medium))
                 )

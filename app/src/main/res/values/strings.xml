@@ -12,7 +12,6 @@
     <string name="share_note_as_text">Share as Text</string>
     <string name="share_note_as_picture">Share as Image</string>
     <string name="cancel">Cancel</string>
-    <string name="search_your_notes">Search your notes</string>
     <string name="icon">icon</string>
     <string name="back">back</string>
     <string name="share">share</string>
@@ -60,4 +59,6 @@
     <string name="general">General</string>
     <string name="by_aritra_das">By Aritra Das 💙</string>
     <string name="add_new_note_shortcut_label">Add New Note</string>
+    <string name="pin_note">Pin</string>
+    <string name="unpin_note">Unpin</string>
 </resources>

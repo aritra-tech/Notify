@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
+import com.aritra.notify.ui.theme.OnPrimaryContainerLight
 
 @Composable
 fun SettingsComponent(
@@ -44,6 +45,7 @@ fun SettingsComponent(
         Text(
             text = itemName,
             fontSize = 16.sp,
+            color = OnPrimaryContainerLight,
             fontFamily = FontFamily(Font(R.font.poppins_light))
         )
     }

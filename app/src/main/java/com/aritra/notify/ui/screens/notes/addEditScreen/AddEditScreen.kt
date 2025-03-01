@@ -1,6 +1,10 @@
 package com.aritra.notify.ui.screens.notes.addEditScreen
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +21,9 @@ import androidx.compose.material3.ElevatedAssistChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -27,6 +34,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -42,7 +50,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.aritra.notify.R
 import com.aritra.notify.components.appbar.AddEditBottomBar
@@ -57,16 +64,18 @@ import com.aritra.notify.ui.screens.notes.addEditScreen.components.DescriptionTe
 import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteChecklist
 import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteImages
 import com.aritra.notify.ui.screens.notes.addEditScreen.components.NoteStats
-import com.aritra.notify.ui.theme.NotifyTheme
 import com.aritra.notify.utils.formatReminderDateTime
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.util.Date
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun AddEditScreen(
+fun SharedTransitionScope.AddEditScreen(
     note: Note,
     isNew: Boolean,
+    isPinned: Boolean,
     modifier: Modifier = Modifier,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     navigateBack: () -> Unit,
     saveNote: (String, String, List<Uri>, List<Todo>) -> Unit,
     deleteNote: (() -> Unit) -> Unit,
@@ -83,6 +92,8 @@ fun AddEditScreen(
     var isEditDateTime by remember { mutableStateOf(false) }
     var openDrawingScreen by remember { mutableStateOf(false) }
     var shouldShowDialogDateTime by remember { mutableStateOf(false) }
+    val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     // Makes sure that the title is updated when the note is updated
     LaunchedEffect(note.title) {
@@ -101,16 +112,36 @@ fun AddEditScreen(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         modifier = modifier,
         topBar = {
             AddEditTopBar(
                 title = title,
                 description = description,
                 isNew = isNew,
+                isPinned = isPinned,
                 onBackPress = if (isNew) {
                     { cancelDialogState.value = true }
                 } else {
                     navigateBack
+                },
+                pinNote = {
+                    note.isPinned = true
+                    scope.launch {
+                        snackBarHostState.showSnackbar(
+                            message = "Note pinned",
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                },
+                unpinNote = {
+                    note.isPinned = false
+                    scope.launch {
+                        snackBarHostState.showSnackbar(
+                            message = "Note unpinned",
+                            duration = SnackbarDuration.Short
+                        )
+                    }
                 },
                 saveNote = {
                     saveNote(title, description, images, checklist)
@@ -148,7 +179,15 @@ fun AddEditScreen(
                             )
 
                             TextField(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .sharedElement(
+                                        state = rememberSharedContentState(key = "title-$title"),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                        boundsTransform = { _, _ ->
+                                            tween(durationMillis = 1000)
+                                        }
+                                    ),
                                 value = title,
                                 onValueChange = { newTitle ->
                                     title = newTitle
@@ -245,6 +284,7 @@ fun AddEditScreen(
                         description = description,
                         parentScrollState = scrollState,
                         isNewNote = isNew,
+                        animatedVisibilityScope = animatedVisibilityScope,
                         onDescriptionChange = { newDescription ->
                             description = newDescription
                         }
@@ -323,22 +363,4 @@ fun AddEditScreen(
         shouldShowDialogDateTime = false
         isEditDateTime = false
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun AddEditScreenPreview() = NotifyTheme {
-    AddEditScreen(
-        note = Note(
-            title = "Title",
-            note = "Description",
-            image = listOf(),
-            dateTime = Date()
-        ),
-        isNew = true,
-        navigateBack = {},
-        saveNote = { _, _, _, _ -> },
-        deleteNote = {},
-        onUpdateReminderDateTime = {}
-    )
 }

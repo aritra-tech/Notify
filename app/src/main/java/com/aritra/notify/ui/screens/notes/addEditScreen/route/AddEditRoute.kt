@@ -2,6 +2,9 @@ package com.aritra.notify.ui.screens.notes.addEditScreen.route
 
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,10 +21,12 @@ import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreenViewModel
 import java.time.LocalDateTime
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun AddEditRoute(
+fun SharedTransitionScope.AddEditRoute(
     navController: NavController,
     backStack: NavBackStackEntry,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -36,6 +41,7 @@ fun AddEditRoute(
     val isNew = remember(noteId) {
         noteId == null
     }
+    val isPinned = (backStack.arguments?.getBoolean("isPinned") ?: false)
     val navigateBack: () -> Unit = remember {
         {
             navController.popBackStack()
@@ -94,9 +100,11 @@ fun AddEditRoute(
         modifier = modifier,
         note = note,
         isNew = isNew,
+        isPinned = isPinned,
         navigateBack = navigateBack,
         saveNote = saveNote,
         deleteNote = deleteNote,
-        onUpdateReminderDateTime = rememberUpdateDateTime
+        onUpdateReminderDateTime = rememberUpdateDateTime,
+        animatedVisibilityScope = animatedVisibilityScope
     )
 }

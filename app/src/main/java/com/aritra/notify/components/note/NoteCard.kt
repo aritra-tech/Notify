@@ -1,6 +1,10 @@
 package com.aritra.notify.components.note
 
 import TrashNoteInfo
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
@@ -20,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedAssistChip
@@ -33,6 +38,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -53,12 +59,15 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.Locale
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun NotesCard(
+fun SharedTransitionScope.NotesCard(
+    modifier: Modifier = Modifier,
     noteModel: Note,
     isSelected: Boolean,
+    isPinned: Boolean,
     dateTimeDeleted: TrashNoteInfo? = null,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
@@ -67,7 +76,7 @@ fun NotesCard(
 
     OutlinedCard(
         border = CardDefaults.outlinedCardBorder().copy(0.dp),
-        modifier = Modifier
+        modifier = modifier
             .padding(10.dp)
             .fillMaxHeight()
             .clip(RoundedCornerShape(15.dp))
@@ -95,6 +104,16 @@ fun NotesCard(
                         .size(24.dp)
                         .align(Alignment.TopEnd)
                 )
+            } else if (isPinned) {
+                Icon(
+                    imageVector = Icons.Filled.PushPin,
+                    contentDescription = stringResource(R.string.pin_note),
+                    modifier = Modifier
+                        .size(24.dp)
+                        .rotate(45f)
+                        .align(Alignment.TopEnd),
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
             }
             Column(
                 modifier = Modifier
@@ -121,6 +140,14 @@ fun NotesCard(
                     Spacer(modifier = Modifier.height(10.dp))
                 }
                 Text(
+                    modifier = Modifier
+                        .sharedElement(
+                            state = rememberSharedContentState(key = "title-${noteModel.title}"),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 1000)
+                            }
+                        ),
                     text = noteModel.title,
                     fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.poppins_medium)),
@@ -129,6 +156,14 @@ fun NotesCard(
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
+                    modifier = Modifier
+                        .sharedElement(
+                            state = rememberSharedContentState(key = "note-${noteModel.note}"),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 1000)
+                            }
+                        ),
                     text = noteModel.note,
                     fontSize = 18.sp,
                     fontFamily = FontFamily(Font(R.font.poppins_light)),

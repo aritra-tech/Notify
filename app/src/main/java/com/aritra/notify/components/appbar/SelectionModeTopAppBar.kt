@@ -2,8 +2,8 @@ package com.aritra.notify.components.appbar
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,7 +19,13 @@ import com.aritra.notify.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectionModeTopAppBar(selectedItems: List<Int>, onDeleteClick: () -> Unit, resetSelectionMode: () -> Unit) {
+fun SelectionModeTopAppBar(selectedItems: List<Int>, onSelectAllClick: () -> Unit, resetSelectionMode: () -> Unit) {
+    val text = if (selectedItems.size == 1) {
+        "${selectedItems.size} item selected"
+    } else {
+        "${selectedItems.size} items selected"
+    }
+
     TopAppBar(navigationIcon = {
         IconButton(
             onClick = resetSelectionMode
@@ -33,16 +39,16 @@ fun SelectionModeTopAppBar(selectedItems: List<Int>, onDeleteClick: () -> Unit, 
     }, title = {
         Text(
             modifier = Modifier.padding(start = 80.dp),
-            text = "${selectedItems.size} item selected",
+            text = text,
             style = MaterialTheme.typography.titleMedium.copy(
                 color = MaterialTheme.colorScheme.onBackground,
                 fontFamily = FontFamily(Font(R.font.poppins_medium))
             )
         )
     }, actions = {
-        IconButton(onDeleteClick) {
+        IconButton(onSelectAllClick) {
             Icon(
-                imageVector = Icons.Outlined.DeleteOutline,
+                imageVector = Icons.Outlined.Checklist,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onBackground
             )

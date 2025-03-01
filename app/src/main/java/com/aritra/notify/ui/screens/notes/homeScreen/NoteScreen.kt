@@ -2,12 +2,20 @@
 
 package com.aritra.notify.ui.screens.notes.homeScreen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -58,20 +66,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
+import com.aritra.notify.components.TypewriterText
 import com.aritra.notify.components.actions.BackPressHandler
 import com.aritra.notify.components.actions.LayoutToggleButton
+import com.aritra.notify.components.appbar.SelectionModeBottomBar
+import com.aritra.notify.components.appbar.SelectionModeTopAppBar
 import com.aritra.notify.components.note.GridNoteCard
 import com.aritra.notify.components.note.NotesCard
-import com.aritra.notify.components.appbar.SelectionModeTopAppBar
 import com.aritra.notify.domain.models.Note
 import com.aritra.notify.ui.screens.notes.addEditScreen.AddEditViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun NoteScreen(
+fun SharedTransitionScope.NoteScreen(
     onFabClicked: () -> Unit,
-    navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
+    navigateToUpdateNoteScreen: (noteId: Int, isPinned: Boolean) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    hideNavBar: () -> Unit,
+    showNavBar: () -> Unit,
 ) {
     val viewModel = hiltViewModel<NoteScreenViewModel>()
 
@@ -101,6 +114,11 @@ fun NoteScreen(
     ) {
         if (isInSelectionMode && selectedNoteIds.isEmpty()) {
             isInSelectionMode = false
+            showNavBar()
+        } else if (!isInSelectionMode) {
+            showNavBar()
+        } else {
+            hideNavBar()
         }
     }
 
@@ -109,48 +127,34 @@ fun NoteScreen(
             SnackbarHost(hostState = snackBarHostState)
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onFabClicked() }
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Edit,
-                    contentDescription = "Add Notes"
-                )
+            if (!isInSelectionMode) {
+                FloatingActionButton(
+                    onClick = { onFabClicked() }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = "Add Notes"
+                    )
+                }
             }
         },
-
         topBar = {
             if (isInSelectionMode) {
                 SelectionModeTopAppBar(
                     selectedItems = selectedNoteIds,
-                    onDeleteClick = {
-                        val selectedNotes =
-                            listOfAllNotes.filter { note -> note.id in selectedNoteIds }
-
-                        viewModel.deleteListOfNote(selectedNotes)
-
-                        deletedNotes.addAll(selectedNotes)
-                        resetSelectionMode()
-
-                        scope.launch {
-                            val snackBarResult = snackBarHostState.showSnackbar(
-                                message = "Notes moved to trash",
-                                actionLabel = "Undo",
-                                duration = SnackbarDuration.Short,
-                                withDismissAction = false
-                            )
-
-                            when (snackBarResult) {
-                                SnackbarResult.ActionPerformed -> {
-                                    addEditViewModel.insertListOfNote(deletedNotes) {}
-                                }
-
-                                SnackbarResult.Dismissed -> {
+                    onSelectAllClick = {
+                        if (selectedNoteIds.size != listOfAllNotes.size) {
+                            listOfAllNotes.forEach { note ->
+                                if (!selectedNoteIds.contains(note.id)) {
+                                    selectedNoteIds.clear()
+                                    selectedNoteIds.addAll(listOfAllNotes.map { it.id })
+                                    return@forEach
                                 }
                             }
+                        } else {
+                            resetSelectionMode()
                         }
                     },
-
                     resetSelectionMode = resetSelectionMode
                 )
             } else {
@@ -165,7 +169,17 @@ fun NoteScreen(
                     onSearch = {},
                     active = false,
                     onActiveChange = {},
-                    placeholder = { Text(stringResource(R.string.search_your_notes)) },
+                    placeholder = {
+                        Row {
+                            Text("Search for ")
+                            TypewriterText(
+                                texts = listOf(
+                                    "Notes",
+                                    "Reminders"
+                                )
+                            )
+                        }
+                    },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                     trailingIcon = {
                         if (searchQuery.isNotEmpty()) {
@@ -182,6 +196,78 @@ fun NoteScreen(
                         }
                     }
                 ) {}
+            }
+        },
+        bottomBar = {
+            AnimatedVisibility(
+                visible = isInSelectionMode,
+                enter = slideInVertically(animationSpec = tween(delayMillis = 100), initialOffsetY = { it }),
+                exit = shrinkOut(shrinkTowards = Alignment.BottomCenter)
+            ) {
+                val selectedNotes = listOfAllNotes.filter { it.id in selectedNoteIds }
+                var shouldShowPinIcon = true
+                selectedNotes.forEach { note ->
+                    if (note.isPinned) {
+                        if (note == selectedNotes.last()) {
+                            shouldShowPinIcon = false
+                        }
+                    } else {
+                        return@forEach
+                    }
+                }
+
+                SelectionModeBottomBar(
+                    shouldShowPinIcon = shouldShowPinIcon,
+                    onPinClick = {
+                        viewModel.pinNotes(selectedNotes) {
+                            val message = if (selectedNotes.size == 1)"Note pinned" else "Notes pinned"
+                            resetSelectionMode()
+                            scope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = message,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+                    },
+                    onUnpinClick = {
+                        viewModel.unpinNotes(selectedNotes) {
+                            val message = if (selectedNotes.size == 1)"Note unpinned" else "Notes unpinned"
+                            resetSelectionMode()
+                            scope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = message,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+                    },
+                    onDeleteClick = {
+                        viewModel.deleteListOfNote(selectedNotes)
+
+                        deletedNotes.addAll(selectedNotes)
+                        val message = if (selectedNotes.size == 1)"Note moved to trash" else "Notes moved to trash"
+                        resetSelectionMode()
+
+                        scope.launch {
+                            val snackBarResult = snackBarHostState.showSnackbar(
+                                message = message,
+                                actionLabel = "Undo",
+                                duration = SnackbarDuration.Short,
+                                withDismissAction = false
+                            )
+
+                            when (snackBarResult) {
+                                SnackbarResult.ActionPerformed -> {
+                                    addEditViewModel.insertListOfNote(deletedNotes) {}
+                                }
+
+                                SnackbarResult.Dismissed -> {
+                                }
+                            }
+                        }
+                    }
+                )
             }
         },
         content = { it ->
@@ -205,11 +291,14 @@ fun NoteScreen(
                                     }
                                 ) { _, notesModel ->
                                     val isSelected = selectedNoteIds.contains(notesModel.id)
+                                    val isPinned = notesModel.isPinned
 
                                     GridNoteCard(
                                         notesModel,
                                         isSelected,
-                                        {
+                                        isPinned,
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                        onClick = {
                                             if (isInSelectionMode) {
                                                 if (isSelected) {
                                                     selectedNoteIds.remove(notesModel.id)
@@ -217,7 +306,7 @@ fun NoteScreen(
                                                     selectedNoteIds.add(notesModel.id)
                                                 }
                                             } else {
-                                                navigateToUpdateNoteScreen(notesModel.id)
+                                                navigateToUpdateNoteScreen(notesModel.id, notesModel.isPinned)
                                             }
                                         }
                                     ) {
@@ -251,11 +340,14 @@ fun NoteScreen(
                                 ) { notesModel ->
 
                                     val isSelected = selectedNoteIds.contains(notesModel.id)
+                                    val isPinned = notesModel.isPinned
 
                                     Box {
                                         NotesCard(
                                             noteModel = notesModel,
                                             isSelected = isSelected,
+                                            isPinned = isPinned,
+                                            animatedVisibilityScope = animatedVisibilityScope,
                                             onClick = {
                                                 if (isInSelectionMode) {
                                                     if (isSelected) {
@@ -264,7 +356,7 @@ fun NoteScreen(
                                                         selectedNoteIds.add(notesModel.id)
                                                     }
                                                 } else {
-                                                    navigateToUpdateNoteScreen(notesModel.id)
+                                                    navigateToUpdateNoteScreen(notesModel.id, notesModel.isPinned)
                                                 }
                                             }
                                         ) {

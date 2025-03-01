@@ -1,5 +1,9 @@
 package com.aritra.notify.components.note
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
@@ -17,6 +21,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +34,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
@@ -45,11 +51,13 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun GridNoteCard(
+fun SharedTransitionScope.GridNoteCard(
     notesModel: Note,
     isSelected: Boolean,
+    isPinned: Boolean,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
@@ -94,6 +102,17 @@ fun GridNoteCard(
                         .align(Alignment.TopEnd)
 
                 )
+            } else if (isPinned) {
+                Icon(
+                    imageVector = Icons.Filled.PushPin,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .rotate(45f)
+                        .align(Alignment.TopEnd)
+
+                )
             }
 
             Column(
@@ -128,7 +147,14 @@ fun GridNoteCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            modifier = Modifier.padding(top = 10.dp),
+                            modifier = Modifier.padding(top = 10.dp)
+                                .sharedElement(
+                                    state = rememberSharedContentState(key = "title-${notesModel.title}"),
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    boundsTransform = { _, _ ->
+                                        tween(durationMillis = 1000)
+                                    }
+                                ),
                             text = notesModel.title,
                             fontSize = 20.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_semibold)),
@@ -139,7 +165,16 @@ fun GridNoteCard(
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
+
                 Text(
+                    modifier = Modifier
+                        .sharedElement(
+                            state = rememberSharedContentState(key = "title-${notesModel.note}"),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 1000)
+                            }
+                        ),
                     text = notesModel.note,
                     fontSize = 18.sp,
                     fontFamily = FontFamily(Font(R.font.poppins_light)),

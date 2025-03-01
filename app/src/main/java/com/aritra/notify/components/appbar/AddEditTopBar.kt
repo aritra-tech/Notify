@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,12 +41,16 @@ fun AddEditTopBar(
     title: String,
     description: String,
     isNew: Boolean,
+    isPinned: Boolean,
     onBackPress: () -> Unit,
+    pinNote: () -> Unit,
+    unpinNote: () -> Unit,
     saveNote: () -> Unit,
     deleteNote: (() -> Unit) -> Unit,
 ) {
     val context = LocalContext.current
     val deleteDialogVisible = remember { mutableStateOf(false) }
+    var pinned by remember { mutableStateOf(isPinned) }
 
     val onBack = remember(description) {
         {
@@ -82,6 +88,32 @@ fun AddEditTopBar(
         },
         actions = {
             if (!isNew) {
+                if (!pinned) {
+                    IconButton(
+                        onClick = {
+                            pinned = true
+                            pinNote()
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.PushPin,
+                            contentDescription = stringResource(R.string.pin_note)
+                        )
+                    }
+                } else {
+                    IconButton(
+                        onClick = {
+                            pinned = false
+                            unpinNote()
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.unpin_icon),
+                            contentDescription = stringResource(R.string.unpin_note)
+                        )
+                    }
+                }
+
                 IconButton(
                     onClick = {
                         deleteDialogVisible.value = true
