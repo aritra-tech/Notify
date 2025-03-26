@@ -34,7 +34,7 @@ devtools-ksp = "2.1.0-1.0.29"
 zoomable = "0.6.2"
 zoomableImageCoil = "0.6.2"
 ktlint = "11.6.1"
-camerax_version = "1.4.0-alpha01"
+camerax_version = "1.4.2"
 composeAnimation = "1.7.0-alpha07"
 serialization = "1.6.3"
 
