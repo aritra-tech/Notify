@@ -46,7 +46,7 @@ androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx
 android-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "bom" }
 android-kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlinBom" }
 androidx-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
-compose-ui = "androidx.compose.ui:ui:1.6.8"
+compose-ui = "androidx.compose.ui:ui:1.9.0"
 compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
