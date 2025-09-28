@@ -36,7 +36,7 @@ zoomableImageCoil = "0.6.2"
 ktlint = "11.6.1"
 camerax_version = "1.4.0-alpha01"
 composeAnimation = "1.7.0-alpha07"
-serialization = "1.6.3"
+serialization = "1.9.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
