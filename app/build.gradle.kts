@@ -12,11 +12,11 @@ plugins {
 }
 
 android {
-    namespace = "com.aritra.notify"
+    namespace = "com.aritradas.notify"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.aritra.notify"
+        applicationId = "com.aritradas.notify"
         minSdk = 24
         targetSdk = 34
         versionCode = 16
