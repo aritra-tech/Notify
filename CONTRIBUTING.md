@@ -19,7 +19,7 @@ Explain examples with code for these updates.
 4. 🚨Always make a pull request against the `develop` branch.
 5. Always have descriptive commit messages explaining what you did.
 6. Always have a description for your pull request to explain what you did in-depth, it will be great if you include video recordings or screenshots if possible.
-7. If you need help with the above please feel to reach out to me and I will help you out.
+7. If you need help with the above please feel free to reach out to me and I will help you out.
 
 ## Code reviews
 All submissions, including submissions by project members, require review. We use GitHub pull requests for this purpose. Consult [GitHub Help](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) for more information on using pull requests.
