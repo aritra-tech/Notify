@@ -60,7 +60,7 @@ _Notify_ focuses on the following key things:
 - Offline Capability - Notes. ✈️
 - Clean and Simple Material UI. 🎨
 - Dark mode. 🌗
-- Back/Restore feature. 👀
+- Backup/Restore feature. 👀
 - Jetpack Compose UI. 🖌
 - Switch between layouts. 🌟
 - Share the notes in the form of Text, Image & PDF 📤
